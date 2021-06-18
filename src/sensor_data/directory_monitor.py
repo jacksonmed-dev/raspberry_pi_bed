@@ -17,13 +17,6 @@ class OnMyWatch:
     def run(self):
         self.__observer.schedule(self.__event_handler, self.__watch_directory, recursive=True)
         self.__observer.start()
-        # try:
-        #     while True:
-        #         time.sleep(5)
-        # except:
-        #     self.observer.stop()
-        #     print("Observer Stopped")
-
         self.__observer.join()
 
     def stop(self):
@@ -43,13 +36,22 @@ class Handler(FileSystemEventHandler):
     def __init__(self, bed: Bed, path):
         self.__bed = bed
         self.__file = path + "/data.csv"
+        # Fix the file path!!!!
 
     def on_modified(self, event):
         df = pd.read_csv(self.__file, index_col=0)
-        temp = extract_sensor_dataframe(df)
+        data = extract_sensor_dataframe(df)
+
+        df.at[df.index.values[0], "data"] = data.astype(float)
+        sensor = self.__bed.get_pressure_sensor()
+        sensor.append_sensor_data(df)
+        sensor.set_current_frame(df)
+        self.__bed.analyze_sensor_data()
         print("Directory Modified - %s" % event.src_path)
 
-    def on_created(self, event):
-        df = pd.read_csv(self.__file, index_col=0)
-        temp = extract_sensor_dataframe(df)
-        print("Directory Created - %s" % event.src_path)
+    # def on_created(self, event):
+    #     df = pd.read_csv(self.__file, index_col=0)
+    #     sensor = self.__bed.get_pressure_sensor()
+    #     sensor.append_sensor_data(df)
+    #     sensor.set_current_frame(df)
+    #     print("Directory Created - %s" % event.src_path)
