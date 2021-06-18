@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 from src.sensor_data.tactilus import PressureSensor
 from src.body.body import Patient
 from src.sensor_data.util.sensor_data_utils import extract_sensor_dataframe
@@ -12,10 +12,11 @@ class Bed:
     #   Sensor
     #   Relays to control the valves
     __inflatable_regions = 10
+    __inflatable_regions_relays = np.zeros(__inflatable_regions)
     __pressure_sensor = PressureSensor(__inflatable_regions)
     __relay_count = 1
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
-                                   columns=['time', 'max_pressure', 'inflatable_region'])
+                                   columns=['time', 'max_pressure'])
 
     def __init__(self, patient: Patient):
         self.__patient = patient
@@ -44,11 +45,19 @@ class Bed:
                 self.__body_stats_df.at[body_part, 'time'] = timedelta(0)
 
         # identify regions to inflate/deflate
+        # for body_part, value in sensor_composition.items():
+        #     time = self.__body_stats_df.at[body_part, 'time']
+        #     if time == timedelta(0):
+        #         self.calculate_deflatable_regions(body_part)
+        #     elif time > timedelta(minutes=0):
+        #         self.calculate_inflatable_regions(body_part)
+
+        # Demo method!!
         for body_part, value in sensor_composition.items():
-            time = self.__body_stats_df.at[body_part, 'time']
-            if time == timedelta(0):
+            pressure = self.__body_stats_df.at[body_part, 'max_pressure']
+            if pressure > self.__pressure_sensor.get_sensor_threshold():
                 self.calculate_deflatable_regions(body_part)
-            elif time > timedelta(minutes=5):
+            else:
                 self.calculate_inflatable_regions(body_part)
         return
 
@@ -67,7 +76,7 @@ class Bed:
                 # temp2 = [x for x in sensor_data_max_index if x in array]
                 max_sensor_value = sensor_data_row_max[[x in array for x in sensor_data_row_max_indices]].max()
                 if max_sensor_value > sensor_threshold:
-                    self.enable_relays([index])
+                    self.enable_relays(index)
             return
 
     def calculate_deflatable_regions(self, body_part):
@@ -78,17 +87,21 @@ class Bed:
 
         for index, array in enumerate(self.__pressure_sensor.get_sensor_inflatable_composition()):
             if any(x in sensor_data_row_max for x in array):
-                self.disable_relays([index])
+                self.disable_relays(index)
             return
 
-    def enable_relays(self, pins):
+    def enable_relays(self, pin):
         # enable all pins
-        for pin in pins:
-            print("Relay %d Enabled" % pin)
+        self.__inflatable_regions_relays[pin] = 1
 
-    def disable_relays(self, pins):
-        for pin in pins:
-            print("Relay %d Disabled" % pin)
+    def disable_relays(self, pin):
+        self.__inflatable_regions_relays[pin] = 0
+
+    def print_stats(self):
+        print("Directory Modified")
+        print("Body Stats:\n{}\n".format(self.__body_stats_df))
+        print("Relays:\t{}\n\n".format(self.__inflatable_regions_relays))
+
 
     # Getters/Setters
     def get_pressure_sensor(self):

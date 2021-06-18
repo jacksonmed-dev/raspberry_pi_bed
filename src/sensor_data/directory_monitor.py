@@ -47,5 +47,6 @@ class Handler(FileSystemEventHandler):
         sensor.append_sensor_data(df)
         sensor.set_current_frame(df)
         self.__bed.analyze_sensor_data()
-        print("Directory Modified - %s" % event.src_path)
+        self.__bed.print_stats()
+        # print("Directory Modified - %s" % event.src_path)
 
