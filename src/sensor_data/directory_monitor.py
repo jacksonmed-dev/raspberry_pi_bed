@@ -49,9 +49,3 @@ class Handler(FileSystemEventHandler):
         self.__bed.analyze_sensor_data()
         print("Directory Modified - %s" % event.src_path)
 
-    # def on_created(self, event):
-    #     df = pd.read_csv(self.__file, index_col=0)
-    #     sensor = self.__bed.get_pressure_sensor()
-    #     sensor.append_sensor_data(df)
-    #     sensor.set_current_frame(df)
-    #     print("Directory Created - %s" % event.src_path)

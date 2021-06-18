@@ -22,6 +22,7 @@ class Bed:
         self.__body_stats_df['time'] = timedelta(0)
         return
 
+    # Main algorithm to make decision. Only looks at time spent under "high pressure"
     def analyze_sensor_data(self):
         #### Work on this ###
         ### function should generate a dataframe with pressure regions ###
