@@ -12,7 +12,7 @@ class Bed:
     #   Sensor
     #   Relays to control the valves
     __inflatable_regions = 10
-    __inflatable_regions_relays = np.zeros(__inflatable_regions)
+    __inflatable_regions_relays = np.ones(__inflatable_regions)
     __pressure_sensor = PressureSensor(__inflatable_regions)
     __relay_count = 1
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
@@ -63,7 +63,7 @@ class Bed:
 
     # Should be pre computed. Change this!!! Save in dictionary. Should only called if the body region state needs to
     # change
-    def calculate_inflatable_regions(self, body_part):
+    def calculate_deflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
         sensor_data_df = extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()).loc[sensor_region_body]
 
@@ -76,10 +76,10 @@ class Bed:
                 # temp2 = [x for x in sensor_data_max_index if x in array]
                 max_sensor_value = sensor_data_row_max[[x in array for x in sensor_data_row_max_indices]].max()
                 if max_sensor_value > sensor_threshold:
-                    self.enable_relays(index)
-            return
+                    self.disable_relay(index)
+        return
 
-    def calculate_deflatable_regions(self, body_part):
+    def calculate_inflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
         sensor_data_df = extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()).loc[sensor_region_body]
 
@@ -87,15 +87,29 @@ class Bed:
 
         for index, array in enumerate(self.__pressure_sensor.get_sensor_inflatable_composition()):
             if any(x in sensor_data_row_max for x in array):
-                self.disable_relays(index)
-            return
+                self.enable_relay(index)
+        return
 
-    def enable_relays(self, pin):
+    #Does not explicitly enable the relay. Sets the value so that the method can change
+    # relay state in the change_relay_state method at a later time
+    def enable_relay(self, pin):
         # enable all pins
         self.__inflatable_regions_relays[pin] = 1
 
-    def disable_relays(self, pin):
+    def disable_relay(self, pin):
         self.__inflatable_regions_relays[pin] = 0
+
+    def change_relay_state(self):
+        for relay in self.__inflatable_regions_relays:
+            if relay == 0:
+                # Turn off GPIO
+                print()
+            elif relay == 1:
+                # turn on GPIO pin
+                print()
+            else:
+                print("Error: GPIO pin could not be set, improper array value %d" % relay)
+
 
     def print_stats(self):
         print("Directory Modified")
