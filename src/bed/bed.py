@@ -1,10 +1,12 @@
 import pandas as pd
 import numpy as np
+import RPi.GPIO as GPIO
 from src.sensor_data.tactilus import PressureSensor
 from src.body.body import Patient
 from src.sensor_data.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
 
+GPIO.setmode(GPIO.BCM)
 
 class Bed:
     # A bed contains the following:
@@ -12,7 +14,8 @@ class Bed:
     #   Sensor
     #   Relays to control the valves
     __inflatable_regions = 10
-    __inflatable_regions_relays = np.ones(__inflatable_regions)
+    __inflatable_regions_relays = {[]}
+    # __inflatable_regions_relays = np.ones(__inflatable_regions)
     __pressure_sensor = PressureSensor(__inflatable_regions)
     __relay_count = 1
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
@@ -21,6 +24,11 @@ class Bed:
     def __init__(self, patient: Patient):
         self.__patient = patient
         self.__body_stats_df['time'] = timedelta(0)
+        for index in range(self.__inflatable_regions):
+            self.__inflatable_regions_relays.append({index: index + 3})
+        for relay in self.__inflatable_regions_relays():
+            GPIO.setup(relay, GPIO.OUT)
+
         return
 
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
