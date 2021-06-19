@@ -1,19 +1,22 @@
 import pandas as pd
 import numpy as np
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 from src.sensor_data.tactilus import PressureSensor
 from src.body.body import Patient
 from src.sensor_data.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
+import time
 
-# GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BCM)
+
 
 class Bed:
     # A bed contains the following:
     #   Patient
     #   Sensor
     #   Relays to control the valves
-    __inflatable_regions = 10
+    __inflatable_regions = 8
+    __rasp_pi_available_gpio = [17, 18, 27, 22, 23, 24, 10, 9, 25,  11, 8, 7, 0]
     __gpio_pins = {}
     # __inflatable_regions_relays = np.ones(__gpio_pins)
     __pressure_sensor = PressureSensor(__inflatable_regions)
@@ -24,11 +27,16 @@ class Bed:
     def __init__(self, patient: Patient):
         self.__patient = patient
         self.__body_stats_df['time'] = timedelta(0)
-        for index in range(self.__inflatable_regions):
-            self.__gpio_pins[index] = {"gpio_pin": index + 3, "state": 1}
-        # for relay in self.__inflatable_regions_relays():
-        #     GPIO.setup(relay, GPIO.OUT)
 
+        for index in range(self.__inflatable_regions):
+            self.__gpio_pins[index] = {"gpio_pin": self.__rasp_pi_available_gpio[index] , "state": 1}
+        GPIO.cleanup()
+        for key, value in self.__gpio_pins.items():
+            GPIO.setup(value["gpio_pin"], GPIO.OUT)
+            GPIO.output(value["gpio_pin"], GPIO.HIGH)
+            time.sleep(0.25)
+            GPIO.output(value["gpio_pin"], GPIO.LOW)
+            time.sleep(0.25)
         return
 
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
@@ -67,6 +75,8 @@ class Bed:
                 self.calculate_deflatable_regions(body_part)
             else:
                 self.calculate_inflatable_regions(body_part)
+
+        self.change_relay_state()
         return
 
     # Should be pre computed. Change this!!! Save in dictionary. Should only called if the body region state needs to
@@ -98,7 +108,7 @@ class Bed:
                 self.enable_relay(index)
         return
 
-    #Does not explicitly enable the relay. Sets the value so that the method can change
+    # Does not explicitly enable the relay. Sets the value so that the method can change
     # relay state in the change_relay_state method at a later time
     def enable_relay(self, pin):
         # enable all pins
@@ -108,22 +118,19 @@ class Bed:
         self.__gpio_pins[pin]["state"] = 0
 
     def change_relay_state(self):
-        for relay in self.__gpio_pins:
-            if relay == 0:
+        for key, value in self.__gpio_pins.items():
+            if value["state"] == 0:
                 # Turn off GPIO
-                print()
-            elif relay == 1:
-                # turn on GPIO pin
-                print()
+                GPIO.output(value["gpio_pin"], GPIO.HIGH)  # Turn off
+            elif value["state"] == 1:
+                GPIO.output(value["gpio_pin"], GPIO.LOW)  # Turn on
             else:
-                print("Error: GPIO pin could not be set, improper array value %d" % relay)
-
+                print("Error: GPIO pin could not be set, improper array value %d" % value)
 
     def print_stats(self):
         print("Directory Modified")
         print("Body Stats:\n{}\n".format(self.__body_stats_df))
         print("Relays:\t{}\n\n".format(self.__gpio_pins))
-
 
     # Getters/Setters
     def get_pressure_sensor(self):
