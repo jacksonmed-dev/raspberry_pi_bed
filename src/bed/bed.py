@@ -1,12 +1,12 @@
 import pandas as pd
 import numpy as np
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 from src.sensor_data.tactilus import PressureSensor
 from src.body.body import Patient
 from src.sensor_data.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
 
-GPIO.setmode(GPIO.BCM)
+# GPIO.setmode(GPIO.BCM)
 
 class Bed:
     # A bed contains the following:
@@ -14,8 +14,8 @@ class Bed:
     #   Sensor
     #   Relays to control the valves
     __inflatable_regions = 10
-    __inflatable_regions_relays = {[]}
-    # __inflatable_regions_relays = np.ones(__inflatable_regions)
+    __gpio_pins = {}
+    # __inflatable_regions_relays = np.ones(__gpio_pins)
     __pressure_sensor = PressureSensor(__inflatable_regions)
     __relay_count = 1
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
@@ -25,9 +25,9 @@ class Bed:
         self.__patient = patient
         self.__body_stats_df['time'] = timedelta(0)
         for index in range(self.__inflatable_regions):
-            self.__inflatable_regions_relays.append({index: index + 3})
-        for relay in self.__inflatable_regions_relays():
-            GPIO.setup(relay, GPIO.OUT)
+            self.__gpio_pins[index] = {"gpio_pin": index + 3, "state": 1}
+        # for relay in self.__inflatable_regions_relays():
+        #     GPIO.setup(relay, GPIO.OUT)
 
         return
 
@@ -102,13 +102,13 @@ class Bed:
     # relay state in the change_relay_state method at a later time
     def enable_relay(self, pin):
         # enable all pins
-        self.__inflatable_regions_relays[pin] = 1
+        self.__gpio_pins[pin]["state"] = 1
 
     def disable_relay(self, pin):
-        self.__inflatable_regions_relays[pin] = 0
+        self.__gpio_pins[pin]["state"] = 0
 
     def change_relay_state(self):
-        for relay in self.__inflatable_regions_relays:
+        for relay in self.__gpio_pins:
             if relay == 0:
                 # Turn off GPIO
                 print()
@@ -122,7 +122,7 @@ class Bed:
     def print_stats(self):
         print("Directory Modified")
         print("Body Stats:\n{}\n".format(self.__body_stats_df))
-        print("Relays:\t{}\n\n".format(self.__inflatable_regions_relays))
+        print("Relays:\t{}\n\n".format(self.__gpio_pins))
 
 
     # Getters/Setters
