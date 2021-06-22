@@ -12,7 +12,7 @@ class Gpio:
 
         self.__rasp_pi_available_gpio = [i for i in range(inflatable_regions)]
 
-        for index in range(self.__inflatable_regions):
+        for index in range(inflatable_regions):
             self.__gpio_pins[index] = {"gpio_pin": self.__rasp_pi_available_gpio[index], "state": 1}
         GPIO.cleanup()
         for key, value in self.__gpio_pins.items():
