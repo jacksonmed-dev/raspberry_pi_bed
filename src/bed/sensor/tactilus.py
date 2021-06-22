@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # This class will be used when we have access to the api to get sensor data
 class PressureSensor:
-    # watchDirectory = OnMyWatch(path="/home/dev/Desktop/sensor_data")
+    # watchDirectory = OnMyWatch(path="/home/dev/Desktop/sensor")
     # gpio pin list used to control relays
     __sensor_data = pd.DataFrame()
     __sensor_threshold = 1.0
