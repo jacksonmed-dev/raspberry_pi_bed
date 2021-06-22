@@ -8,7 +8,7 @@ class PressureSensor:
     # watchDirectory = OnMyWatch(path="/home/dev/Desktop/sensor")
     # gpio pin list used to control relays
     __sensor_data = pd.DataFrame()
-    __sensor_threshold = 1.0
+    __sensor_threshold = 0.65
     __sensor_body_composition = {
         "head": [i for i in range(0, 9)],
         "shoulders": [i for i in range(10, 16)],
