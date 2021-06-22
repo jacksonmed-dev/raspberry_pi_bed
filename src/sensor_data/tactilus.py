@@ -24,7 +24,7 @@ class PressureSensor:
     __path = "/home/dev/Desktop/sensor_data"
 
     def __init__(self, inflatable_regions):
-        temp = np.arange(int(self.__sensor_rows/8) + 1, self.__sensor_rows, int(self.__sensor_rows/8)+1)
+        temp = np.arange(int(self.__sensor_rows/inflatable_regions) + 1, self.__sensor_rows, int(self.__sensor_rows/inflatable_regions)+1)
         self.__sensor_inflatable_composition = np.split(np.arange(0, self.__sensor_rows), temp)
         return
 

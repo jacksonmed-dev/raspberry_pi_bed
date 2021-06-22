@@ -1,8 +1,8 @@
 import pandas as pd
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from src.bed.bed import Bed
-from src.sensor_data.util.sensor_data_utils import extract_sensor_dataframe
+from bed.bed import Bed
+from sensor_data.util.sensor_data_utils import extract_sensor_dataframe
 
 
 class OnMyWatch:

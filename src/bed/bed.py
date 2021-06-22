@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 import RPi.GPIO as GPIO
-from src.sensor_data.tactilus import PressureSensor
-from src.body.body import Patient
-from src.sensor_data.util.sensor_data_utils import extract_sensor_dataframe
+from sensor_data.tactilus import PressureSensor
+from body.body import Patient
+from sensor_data.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
 import time
 
@@ -15,8 +15,9 @@ class Bed:
     #   Patient
     #   Sensor
     #   Relays to control the valves
-    __inflatable_regions = 8
-    __rasp_pi_available_gpio = [17, 18, 27, 22, 23, 24, 10, 9, 25,  11, 8, 7, 0]
+    __inflatable_regions = 20
+    __rasp_pi_available_gpio = [i for i in range(__inflatable_regions)]
+#    __rasp_pi_available_gpio = [17, 18, 27, 22, 23, 24, 10, 9, 25,  11, 8, 7, 0]
     __gpio_pins = {}
     # __inflatable_regions_relays = np.ones(__gpio_pins)
     __pressure_sensor = PressureSensor(__inflatable_regions)
@@ -36,7 +37,8 @@ class Bed:
             GPIO.output(value["gpio_pin"], GPIO.HIGH)
             time.sleep(0.25)
             GPIO.output(value["gpio_pin"], GPIO.LOW)
-            time.sleep(0.25)
+            time.sleep(0.25)            
+        
         return
 
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
