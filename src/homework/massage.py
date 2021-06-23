@@ -28,7 +28,7 @@ class Message:
 
     def __init__(self):
         self.__body_stats_df['time'] = timedelta(0)
-        self.inflate_all()
+        # self.inflate_all()
         return
 
     def message(self):
