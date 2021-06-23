@@ -10,11 +10,11 @@ class PressureSensor:
     __sensor_data = pd.DataFrame()
     __sensor_threshold = 0.65
     __sensor_body_composition = {
-        "head": [i for i in range(0, 9)],
-        "shoulders": [i for i in range(10, 16)],
-        "back": [i for i in range(17, 33)],
-        "butt": [i for i in range(34, 43)],
-        "calves": [i for i in range(44, 57)],
+        "head": [i for i in range(0, 7)],
+        "shoulders": [i for i in range(8, 12)],
+        "back": [i for i in range(13, 30)],
+        "butt": [i for i in range(31, 38)],
+        "calves": [i for i in range(39, 57)],
         "feet": [i for i in range(58, 64)]
     }
     __sensor_rows = 65
