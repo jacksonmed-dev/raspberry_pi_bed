@@ -17,8 +17,8 @@ else:
 class Bed:
     # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
     # inflatable regions. For now, the variable serves no purpose
-    __inflatable_regions = 18
-    __relay_count = 18
+    __inflatable_regions = 20
+    __relay_count = 20
     __bed_gpio = Gpio(inflatable_regions=__inflatable_regions)
     __pressure_sensor = PressureSensor(__inflatable_regions)
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
