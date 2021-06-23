@@ -9,8 +9,8 @@ class Gpio:
 
     def __init__(self, inflatable_regions):
         GPIO.setmode(GPIO.BCM)
-
-        self.__rasp_pi_available_gpio = [i+1 for i in range(inflatable_regions)]
+        ## Mistakes were made!!!
+        self.__rasp_pi_available_gpio = [i+1 for i in range(inflatable_regions-1)]
 
         for index in range(inflatable_regions):
             self.__gpio_pins[index] = {"gpio_pin": self.__rasp_pi_available_gpio[index], "state": 1}
