@@ -11,6 +11,11 @@ class Gpio:
         # enable all pins
         self.__gpio_pins[pin]["state"] = state
 
+    def set_relays(self, pins, state):
+        # enable all pins
+        for pin in pins:
+            self.__gpio_pins[pin]["state"] = state
+
     def change_relay_state(self):
         return
 
