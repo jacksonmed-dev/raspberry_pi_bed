@@ -15,10 +15,10 @@ class Message:
     # inflatable regions. For now, the variable serves no purpose
     __inflatable_regions = 20
     __relay_count = 20
-    __pressure_sensor = PressureSensor(__inflatable_regions)
+    # __pressure_sensor = PressureSensor(__inflatable_regions)
     __bed_gpio = Gpio(inflatable_regions=__inflatable_regions)
-    __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
-                                   columns=['time', 'max_pressure'])
+    # __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
+    #                                columns=['time', 'max_pressure'])
     __composition = {
         "head": [i for i in range(0, 3)],
         "shoulders": [i for i in range(4, 5)],
