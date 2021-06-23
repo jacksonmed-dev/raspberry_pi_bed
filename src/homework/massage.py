@@ -70,14 +70,18 @@ class Message:
         return
 
     def message_wave_two(self):
+        print("Message Wave Two")
         offset = 5
         max_val = 20
-        for i in range(max_val + offset):
+        for i in range(1, max_val + offset):
             if (i - 5) > 0:
+                print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
             if i < 20:
+                print("Setting Relay: {}, State: 0".format(i))
                 self.__gpio.set_relay(i, state=0)
             else:
+                print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
             self.__gpio.change_relay_state()
             # time.sleep(1)
