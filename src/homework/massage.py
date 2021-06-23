@@ -1,20 +1,17 @@
 import os
 import time
-from datetime import timedelta
 
-if os.uname()[4][:3] == 'arm':
-    from bed.sensor.gpio import Gpio
-else:
-    from bed.sensor.dummy_gpio import Gpio
+from bed.bed import Bed
+from body.body import Patient
 
 
 class Message:
     # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
     # inflatable regions. For now, the variable serves no purpose
-    __inflatable_regions = 20
-    __relay_count = 20
+
     # __pressure_sensor = PressureSensor(__inflatable_regions)
-    __gpio = Gpio(inflatable_regions=__inflatable_regions)
+    __bed = Bed(patient= Patient())
+    __gpio = __bed.get_gpio()
     # __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
     #                                columns=['time', 'max_pressure'])
     __composition = {

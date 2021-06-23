@@ -110,6 +110,9 @@ class Bed:
     def get_inflatable_regions(self):
         return self.__inflatable_regions
 
+    def get_gpio(self):
+        return self.__bed_gpio
+
     def set_pressure_sensor(self, pressure_sensor: PressureSensor):
         self.__pressure_sensor = pressure_sensor
 
