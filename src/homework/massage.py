@@ -1,8 +1,6 @@
 import os
 import time
 from datetime import timedelta
-import pandas as pd
-from bed.sensor.tactilus import PressureSensor
 
 if os.uname()[4][:3] == 'arm':
     from bed.sensor.gpio import Gpio
@@ -16,7 +14,7 @@ class Message:
     __inflatable_regions = 20
     __relay_count = 20
     # __pressure_sensor = PressureSensor(__inflatable_regions)
-    __bed_gpio = Gpio(inflatable_regions=__inflatable_regions)
+    __gpio = Gpio(inflatable_regions=__inflatable_regions)
     # __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
     #                                columns=['time', 'max_pressure'])
     __composition = {
@@ -76,72 +74,72 @@ class Message:
         max_val = 20
         for i in range(max_val + offset):
             if (i - 5) > 0:
-                self.__bed_gpio.set_relay(i - offset, state=1)
+                self.__gpio.set_relay(i - offset, state=1)
             if i < 20:
-                self.__bed_gpio.set_relay(i, state=0)
+                self.__gpio.set_relay(i, state=0)
             else:
-                self.__bed_gpio.set_relay(i - offset, state=1)
-            self.__bed_gpio.change_relay_state()
+                self.__gpio.set_relay(i - offset, state=1)
+            self.__gpio.change_relay_state()
             # time.sleep(1)
         time.sleep(10)
         return
 
     def head_inflate(self):
-        self.__bed_gpio.set_relays(self.__composition['head'], state=1)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['head'], state=1)
+        self.__gpio.change_relay_state()
         return
 
     def head_deflate(self):
-        self.__bed_gpio.set_relays(self.__composition['head'], state=0)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['head'], state=0)
+        self.__gpio.change_relay_state()
         return
 
     def shoulders_inflate(self):
-        self.__bed_gpio.set_relays(self.__composition['shoulders'], state=1)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['shoulders'], state=1)
+        self.__gpio.change_relay_state()
         return
 
     def shoulders_deflate(self):
-        self.__bed_gpio.set_relays(self.__composition['shoulders'], state=0)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['shoulders'], state=0)
+        self.__gpio.change_relay_state()
         return
 
     def back_inflate(self):
-        self.__bed_gpio.set_relays(self.__composition['back'], state=1)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['back'], state=1)
+        self.__gpio.change_relay_state()
         return
 
     def back_deflate(self):
-        self.__bed_gpio.set_relays(self.__composition['back'], state=0)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['back'], state=0)
+        self.__gpio.change_relay_state()
         return
 
     def butt_inflate(self):
-        self.__bed_gpio.set_relays(self.__composition['butt'], state=1)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['butt'], state=1)
+        self.__gpio.change_relay_state()
         return
 
     def butt_deflate(self):
-        self.__bed_gpio.set_relays(self.__composition['butt'], state=0)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['butt'], state=0)
+        self.__gpio.change_relay_state()
         return
 
     def calves_inflate(self):
-        self.__bed_gpio.set_relays(self.__composition['calves'], state=1)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['calves'], state=1)
+        self.__gpio.change_relay_state()
         return
 
     def calves_deflate(self):
-        self.__bed_gpio.set_relays(self.__composition['calves'], state=0)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['calves'], state=0)
+        self.__gpio.change_relay_state()
         return
 
     def feet_inflate(self):
-        self.__bed_gpio.set_relays(self.__composition['feet'], state=1)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['feet'], state=1)
+        self.__gpio.change_relay_state()
         return
 
     def feet_deflate(self):
-        self.__bed_gpio.set_relays(self.__composition['feet'], state=0)
-        self.__bed_gpio.change_relay_state()
+        self.__gpio.set_relays(self.__composition['feet'], state=0)
+        self.__gpio.change_relay_state()
         return
