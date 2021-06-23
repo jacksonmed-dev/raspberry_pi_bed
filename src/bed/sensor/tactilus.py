@@ -46,6 +46,7 @@ class PressureSensor:
     def get_sensor_inflatable_composition(self):
         return self.__sensor_inflatable_composition
 
+    # This method needs a test. Handle error where data frame passed is larger than one
     def set_current_frame(self, df):
         self.__current_frame = df
 
@@ -62,14 +63,23 @@ class PressureSensor:
         self.__sensor_data = self.__sensor_data.append(df)
 
     def get_time(self):
+        if self.__sensor_data is None:
+            return None
         if len(self.__sensor_data) <= 1:
             return timedelta(0)
         else:
-            format = '%Y-%m-%d %H:%M:%S.%f'
-            length = len(self.__sensor_data)
-            time1 = self.__sensor_data.index.values[length - 1]
-            time2 = self.__sensor_data.index.values[length - 2]
-            time_diff = datetime.strptime(time1, format) - datetime.strptime(time2, format)
-            return time_diff
+            try:
+                date_format = '%Y-%m-%d %H:%M:%S.%f'
+                length = len(self.__sensor_data)
+                time1 = self.__sensor_data.index.values[length - 1]
+                time2 = self.__sensor_data.index.values[length - 2]
+                time_diff = datetime.strptime(time1, date_format) - datetime.strptime(time2, date_format)
+                return time_diff
+            except ValueError as e:
+                print("DateTime format error: {}".format(e))
+            else:
+                return None
+
+
 
 

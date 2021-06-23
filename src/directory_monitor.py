@@ -8,6 +8,7 @@ from body.body import Patient
 import os
 
 
+# Check to make sure the file is not empty!!!
 class OnMyWatch:
     # Set the directory on watch
     __observer = Observer()
