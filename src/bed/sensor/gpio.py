@@ -8,8 +8,8 @@ class Gpio:
     __gpio_pins = {}
 
     def __init__(self, inflatable_regions):
-        # GPIO.setmode(GPIO.BCM)
-        GPIO.setmode(GPIO.BOARD)
+        GPIO.setmode(GPIO.BCM)
+        # GPIO.setmode(GPIO.BOARD)
 
         self.__rasp_pi_available_gpio = [i for i in range(inflatable_regions)]
 
