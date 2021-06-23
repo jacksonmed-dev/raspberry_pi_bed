@@ -70,6 +70,7 @@ if __name__ == '__main__':
         watch = OnMyWatch(bed=bed, path=path)
         watch.run()
     elif sys.argv[1] == 'message':
+        print("Entering Message Class")
         message = Message()
         message.message()
     else:

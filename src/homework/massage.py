@@ -27,7 +27,6 @@ class Message:
     }
 
     def __init__(self):
-        self.__body_stats_df['time'] = timedelta(0)
         print("Starting Message \n\n\n")
         # self.inflate_all()
         return
@@ -85,7 +84,7 @@ class Message:
                 print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
             self.__gpio.change_relay_state()
-            # time.sleep(1)
+            time.sleep(1)
         time.sleep(10)
         return
 
