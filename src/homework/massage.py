@@ -25,12 +25,13 @@ class Message:
 
     def __init__(self):
         print("Starting Message \n\n\n")
-        # self.inflate_all()
+        self.inflate_all()
         return
 
     def message(self):
         while True:
-            self.message_wave_two()
+            # self.message_wave_two()
+            self.message_stretch()
         return
 
     def inflate_all(self):
@@ -63,12 +64,25 @@ class Message:
         self.calves_inflate()
         time.sleep(1)
         self.feet_inflate(1)
-        time.sleep(10)
+        time.sleep(20)
         return
+
+    def message_stretch(self):
+        self.head_deflate()
+        self.back_deflate()
+        time.sleep(10)
+        self.head_inflate()
+        self.back_inflate()
+        time.sleep(30)
+        self.shoulders_deflate()
+        self.calves_deflate()
+        time.sleep(10)
+        time.sleep(30)
+
 
     def message_wave_two(self):
         print("Message Wave Two")
-        offset = 5
+        offset = 4
         max_val = 20
         for i in range(1, max_val + offset):
             if (i - 5) > 0:
@@ -81,8 +95,8 @@ class Message:
                 print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
             self.__gpio.change_relay_state()
-            time.sleep(1)
-        time.sleep(10)
+            time.sleep(2)
+        time.sleep(20)
         return
 
     def head_inflate(self):
