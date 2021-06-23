@@ -1,8 +1,11 @@
+import sys
+
 import pandas as pd
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from bed.bed import Bed
 from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
+from homework.massage import Message
 
 from body.body import Patient
 import os
@@ -61,7 +64,12 @@ if __name__ == '__main__':
         path = "/home/pi/Desktop/sensor_data"
     else:
         path = "/home/dev/Desktop/sensor_data"
-    p = Patient()
-    bed = Bed(patient=p)
-    watch = OnMyWatch(bed=bed, path=path)
-    watch.run()
+    temp = sys.argv[1]
+    if sys.argv[1] == 'message':
+        message = Message()
+        message.message()
+    else:
+        p = Patient()
+        bed = Bed(patient=p)
+        watch = OnMyWatch(bed=bed, path=path)
+        watch.run()
