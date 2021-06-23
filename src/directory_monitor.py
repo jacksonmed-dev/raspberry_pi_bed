@@ -64,10 +64,13 @@ if __name__ == '__main__':
         path = "/home/pi/Desktop/sensor_data"
     else:
         path = "/home/dev/Desktop/sensor_data"
-    # p = Patient()
-    # bed = Bed(patient=p)
-    # watch = OnMyWatch(bed=bed, path=path)
-    # watch.run()
-    print("Entering Message Class")
-    message = Message()
-    message.message()
+    if len(sys.argv) == 1:
+        p = Patient()
+        bed = Bed(patient=p)
+        watch = OnMyWatch(bed=bed, path=path)
+        watch.run()
+    elif sys.argv[1] == 'message':
+        message = Message()
+        message.message()
+    else:
+        print("Invalid argument passed")
