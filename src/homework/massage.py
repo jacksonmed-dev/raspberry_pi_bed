@@ -32,20 +32,20 @@ class Message:
 
     def message(self):
         while True:
-            self.message_calves()
-            time.sleep(10)
+            # self.message_calves()
+            # time.sleep(10)
             self.message_wave_two()
             time.sleep(10)
-            self.message_head()
-            time.sleep(10)
-            self.message_stretch()
-            time.sleep(10)
-            self.message_calves()
-            time.sleep(10)
-            self.message_wave_one()
-            time.sleep(10)
-            self.message_head()
-            time.sleep(10)
+            # self.message_head()
+            # time.sleep(10)
+            # self.message_stretch()
+            # time.sleep(10)
+            # self.message_calves()
+            # time.sleep(10)
+            # self.message_wave_one()
+            # time.sleep(10)
+            # self.message_head()
+            # time.sleep(10)
         return
 
     def inflate_all(self):
@@ -187,8 +187,11 @@ class Message:
                 print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
             self.__gpio.change_relay_state()
-            time.sleep(1.3)
-        time.sleep(10)
+
+            if 6 <= i <= 11:
+                time.sleep(1)
+            else:
+                time.sleep(2)
         return
 
     def head_inflate(self):
