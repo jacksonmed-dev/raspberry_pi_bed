@@ -1,4 +1,5 @@
 import os
+import random
 import time
 
 from bed.bed import Bed
@@ -32,7 +33,9 @@ class Message:
     def message(self):
         while True:
             self.message_wave_two()
+            self.inflate_all_slowly()
             self.message_stretch()
+            self.inflate_all_slowly()
         return
 
     def inflate_all(self):
@@ -42,6 +45,19 @@ class Message:
         self.butt_inflate()
         self.calves_inflate()
         self.feet_inflate()
+
+    def inflate_all_slowly(self):
+        print("Inflating everything Slowly")
+        max_val = 20
+        for i in range(1, max_val):
+            random_val = random.randint(1, max_val)
+            self.__gpio.set_relay(random_val, state=0)
+            self.__gpio.change_relay_state()
+            time.sleep(0.5)
+            self.__gpio.set_relay(random_val, state=1)
+            self.__gpio.change_relay_state()
+            time.sleep(5)
+        return
 
     def message_wave_one(self):
         self.head_deflate()
@@ -69,6 +85,20 @@ class Message:
         time.sleep(20)
         return
 
+    def rand_inflate_quick(self):
+        print("Inflating Random quickly")
+        self.inflate_all()
+        max_val = 10
+        for i in range(1, 25):
+            random_val = random.randint(1, 20)
+            self.__gpio.set_relay(random_val, state=0)
+            self.__gpio.change_relay_state()
+            time.sleep(0.5)
+            self.__gpio.set_relay(random_val, state=1)
+            self.__gpio.change_relay_state()
+            time.sleep(3)
+        return
+
     def message_stretch(self):
         print("Deflating head, back, shoulders")
         self.head_deflate()
@@ -79,7 +109,7 @@ class Message:
         self.head_inflate()
         self.shoulders_inflate()
         self.back_inflate()
-        time.sleep(15)
+        self.rand_inflate_quick()
         print("Deflating head, shoulders, butt, calves, feet")
         self.head_deflate()
         self.shoulders_deflate()
@@ -93,7 +123,7 @@ class Message:
         self.butt_inflate()
         self.calves_inflate()
         self.feet_inflate()
-        time.sleep(15)
+        self.rand_inflate_quick()
         print("deflating back")
         self.back_deflate()
         time.sleep(20)
@@ -108,7 +138,7 @@ class Message:
         offset = 4
         max_val = 20
         for i in range(1, max_val + offset):
-            if (i - 5) > 0:
+            if (i - offset) > 0:
                 print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
             if i < 20:
@@ -118,7 +148,7 @@ class Message:
                 print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
             self.__gpio.change_relay_state()
-            time.sleep(2)
+            time.sleep(1)
         time.sleep(20)
         return
 
