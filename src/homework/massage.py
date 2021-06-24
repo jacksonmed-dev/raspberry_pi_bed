@@ -33,13 +33,15 @@ class Message:
     def message(self):
         while True:
             self.message_wave_two()
-            time.sleep(5)
+            time.sleep(3)
             self.rand_inflate_quick()
-            time.sleep(5)
+            time.sleep(3)
             self.message_stretch()
-            time.sleep(5)
+            time.sleep(3)
             self.rand_inflate_quick()
-            time.sleep(5)
+            time.sleep(3)
+            self.message_wave_one()
+            time.sleep(3)
         return
 
     def inflate_all(self):
@@ -52,7 +54,7 @@ class Message:
 
     def inflate_all_slowly(self):
         print("Inflating everything Slowly")
-        max_val = 20
+        max_val = 20 - 1
         for i in range(1, max_val):
             random_val = random.randint(1, max_val)
             self.__gpio.set_relay(random_val, state=0)
@@ -65,43 +67,43 @@ class Message:
 
     def message_wave_one(self):
         self.head_deflate()
-        time.sleep(1)
+        time.sleep(2)
         self.shoulders_deflate()
-        time.sleep(1)
+        time.sleep(2)
         self.back_deflate()
-        time.sleep(1)
+        time.sleep(2)
         self.butt_deflate()
-        time.sleep(1)
+        time.sleep(2)
         self.head_inflate()
         self.calves_deflate()
-        time.sleep(1)
+        time.sleep(2)
         self.shoulders_inflate()
         self.feet_inflate()
-        time.sleep(1)
+        time.sleep(2)
         self.back_inflate()
-        time.sleep(1)
+        time.sleep(2)
         self.butt_inflate()
-        time.sleep(1)
+        time.sleep(2)
         self.calves_inflate()
-        time.sleep(1)
-        self.feet_inflate(1)
+        time.sleep(2)
+        self.feet_inflate(2)
         self.inflate_all()
-        time.sleep(20)
+        time.sleep(10)
         return
 
     def rand_inflate_quick(self):
         print("Inflating Random quickly")
         self.inflate_all()
-        max_val = 20
+        max_val = 20 - 1
         for i in range(1, 10):
             random_val_1 = random.randint(1, max_val)
             random_val_2 = random.randint(1, max_val)
             self.__gpio.set_relays([random_val_1, random_val_2], state=0)
             self.__gpio.change_relay_state()
-            time.sleep(1)
+            time.sleep(1.5)
             self.__gpio.set_relays([random_val_1, random_val_2], state=1)
             self.__gpio.change_relay_state()
-            time.sleep(5)
+            time.sleep(3)
         return
 
     def message_stretch(self):
@@ -154,8 +156,8 @@ class Message:
                 print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
             self.__gpio.change_relay_state()
-            time.sleep(1)
-        time.sleep(20)
+            time.sleep(2)
+        time.sleep(10)
         return
 
     def head_inflate(self):
