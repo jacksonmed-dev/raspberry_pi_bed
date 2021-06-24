@@ -34,11 +34,15 @@ class Message:
         while True:
             # self.message_calves()
             # time.sleep(10)
+            self.message_feet()
+            time.sleep(10)
             self.message_wave_two()
             time.sleep(10)
             self.message_head()
             time.sleep(10)
             self.message_head()
+            time.sleep(10)
+            self.message_feet()
             time.sleep(10)
             # self.message_stretch()
             # time.sleep(10)
@@ -190,11 +194,19 @@ class Message:
                 self.__gpio.set_relay(i - offset, state=1)
             self.__gpio.change_relay_state()
 
-            if 4 <= i <= 11:
+            if 4 <= i <= 9:
                 time.sleep(0.75)
+            if 10 <= i <= 11:
+                time.sleep(0.5)
             else:
                 time.sleep(1)
         return
+
+    def message_feet(self):
+        self.feet_deflate()
+        time.sleep(15)
+        self.feet_inflate()
+        time.sleep(30)
 
     def head_inflate(self):
         self.__gpio.set_relays(self.__composition['head'], state=1)
