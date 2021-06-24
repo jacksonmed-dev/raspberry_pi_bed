@@ -36,8 +36,10 @@ class Message:
             # time.sleep(10)
             self.message_wave_two()
             time.sleep(10)
-            # self.message_head()
-            # time.sleep(10)
+            self.message_head()
+            time.sleep(10)
+            self.message_head()
+            time.sleep(10)
             # self.message_stretch()
             # time.sleep(10)
             # self.message_calves()
@@ -174,7 +176,7 @@ class Message:
 
     def message_wave_two(self):
         print("Message Wave Two")
-        offset = 4
+        offset = 3
         max_val = 20
         for i in range(1, max_val + offset):
             if (i - offset) > 0:
@@ -188,10 +190,10 @@ class Message:
                 self.__gpio.set_relay(i - offset, state=1)
             self.__gpio.change_relay_state()
 
-            if 6 <= i <= 11:
-                time.sleep(1)
+            if 4 <= i <= 11:
+                time.sleep(0.75)
             else:
-                time.sleep(2)
+                time.sleep(1)
         return
 
     def head_inflate(self):
