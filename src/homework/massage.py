@@ -32,12 +32,14 @@ class Message:
 
     def message(self):
         while True:
+            self.message_calves()
             self.message_wave_two()
             self.message_head()
             self.message_stretch()
-            self.message_head()
+            self.message_calves()
             self.message_wave_one()
             self.message_head()
+            time.sleep(10)
         return
 
     def inflate_all(self):
@@ -88,12 +90,30 @@ class Message:
         return
 
     def message_head(self):
-        for i in range(3):
-            self.head_deflate()
-            time.sleep(30)
-            self.head_inflate()
-            time.sleep(30)
-        self.rand_inflate_quick()
+        self.head_deflate()
+        time.sleep(20)
+        self.head_inflate()
+        time.sleep(30)
+
+    def message_calves(self):
+        print("Message Calves")
+        min_val = 13
+        offset = 3
+        max_val = 17
+        for i in range(1, max_val + offset):
+            if (i - offset) > 0:
+                print("Setting Relay: {}, State: 1".format(i - offset))
+                self.__gpio.set_relay(i - offset, state=1)
+            if i < max_val:
+                print("Setting Relay: {}, State: 0".format(i))
+                self.__gpio.set_relay(i, state=0)
+            else:
+                print("Setting Relay: {}, State: 1".format(i - offset))
+                self.__gpio.set_relay(i - offset, state=1)
+            self.__gpio.change_relay_state()
+            time.sleep(2)
+        time.sleep(10)
+        return
 
     def rand_inflate_quick(self):
         print("Inflating Random quickly")
