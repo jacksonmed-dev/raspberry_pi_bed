@@ -33,9 +33,11 @@ class Message:
     def message(self):
         while True:
             self.message_calves()
+            self.message_calves()
             self.message_wave_two()
             self.message_head()
             self.message_stretch()
+            self.message_calves()
             self.message_calves()
             self.message_wave_one()
             self.message_head()
@@ -91,16 +93,16 @@ class Message:
 
     def message_head(self):
         self.head_deflate()
-        time.sleep(20)
-        self.head_inflate()
         time.sleep(30)
+        self.head_inflate()
+        time.sleep(40)
 
     def message_calves(self):
         print("Message Calves")
         min_val = 13
         offset = 3
         max_val = 17
-        for i in range(1, max_val + offset):
+        for i in range(min_val, max_val + offset):
             if (i - offset) > 0:
                 print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
@@ -161,7 +163,6 @@ class Message:
         print("Inflating everything")
         self.inflate_all()
         time.sleep(15)
-        self.rand_inflate_quick()
 
 
 
