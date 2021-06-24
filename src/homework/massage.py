@@ -26,6 +26,7 @@ class Message:
     def __init__(self):
         print("Starting Message \n\n\n")
         self.inflate_all()
+        time.sleep(10)
         return
 
     def message(self):
