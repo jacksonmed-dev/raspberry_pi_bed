@@ -33,15 +33,11 @@ class Message:
     def message(self):
         while True:
             self.message_wave_two()
-            time.sleep(3)
-            self.rand_inflate_quick()
-            time.sleep(3)
+            self.message_head()
             self.message_stretch()
-            time.sleep(3)
-            self.rand_inflate_quick()
-            time.sleep(3)
+            self.message_head()
             self.message_wave_one()
-            time.sleep(3)
+            self.message_head()
         return
 
     def inflate_all(self):
@@ -86,10 +82,18 @@ class Message:
         time.sleep(2)
         self.calves_inflate()
         time.sleep(2)
-        self.feet_inflate(2)
+        self.feet_inflate()
         self.inflate_all()
         time.sleep(10)
         return
+
+    def message_head(self):
+        for i in range(3):
+            self.head_deflate()
+            time.sleep(30)
+            self.head_inflate()
+            time.sleep(30)
+        self.rand_inflate_quick()
 
     def rand_inflate_quick(self):
         print("Inflating Random quickly")
