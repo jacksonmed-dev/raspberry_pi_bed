@@ -33,9 +33,13 @@ class Message:
     def message(self):
         while True:
             self.message_wave_two()
-            self.inflate_all_slowly()
+            time.sleep(5)
+            self.rand_inflate_quick()
+            time.sleep(5)
             self.message_stretch()
-            self.inflate_all_slowly()
+            time.sleep(5)
+            self.rand_inflate_quick()
+            time.sleep(5)
         return
 
     def inflate_all(self):
@@ -88,15 +92,16 @@ class Message:
     def rand_inflate_quick(self):
         print("Inflating Random quickly")
         self.inflate_all()
-        max_val = 10
-        for i in range(1, 25):
-            random_val = random.randint(1, 20)
-            self.__gpio.set_relay(random_val, state=0)
+        max_val = 20
+        for i in range(1, 10):
+            random_val_1 = random.randint(1, max_val)
+            random_val_2 = random.randint(1, max_val)
+            self.__gpio.set_relays([random_val_1, random_val_2], state=0)
             self.__gpio.change_relay_state()
-            time.sleep(0.5)
-            self.__gpio.set_relay(random_val, state=1)
+            time.sleep(1)
+            self.__gpio.set_relays([random_val_1, random_val_2], state=1)
             self.__gpio.change_relay_state()
-            time.sleep(3)
+            time.sleep(5)
         return
 
     def message_stretch(self):
@@ -109,7 +114,7 @@ class Message:
         self.head_inflate()
         self.shoulders_inflate()
         self.back_inflate()
-        self.rand_inflate_quick()
+        time.sleep(15)
         print("Deflating head, shoulders, butt, calves, feet")
         self.head_deflate()
         self.shoulders_deflate()
@@ -123,13 +128,14 @@ class Message:
         self.butt_inflate()
         self.calves_inflate()
         self.feet_inflate()
-        self.rand_inflate_quick()
+        time.sleep(15)
         print("deflating back")
         self.back_deflate()
         time.sleep(20)
         print("Inflating everything")
         self.inflate_all()
-        time.sleep(30)
+        time.sleep(15)
+        self.rand_inflate_quick()
 
 
 
