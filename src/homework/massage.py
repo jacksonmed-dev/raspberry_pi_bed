@@ -34,6 +34,8 @@ class Message:
         while True:
             # self.message_calves()
             # time.sleep(10)
+            self.message_wave_two()
+            time.sleep(10)
             self.message_feet()
             time.sleep(10)
             self.message_head()
