@@ -30,7 +30,7 @@ class Message:
 
     def message(self):
         while True:
-            # self.message_wave_two()
+            self.message_wave_two()
             self.message_stretch()
         return
 
@@ -64,20 +64,42 @@ class Message:
         self.calves_inflate()
         time.sleep(1)
         self.feet_inflate(1)
+        self.inflate_all()
         time.sleep(20)
         return
 
     def message_stretch(self):
+        print("Deflating head, back, shoulders")
         self.head_deflate()
+        self.shoulders_deflate()
         self.back_deflate()
         time.sleep(10)
+        print("Inflating head, shoulders, back")
         self.head_inflate()
+        self.shoulders_inflate()
         self.back_inflate()
-        time.sleep(30)
+        time.sleep(15)
+        print("Deflating head, shoulders, butt, calves, feet")
+        self.head_deflate()
         self.shoulders_deflate()
+        self.butt_deflate()
         self.calves_deflate()
+        self.feet_deflate()
         time.sleep(10)
+        print("Inflating head, shoulders, butt, calves, feet")
+        self.head_inflate()
+        self.shoulders_inflate()
+        self.butt_inflate()
+        self.calves_inflate()
+        self.feet_inflate()
+        time.sleep(15)
+        print("deflating back")
+        self.back_deflate()
+        time.sleep(20)
+        print("Inflating everything")
+        self.inflate_all()
         time.sleep(30)
+
 
 
     def message_wave_two(self):
