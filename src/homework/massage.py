@@ -36,9 +36,9 @@ class Message:
             # time.sleep(10)
             self.message_feet()
             time.sleep(10)
-            self.message_wave_two()
-            time.sleep(10)
             self.message_head()
+            time.sleep(10)
+            self.message_wave_two()
             time.sleep(10)
             self.message_head()
             time.sleep(10)
@@ -194,9 +194,9 @@ class Message:
                 self.__gpio.set_relay(i - offset, state=1)
             self.__gpio.change_relay_state()
 
-            if 4 <= i <= 9:
+            if 3 <= i <= 8:
                 time.sleep(0.75)
-            if 10 <= i <= 11:
+            if 9 <= i <= 11:
                 time.sleep(0.5)
             else:
                 time.sleep(1)
