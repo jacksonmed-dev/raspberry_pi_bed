@@ -33,13 +33,17 @@ class Message:
     def message(self):
         while True:
             self.message_calves()
-            self.message_calves()
+            time.sleep(10)
             self.message_wave_two()
+            time.sleep(10)
             self.message_head()
+            time.sleep(10)
             self.message_stretch()
+            time.sleep(10)
             self.message_calves()
-            self.message_calves()
+            time.sleep(10)
             self.message_wave_one()
+            time.sleep(10)
             self.message_head()
             time.sleep(10)
         return
@@ -66,26 +70,28 @@ class Message:
         return
 
     def message_wave_one(self):
+        time_inflate = 2
+        time_deflate = 1
         self.head_deflate()
-        time.sleep(2)
+        time.sleep(time_deflate)
         self.shoulders_deflate()
-        time.sleep(2)
+        time.sleep(time_deflate)
         self.back_deflate()
-        time.sleep(2)
+        time.sleep(time_deflate)
         self.butt_deflate()
-        time.sleep(2)
+        time.sleep(time_deflate)
         self.head_inflate()
         self.calves_deflate()
-        time.sleep(2)
+        time.sleep(time_inflate)
         self.shoulders_inflate()
         self.feet_inflate()
-        time.sleep(2)
+        time.sleep(time_inflate)
         self.back_inflate()
-        time.sleep(2)
+        time.sleep(time_inflate)
         self.butt_inflate()
-        time.sleep(2)
+        time.sleep(time_inflate)
         self.calves_inflate()
-        time.sleep(2)
+        time.sleep(time_inflate)
         self.feet_inflate()
         self.inflate_all()
         time.sleep(10)
@@ -93,13 +99,13 @@ class Message:
 
     def message_head(self):
         self.head_deflate()
-        time.sleep(30)
+        time.sleep(15)
         self.head_inflate()
-        time.sleep(40)
+        time.sleep(30)
 
     def message_calves(self):
         print("Message Calves")
-        min_val = 13
+        min_val = 11
         offset = 3
         max_val = 17
         for i in range(min_val, max_val + offset):
@@ -137,7 +143,7 @@ class Message:
         self.head_deflate()
         self.shoulders_deflate()
         self.back_deflate()
-        time.sleep(10)
+        time.sleep(6)
         print("Inflating head, shoulders, back")
         self.head_inflate()
         self.shoulders_inflate()
@@ -149,7 +155,7 @@ class Message:
         self.butt_deflate()
         self.calves_deflate()
         self.feet_deflate()
-        time.sleep(10)
+        time.sleep(6)
         print("Inflating head, shoulders, butt, calves, feet")
         self.head_inflate()
         self.shoulders_inflate()
@@ -159,7 +165,7 @@ class Message:
         time.sleep(15)
         print("deflating back")
         self.back_deflate()
-        time.sleep(20)
+        time.sleep(6)
         print("Inflating everything")
         self.inflate_all()
         time.sleep(15)
@@ -181,7 +187,7 @@ class Message:
                 print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
             self.__gpio.change_relay_state()
-            time.sleep(2)
+            time.sleep(1.3)
         time.sleep(10)
         return
 
