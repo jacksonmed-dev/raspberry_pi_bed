@@ -1,12 +1,11 @@
 import os
 import sys
 import threading
-from flask import Flask
 from bed.bed import Bed
 from body.body import Patient
-from directory_monitor import OnMyWatch
+from bed.sensor.directory_monitor import OnMyWatch
 from homework.massage import Message
-from src.server.flask_server import server_endpoints, create_server
+from server.flask_server import create_server
 
 if os.uname()[4][:3] == 'arm':
     path = "/home/pi/Desktop/sensor_data"
