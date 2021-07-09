@@ -7,14 +7,15 @@ class Patient(object):
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
                                    columns=['time', 'max_pressure'])
     __body = {
+        "first_name": "Slim",
+        "last_name": "Jim",
+        "age": 50,
         "height": 0,
         "weight": 0
     }
 
     def __init__(self):
         self.lock = threading.Lock()
-        self.height = 0,
-        self.weight = 0,
         pass
 
     def set_body_stats_df(self, new_df):
