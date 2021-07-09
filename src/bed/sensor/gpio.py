@@ -19,9 +19,9 @@ class Gpio:
         for key, value in self.__gpio_pins.items():
             GPIO.setup(value["gpio_pin"], GPIO.OUT)
             GPIO.output(value["gpio_pin"], GPIO.HIGH)
-            time.sleep(0.25)
+            time.sleep(0.1)
             GPIO.output(value["gpio_pin"], GPIO.LOW)
-            time.sleep(0.25)
+            time.sleep(0.1)
 
     def set_relay(self, pin, state):
         # enable all pins
