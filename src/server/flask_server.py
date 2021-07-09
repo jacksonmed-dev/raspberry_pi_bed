@@ -31,12 +31,15 @@ def get_patient_info():
 def start_message():
     massage = get_bed().get_massage()
     threading.Thread(massage.start())
+    return json.dumps({"status": "massage started"})
 
 
 @server_endpoints.route('/massage/stop', methods=["GET"])
 def stop_message():
     massage = get_bed().get_massage()
     massage.set_message(False)
+    return json.dumps({"status": "massage stopped"})
+
 
 
 def create_server(bed):
