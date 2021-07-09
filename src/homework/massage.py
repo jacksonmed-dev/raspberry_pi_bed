@@ -34,7 +34,6 @@ class Massage():
     def start(self):
         print("Starting Message \n\n\n")
         self.inflate_all()
-        time.sleep(10)
         print("Check complete... Massage Starting")
         while self.__massage:
             self.message_wave_two()
