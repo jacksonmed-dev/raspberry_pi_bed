@@ -30,7 +30,8 @@ def get_patient_info():
 @server_endpoints.route('/massage/start', methods=["GET"])
 def start_message():
     massage = get_bed().get_massage()
-    threading.Thread(massage.start())
+    massage.set_message(True)
+    massage.start()
     return json.dumps({"status": "massage started"})
 
 

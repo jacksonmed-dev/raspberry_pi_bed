@@ -3,7 +3,7 @@ import threading
 import time
 
 
-class Massage():
+class Massage(threading.Thread):
     # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
     # inflatable regions. For now, the variable serves no purpose
 
@@ -22,16 +22,21 @@ class Massage():
     __massage = True
 
     def __init__(self, gpio):
+        super(Massage,self).__init__()
         self.lock = threading.Lock()
         self.__gpio = gpio
         return
+
+    # def run_massage_thread(self):
+    #     threading.Thread(self.start())
 
     def set_message(self, value: bool):
         self.lock.acquire()
         self.__massage = value
         self.lock.release()
 
-    def start(self):
+
+    def run(self):
         print("Starting Message \n\n\n")
         self.inflate_all()
         print("Check complete... Massage Starting")
