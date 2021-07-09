@@ -6,13 +6,11 @@ from bed.bed import Bed
 from body.body import Patient
 
 
-class Message:
+class Message():
     # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
     # inflatable regions. For now, the variable serves no purpose
 
     # __pressure_sensor = PressureSensor(__inflatable_regions)
-    __bed = Bed(patient= Patient())
-    __gpio = __bed.get_gpio()
     # __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
     #                                columns=['time', 'max_pressure'])
     __composition = {
@@ -24,8 +22,10 @@ class Message:
         "feet": [i for i in range(18, 20)]
     }
 
-    def __init__(self):
+    def __init__(self, bed: Bed):
         print("Starting Message \n\n\n")
+        self.__bed = bed
+        self.__gpio = bed.get_gpio()
         self.inflate_all()
         time.sleep(10)
         return
@@ -177,8 +177,6 @@ class Message:
         print("Inflating everything")
         self.inflate_all()
         time.sleep(15)
-
-
 
     def message_wave_two(self):
         print("Message Wave Two")

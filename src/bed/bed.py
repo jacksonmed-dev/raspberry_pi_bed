@@ -4,6 +4,7 @@ from body.body import Patient
 from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
 import os
+
 if os.uname()[4][:3] == 'arm':
     from bed.sensor.gpio import Gpio
 else:
@@ -25,15 +26,15 @@ class Bed:
                                    columns=['time', 'max_pressure'])
 
     def __init__(self, patient: Patient):
-        self.__patient = patient
         self.__body_stats_df['time'] = timedelta(0)
-        
+        self.__patient = patient
         return
 
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
     def analyze_sensor_data(self):
         #### Work on this ###
         ### function should generate a dataframe with pressure regions ###
+        body_stats_df = self.__patient.get_body_stats_df()
         time_diff = self.__pressure_sensor.get_time()
         sensor_data = extract_sensor_dataframe(self.__pressure_sensor.get_current_frame())
         sensor_composition = self.__pressure_sensor.get_sensor_body_composition()
@@ -42,18 +43,18 @@ class Bed:
         for body_part, value in sensor_composition.items():
             data = sensor_data.loc[value]
             max_value = data.max().max()
-            self.__body_stats_df.at[body_part, 'max_pressure'] = max_value
+            body_stats_df.at[body_part, 'max_pressure'] = max_value
 
             if max_value > self.__pressure_sensor.get_sensor_threshold():
-                current_time = self.__body_stats_df.at[body_part, 'time']
+                current_time = body_stats_df.at[body_part, 'time']
                 new_time = current_time + time_diff
-                self.__body_stats_df.at[body_part, 'time'] = new_time
+                body_stats_df.at[body_part, 'time'] = new_time
             else:
-                self.__body_stats_df.at[body_part, 'time'] = timedelta(0)
+                body_stats_df.at[body_part, 'time'] = timedelta(0)
 
         # Demo method!!
         for body_part, value in sensor_composition.items():
-            pressure = self.__body_stats_df.at[body_part, 'max_pressure']
+            pressure = body_stats_df.at[body_part, 'max_pressure']
             if pressure > self.__pressure_sensor.get_sensor_threshold():
                 self.calculate_deflatable_regions(body_part)
             else:
@@ -90,7 +91,6 @@ class Bed:
             if any(x in sensor_data_row_max for x in array):
                 self.__bed_gpio.set_relay(pin=index, state=1)
         return
-
 
     def print_stats(self):
         print("Directory Modified")

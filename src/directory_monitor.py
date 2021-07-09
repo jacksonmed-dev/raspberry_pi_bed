@@ -1,4 +1,5 @@
 import sys
+import threading
 
 import pandas as pd
 from watchdog.observers import Observer
@@ -6,13 +7,12 @@ from watchdog.events import FileSystemEventHandler
 from bed.bed import Bed
 from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
 from homework.massage import Message
-
 from body.body import Patient
 import os
 
 
 # Check to make sure the file is not empty!!!
-class OnMyWatch:
+class OnMyWatch(threading.Thread):
     # Set the directory on watch
     __observer = Observer()
 
@@ -25,7 +25,7 @@ class OnMyWatch:
         print("Directory Monitor Started")
         self.__observer.schedule(self.__event_handler, self.__watch_directory, recursive=True)
         self.__observer.start()
-        self.__observer.join()
+        # self.__observer.join()
 
     def stop(self):
         self.__observer.stop()
@@ -58,19 +58,3 @@ class Handler(FileSystemEventHandler):
         self.__bed.print_stats()
         # print("Directory Modified - %s" % event.src_path)
 
-
-if __name__ == '__main__':
-    if os.uname()[4][:3] == 'arm':
-        path = "/home/pi/Desktop/sensor_data"
-    else:
-        path = "/home/dev/Desktop/sensor_data"
-    if len(sys.argv) == 1:
-        p = Patient()
-        bed = Bed(patient=p)
-        watch = OnMyWatch(bed=bed, path=path)
-        watch.run()
-    elif sys.argv[1] == 'message':
-        message = Message()
-        message.message()
-    else:
-        print("Invalid argument passed")
