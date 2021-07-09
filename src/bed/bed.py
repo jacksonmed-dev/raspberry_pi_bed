@@ -5,6 +5,8 @@ from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
 import os
 
+from homework.massage import Massage
+
 if os.uname()[4][:3] == 'arm':
     from bed.sensor.gpio import Gpio
 else:
@@ -15,6 +17,7 @@ else:
 #   Patient
 #   Sensor
 #   Relays to control the valves
+#   Massage Functionality
 class Bed:
     # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
     # inflatable regions. For now, the variable serves no purpose
@@ -24,6 +27,8 @@ class Bed:
     __pressure_sensor = PressureSensor(__inflatable_regions)
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
                                    columns=['time', 'max_pressure'])
+
+    __massage = Massage(__bed_gpio)
 
     def __init__(self, patient: Patient):
         self.__body_stats_df['time'] = timedelta(0)
@@ -98,6 +103,10 @@ class Bed:
         print("Relays:\t{}\n\n".format(self.__bed_gpio.get_gpio_pins()))
 
     # Getters/Setters
+
+    def get_massage(self):
+        return self.__massage
+
     def get_pressure_sensor(self):
         return self.__pressure_sensor
 

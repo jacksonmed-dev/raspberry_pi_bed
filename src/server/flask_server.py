@@ -1,3 +1,5 @@
+import threading
+
 from flask import Blueprint, Flask, current_app
 import json
 
@@ -23,6 +25,18 @@ def get_patient_info():
     bed = get_bed()
     patient = bed.get_patient()
     return patient.get_patient_info_json()
+
+# There needs to be checks in place here. Is there already a thread???
+@server_endpoints.route('/massage/start', methods=["GET"])
+def start_message():
+    massage = get_bed().get_massage()
+    threading.Thread(massage.start())
+
+
+@server_endpoints.route('/massage/stop', methods=["GET"])
+def stop_message():
+    massage = get_bed().get_massage()
+    massage.set_message(False)
 
 
 def create_server(bed):

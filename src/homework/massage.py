@@ -1,12 +1,9 @@
-import os
 import random
+import threading
 import time
 
-from bed.bed import Bed
-from body.body import Patient
 
-
-class Message():
+class Massage():
     # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
     # inflatable regions. For now, the variable serves no purpose
 
@@ -22,18 +19,24 @@ class Message():
         "feet": [i for i in range(18, 20)]
     }
 
-    def __init__(self, bed: Bed):
-        print("Starting Message \n\n\n")
-        self.__bed = bed
-        self.__gpio = bed.get_gpio()
-        self.inflate_all()
-        time.sleep(10)
+    __massage = True
+
+    def __init__(self, gpio):
+        self.lock = threading.Lock()
+        self.__gpio = gpio
         return
 
-    def message(self):
-        while True:
-            # self.message_calves()
-            # time.sleep(10)
+    def set_message(self, value: bool):
+        self.lock.acquire()
+        self.__massage = value
+        self.lock.release()
+
+    def start(self):
+        print("Starting Message \n\n\n")
+        self.inflate_all()
+        time.sleep(10)
+        print("Check complete... Massage Starting")
+        while self.__massage:
             self.message_wave_two()
             time.sleep(10)
             self.message_feet()
@@ -46,14 +49,7 @@ class Message():
             time.sleep(10)
             self.message_feet()
             time.sleep(10)
-            # self.message_stretch()
-            # time.sleep(10)
-            # self.message_calves()
-            # time.sleep(10)
-            # self.message_wave_one()
-            # time.sleep(10)
-            # self.message_head()
-            # time.sleep(10)
+        print("Massage Stopped")
         return
 
     def inflate_all(self):
