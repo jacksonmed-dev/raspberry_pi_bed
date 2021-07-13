@@ -45,5 +45,8 @@ class Gpio:
             else:
                 print("Error: GPIO pin could not be set, improper array value %d" % value)
 
+    def get_num_gpio_pins(self):
+        return len(self.__rasp_pi_available_gpio)
+
     def get_gpio_pins(self):
         return self.__gpio_pins

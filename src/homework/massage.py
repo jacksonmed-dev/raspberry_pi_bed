@@ -22,7 +22,7 @@ class Massage(threading.Thread):
     __massage = True
 
     def __init__(self, gpio):
-        super(Massage,self).__init__()
+        super(Massage, self).__init__()
         self.lock = threading.Lock()
         self.__gpio = gpio
         return
@@ -38,22 +38,43 @@ class Massage(threading.Thread):
 
     def run(self):
         print("Starting Message \n\n\n")
-        self.inflate_all()
+        # self.inflate_all()
         print("Check complete... Massage Starting")
         while self.__massage:
-            self.message_wave_two()
-            time.sleep(10)
-            self.message_feet()
-            time.sleep(10)
-            self.message_head()
-            time.sleep(10)
-            self.message_wave_two()
-            time.sleep(10)
-            self.message_head()
-            time.sleep(10)
-            self.message_feet()
-            time.sleep(10)
-        print("Massage Stopped")
+            self.basic_wave()
+            time.sleep(2)
+        # while self.__massage:
+        #     self.message_wave_two()
+        #     time.sleep(10)
+        #     self.message_feet()
+        #     time.sleep(10)
+        #     self.message_head()
+        #     time.sleep(10)
+        #     self.message_wave_two()
+        #     time.sleep(10)
+        #     self.message_head()
+        #     time.sleep(10)
+        #     self.message_feet()
+        #     time.sleep(10)
+        # print("Massage Stopped")
+        return
+
+    def basic_wave(self):
+        print("Message Wave Two")
+        offset = 3
+        max_val = self.__gpio.get_num_gpio_pins() - 1
+        for i in range(1, max_val + offset):
+            if (i - offset) > 0:
+                print("Setting Relay: {}, State: 1".format(i - offset))
+                self.__gpio.set_relay(i - offset, state=1)
+            if i <= max_val:
+                print("Setting Relay: {}, State: 0".format(i))
+                self.__gpio.set_relay(i, state=0)
+            else:
+                print("Setting Relay: {}, State: 1".format(i - offset))
+                self.__gpio.set_relay(i - offset, state=1)
+            self.__gpio.change_relay_state()
+            time.sleep(1)
         return
 
     def inflate_all(self):
