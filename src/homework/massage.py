@@ -63,7 +63,7 @@ class Massage(threading.Thread):
         print("Message Wave Two")
         offset = 3
         max_val = self.__gpio.get_num_gpio_pins() - 1
-        for i in range(max_val + offset):
+        for i in range(max_val + offset + 1):
             if (i - offset) >= 0:
                 print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
