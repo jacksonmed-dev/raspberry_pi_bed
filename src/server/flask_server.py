@@ -33,7 +33,9 @@ def start_message():
     massage = bed.get_massage()
     if massage.isAlive():
         massage.join()
-        bed.set_new_massage()
+
+    bed.set_new_massage()
+    massage = bed.get_massage()
     massage.set_massage_status(True)
     massage.start()
     return json.dumps({"status": "massage started"})
