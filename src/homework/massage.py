@@ -27,63 +27,52 @@ class Massage(threading.Thread):
         self.__gpio = gpio
         return
 
-    # def run_massage_thread(self):
-    #     threading.Thread(self.start())
 
-    def set_message(self, value: bool):
+    def set_massage(self, value: bool):
         self.lock.acquire()
         self.__massage = value
         self.lock.release()
 
-
     def run(self):
         print("Starting Message \n\n\n")
-        # self.inflate_all()
+        self.inflate_all()
         print("Check complete... Massage Starting")
         while self.__massage:
             self.basic_wave()
             time.sleep(2)
-        # while self.__massage:
-        #     self.message_wave_two()
-        #     time.sleep(10)
-        #     self.message_feet()
-        #     time.sleep(10)
-        #     self.message_head()
-        #     time.sleep(10)
-        #     self.message_wave_two()
-        #     time.sleep(10)
-        #     self.message_head()
-        #     time.sleep(10)
-        #     self.message_feet()
-        #     time.sleep(10)
-        # print("Massage Stopped")
         return
 
     def basic_wave(self):
-        print("Message Wave Two")
+        print("Basic Massage Wave")
         offset = 3
-        max_val = self.__gpio.get_num_gpio_pins() - 1
-        for i in range(max_val + offset + 1):
+        max_val = self.__gpio.get_num_gpio_pins()
+        for i in range(max_val + offset):
             if (i - offset) >= 0:
                 print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
-            if i <= max_val:
+            if i < max_val:
                 print("Setting Relay: {}, State: 0".format(i))
                 self.__gpio.set_relay(i, state=0)
-            else:
-                print("Setting Relay: {}, State: 1".format(i - offset))
-                self.__gpio.set_relay(i - offset, state=1)
             self.__gpio.change_relay_state()
+
+            if not self.check_massage_state(): return
+
             time.sleep(1)
         return
 
+    def check_massage_state(self):
+        if not self.__massage:
+            self.inflate_all()
+            return False
+        else:
+            return True
+
     def inflate_all(self):
-        self.head_inflate()
-        self.shoulders_inflate()
-        self.back_inflate()
-        self.butt_inflate()
-        self.calves_inflate()
-        self.feet_inflate()
+        max_val = self.__gpio.get_num_gpio_pins() - 1
+        for i in range(max_val):
+            print("Setting Relay: {}, State: 1".format(i))
+            self.__gpio.set_relay(i, state=1)
+        self.__gpio.change_relay_state()
 
     def inflate_all_slowly(self):
         print("Inflating everything Slowly")
@@ -96,34 +85,6 @@ class Massage(threading.Thread):
             self.__gpio.set_relay(random_val, state=1)
             self.__gpio.change_relay_state()
             time.sleep(5)
-        return
-
-    def message_wave_one(self):
-        time_inflate = 2
-        time_deflate = 1
-        self.head_deflate()
-        time.sleep(time_deflate)
-        self.shoulders_deflate()
-        time.sleep(time_deflate)
-        self.back_deflate()
-        time.sleep(time_deflate)
-        self.butt_deflate()
-        time.sleep(time_deflate)
-        self.head_inflate()
-        self.calves_deflate()
-        time.sleep(time_inflate)
-        self.shoulders_inflate()
-        self.feet_inflate()
-        time.sleep(time_inflate)
-        self.back_inflate()
-        time.sleep(time_inflate)
-        self.butt_inflate()
-        time.sleep(time_inflate)
-        self.calves_inflate()
-        time.sleep(time_inflate)
-        self.feet_inflate()
-        self.inflate_all()
-        time.sleep(10)
         return
 
     def message_head(self):
@@ -198,30 +159,6 @@ class Massage(threading.Thread):
         print("Inflating everything")
         self.inflate_all()
         time.sleep(15)
-
-    def message_wave_two(self):
-        print("Message Wave Two")
-        offset = 3
-        max_val = 20
-        for i in range(1, max_val + offset):
-            if (i - offset) > 0:
-                print("Setting Relay: {}, State: 1".format(i - offset))
-                self.__gpio.set_relay(i - offset, state=1)
-            if i < 20:
-                print("Setting Relay: {}, State: 0".format(i))
-                self.__gpio.set_relay(i, state=0)
-            else:
-                print("Setting Relay: {}, State: 1".format(i - offset))
-                self.__gpio.set_relay(i - offset, state=1)
-            self.__gpio.change_relay_state()
-
-            if 3 <= i <= 8:
-                time.sleep(0.75)
-            if 9 <= i <= 11:
-                time.sleep(0.5)
-            else:
-                time.sleep(1)
-        return
 
     def message_feet(self):
         self.feet_deflate()

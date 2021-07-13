@@ -30,7 +30,7 @@ def get_patient_info():
 @server_endpoints.route('/massage/start', methods=["GET"])
 def start_message():
     massage = get_bed().get_massage()
-    massage.set_message(True)
+    massage.set_massage(True)
     massage.start()
     return json.dumps({"status": "massage started"})
 
@@ -38,7 +38,7 @@ def start_message():
 @server_endpoints.route('/massage/stop', methods=["GET"])
 def stop_message():
     massage = get_bed().get_massage()
-    massage.set_message(False)
+    massage.set_massage(False)
     return json.dumps({"status": "massage stopped"})
 
 
