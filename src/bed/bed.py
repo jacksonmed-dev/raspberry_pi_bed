@@ -133,3 +133,6 @@ class Bed:
 
     def set_inflatable_regions(self, count):
         self.__inflatable_regions = count
+
+    def set_new_massage(self):
+        self.__massage = Massage(gpio=self.__bed_gpio)

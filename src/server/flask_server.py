@@ -29,7 +29,9 @@ def get_patient_info():
 # There needs to be checks in place here. Is there already a thread???
 @server_endpoints.route('/massage/start', methods=["GET"])
 def start_message():
-    massage = get_bed().get_massage()
+    bed = get_bed()
+    bed.set_new_massage()
+    massage = bed.get_massage()
     massage.set_massage(True)
     massage.start()
     return json.dumps({"status": "massage started"})
