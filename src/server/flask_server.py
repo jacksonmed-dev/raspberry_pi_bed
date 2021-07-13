@@ -30,9 +30,11 @@ def get_patient_info():
 @server_endpoints.route('/massage/start', methods=["GET"])
 def start_message():
     bed = get_bed()
-    bed.set_new_massage()
     massage = bed.get_massage()
-    massage.set_massage(True)
+    if massage.isAlive():
+        massage.join()
+        bed.set_new_massage()
+        massage.set_massage_status(True)
     massage.start()
     return json.dumps({"status": "massage started"})
 
@@ -40,7 +42,11 @@ def start_message():
 @server_endpoints.route('/massage/stop', methods=["GET"])
 def stop_message():
     massage = get_bed().get_massage()
-    massage.set_massage(False)
+    massage.set_massage_status(False)
+    if massage.isAlive():
+        massage.join()
+    if massage.isAlive():
+        return json.dumps({"status": "Thread Still Running..."})
     return json.dumps({"status": "massage stopped"})
 
 

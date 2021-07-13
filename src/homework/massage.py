@@ -19,7 +19,7 @@ class Massage(threading.Thread):
         "feet": [i for i in range(18, 20)]
     }
 
-    __massage = True
+    __massage_status = True
 
     def __init__(self, gpio):
         super(Massage, self).__init__()
@@ -27,26 +27,34 @@ class Massage(threading.Thread):
         self.__gpio = gpio
         return
 
-
-    def set_massage(self, value: bool):
-        self.lock.acquire()
-        self.__massage = value
-        self.lock.release()
-
     def run(self):
         print("Starting Message \n\n\n")
         self.inflate_all()
         print("Check complete... Massage Starting")
-        while self.__massage:
+        while self.__massage_status:
             self.basic_wave()
             time.sleep(2)
         return
+
+    def set_massage_status(self, value: bool):
+        self.lock.acquire()
+        self.__massage_status = value
+        self.lock.release()
+
+    def check_massage_thread_state(self):
+        if not self.__massage_status:
+            self.inflate_all()
+            return False
+        else:
+            return True
 
     def basic_wave(self):
         print("Basic Massage Wave")
         offset = 3
         max_val = self.__gpio.get_num_gpio_pins()
         for i in range(max_val + offset):
+            if not self.check_massage_thread_state(): return
+
             if (i - offset) >= 0:
                 print("Setting Relay: {}, State: 1".format(i - offset))
                 self.__gpio.set_relay(i - offset, state=1)
@@ -55,17 +63,8 @@ class Massage(threading.Thread):
                 self.__gpio.set_relay(i, state=0)
             self.__gpio.change_relay_state()
 
-            if not self.check_massage_state(): return
-
             time.sleep(1)
         return
-
-    def check_massage_state(self):
-        if not self.__massage:
-            self.inflate_all()
-            return False
-        else:
-            return True
 
     def inflate_all(self):
         max_val = self.__gpio.get_num_gpio_pins() - 1
@@ -86,85 +85,6 @@ class Massage(threading.Thread):
             self.__gpio.change_relay_state()
             time.sleep(5)
         return
-
-    def message_head(self):
-        self.head_deflate()
-        time.sleep(15)
-        self.head_inflate()
-        time.sleep(30)
-
-    def message_calves(self):
-        print("Message Calves")
-        min_val = 11
-        offset = 3
-        max_val = 17
-        for i in range(min_val, max_val + offset):
-            if (i - offset) > 0:
-                print("Setting Relay: {}, State: 1".format(i - offset))
-                self.__gpio.set_relay(i - offset, state=1)
-            if i < max_val:
-                print("Setting Relay: {}, State: 0".format(i))
-                self.__gpio.set_relay(i, state=0)
-            else:
-                print("Setting Relay: {}, State: 1".format(i - offset))
-                self.__gpio.set_relay(i - offset, state=1)
-            self.__gpio.change_relay_state()
-            time.sleep(2)
-        time.sleep(10)
-        return
-
-    def rand_inflate_quick(self):
-        print("Inflating Random quickly")
-        self.inflate_all()
-        max_val = 20 - 1
-        for i in range(1, 10):
-            random_val_1 = random.randint(1, max_val)
-            random_val_2 = random.randint(1, max_val)
-            self.__gpio.set_relays([random_val_1, random_val_2], state=0)
-            self.__gpio.change_relay_state()
-            time.sleep(1.5)
-            self.__gpio.set_relays([random_val_1, random_val_2], state=1)
-            self.__gpio.change_relay_state()
-            time.sleep(3)
-        return
-
-    def message_stretch(self):
-        print("Deflating head, back, shoulders")
-        self.head_deflate()
-        self.shoulders_deflate()
-        self.back_deflate()
-        time.sleep(6)
-        print("Inflating head, shoulders, back")
-        self.head_inflate()
-        self.shoulders_inflate()
-        self.back_inflate()
-        time.sleep(15)
-        print("Deflating head, shoulders, butt, calves, feet")
-        self.head_deflate()
-        self.shoulders_deflate()
-        self.butt_deflate()
-        self.calves_deflate()
-        self.feet_deflate()
-        time.sleep(6)
-        print("Inflating head, shoulders, butt, calves, feet")
-        self.head_inflate()
-        self.shoulders_inflate()
-        self.butt_inflate()
-        self.calves_inflate()
-        self.feet_inflate()
-        time.sleep(15)
-        print("deflating back")
-        self.back_deflate()
-        time.sleep(6)
-        print("Inflating everything")
-        self.inflate_all()
-        time.sleep(15)
-
-    def message_feet(self):
-        self.feet_deflate()
-        time.sleep(15)
-        self.feet_inflate()
-        time.sleep(30)
 
     def head_inflate(self):
         self.__gpio.set_relays(self.__composition['head'], state=1)
