@@ -32,11 +32,11 @@ def start_message():
     bed = get_bed()
     massage = bed.get_massage()
     if massage.isAlive():
+        massage.set_massage_status(False)
         massage.join()
 
     bed.set_new_massage()
     massage = bed.get_massage()
-    massage.set_massage_status(True)
     massage.start()
     return json.dumps({"status": "massage started"})
 
@@ -45,8 +45,7 @@ def start_message():
 def stop_message():
     massage = get_bed().get_massage()
     massage.set_massage_status(False)
-    if massage.isAlive():
-        massage.join()
+    massage.join()
     if massage.isAlive():
         return json.dumps({"status": "Thread Still Running..."})
     return json.dumps({"status": "massage stopped"})
