@@ -1,6 +1,4 @@
-import threading
-
-from flask import Blueprint, Flask, current_app
+from flask import Blueprint, Flask, current_app, request
 import json
 
 server_endpoints = Blueprint("server_endpoints", __name__)
@@ -51,11 +49,28 @@ def stop_message():
     return json.dumps({"status": "massage stopped"})
 
 
+# Endpoint should read like this: http://localhost:5000/massage?type=1
+@server_endpoints.route('/massage', methods=["GET"])
+def choose_massage():
+    massage = get_bed().get_massage()
+    massage_type = int(request.args.get('type'))
+    try:
+        massage.set_massage_status(massage_type)
+        return json.dumps({"status": "Massage type updated successfully"})
+    except ValueError as e:
+        return json.dumps({"status": e})
+
+
+
+@server_endpoints.route('/bed/status', methods=["GET"])
+def bed_status():
+    bed = get_bed()
+    return bed.generate_bed_status_json()
+
 
 def create_server(bed):
     app = Flask(__name__)
-
     app.register_blueprint(server_endpoints)
-
     app.config["bed"] = bed
+
     return app

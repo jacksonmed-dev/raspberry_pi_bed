@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 from bed.sensor.tactilus import PressureSensor
 from body.body import Patient
@@ -5,7 +7,7 @@ from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
 import os
 
-from homework.massage import Massage
+from massage.massage import Massage
 
 if os.uname()[4][:3] == 'arm':
     from bed.sensor.gpio import Gpio
@@ -21,8 +23,8 @@ else:
 class Bed:
     # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
     # inflatable regions. For now, the variable serves no purpose
-    __inflatable_regions = 8
-    __relay_count = 8
+    __inflatable_regions = 20
+    __relay_count = 20
     __bed_gpio = Gpio(inflatable_regions=__inflatable_regions)
     __pressure_sensor = PressureSensor(__inflatable_regions)
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
@@ -96,6 +98,12 @@ class Bed:
             if any(x in sensor_data_row_max for x in array):
                 self.__bed_gpio.set_relay(pin=index, state=1)
         return
+
+    def generate_bed_status_json(self):
+        json_final = json.dumps({
+            "gpio_pins": self.__bed_gpio.get_gpio_pins(),
+        })
+        return json_final
 
     def print_stats(self):
         print("Directory Modified")

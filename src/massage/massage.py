@@ -4,12 +4,6 @@ import time
 
 
 class Massage(threading.Thread):
-    # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
-    # inflatable regions. For now, the variable serves no purpose
-
-    # __pressure_sensor = PressureSensor(__inflatable_regions)
-    # __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
-    #                                columns=['time', 'max_pressure'])
     __composition = {
         "head": [i for i in range(0, 3)],
         "shoulders": [i for i in range(4, 5)],
@@ -18,7 +12,7 @@ class Massage(threading.Thread):
         "calves": [i for i in range(14, 17)],
         "feet": [i for i in range(18, 20)]
     }
-
+    __massage_type = 1
     __massage_status = True
 
     def __init__(self, gpio):
@@ -145,3 +139,10 @@ class Massage(threading.Thread):
         self.__gpio.set_relays(self.__composition['feet'], state=0)
         self.__gpio.change_relay_state()
         return
+
+    def set_massage_type(self, value):
+        # Check to see if value corresponds to correct number of massages. Currently, there is one massage
+        if value != 1:
+            raise ValueError("The massage value cannot be {}. Check how many massages are available".format(value))
+        else:
+            self.__massage_type = value

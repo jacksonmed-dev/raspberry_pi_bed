@@ -4,7 +4,7 @@ import threading
 from bed.bed import Bed
 from body.body import Patient
 from bed.sensor.directory_monitor import OnMyWatch
-from homework.massage import Massage
+from massage.massage import Massage
 from server.flask_server import create_server
 
 if os.uname()[4][:3] == 'arm':
