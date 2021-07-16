@@ -100,8 +100,9 @@ class Bed:
         return
 
     def generate_bed_status_json(self):
+        gpio = self.__bed_gpio.get_gpio_pins()
         json_final = json.dumps({
-            "gpio_pins": self.__bed_gpio.get_gpio_pins(),
+            "gpio_pins": [value for key, value in gpio.items()],
         })
         return json_final
 

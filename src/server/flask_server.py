@@ -24,6 +24,7 @@ def get_patient_info():
     patient = bed.get_patient()
     return patient.get_patient_info_json()
 
+
 # There needs to be checks in place here. Is there already a thread???
 @server_endpoints.route('/massage/start', methods=["GET"])
 def start_message():
@@ -59,7 +60,6 @@ def choose_massage():
         return json.dumps({"status": "Massage type updated successfully"})
     except ValueError as e:
         return json.dumps({"status": e})
-
 
 
 @server_endpoints.route('/bed/status', methods=["GET"])
