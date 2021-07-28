@@ -1,5 +1,7 @@
 import json
 import threading
+from datetime import timedelta
+
 import pandas as pd
 
 
@@ -15,6 +17,7 @@ class Patient(object):
     }
 
     def __init__(self):
+        self.__body_stats_df['time'] = timedelta(0)
         self.lock = threading.Lock()
         pass
 

@@ -1,3 +1,4 @@
+import pandas as pd
 from flask import Blueprint, Flask, current_app, request
 import json
 
@@ -11,11 +12,14 @@ def get_bed():
     return bed
 
 
-@server_endpoints.route('/patient/pressure', methods=["GET"])
+@server_endpoints.route('/patient/max_pressure', methods=["GET"])
 def get_patient_pressure():
     bed = get_bed()
     patient = bed.get_patient()
-    return patient.get_body_stats_df_json()
+    df = pd.read_csv("../tests/test_files/body_stats_df.csv", index_col=0)
+    patient.set_body_stats_df(df)
+    return patient.get_body_stats_df()['max_pressure'].to_json()
+    # return patient.get_body_stats_df_json()
 
 
 @server_endpoints.route('/patient/info', methods=["GET"])
@@ -23,6 +27,7 @@ def get_patient_info():
     bed = get_bed()
     patient = bed.get_patient()
     return patient.get_patient_info_json()
+
 
 
 # There needs to be checks in place here. Is there already a thread???

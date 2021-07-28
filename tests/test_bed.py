@@ -14,6 +14,8 @@ class TestBed(TestCase):
         sensor = cls.bed.get_pressure_sensor()
         sensor.append_sensor_data(data_df)
         sensor.set_current_frame(data_df)
+        cls.bed.analyze_sensor_data()
+
 
     def test_analyze_sensor_data(self):
         self.fail()

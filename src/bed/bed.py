@@ -27,13 +27,12 @@ class Bed:
     __relay_count = 20
     __bed_gpio = Gpio(inflatable_regions=__inflatable_regions)
     __pressure_sensor = PressureSensor(__inflatable_regions)
-    __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
-                                   columns=['time', 'max_pressure'])
+    # __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
+    #                                columns=['time', 'max_pressure'])
 
     __massage = Massage(__bed_gpio)
 
     def __init__(self, patient: Patient):
-        self.__body_stats_df['time'] = timedelta(0)
         self.__patient = patient
         return
 
@@ -58,6 +57,9 @@ class Bed:
                 body_stats_df.at[body_part, 'time'] = new_time
             else:
                 body_stats_df.at[body_part, 'time'] = timedelta(0)
+
+        # Update the patient body stats dataframe
+        self.__patient.set_body_stats_df(body_stats_df)
 
         # Demo method!!
         for body_part, value in sensor_composition.items():
@@ -108,7 +110,7 @@ class Bed:
 
     def print_stats(self):
         print("Directory Modified")
-        print("Body Stats:\n{}\n".format(self.__body_stats_df))
+        print("Body Stats:\n{}\n".format(self.__patient.get_body_stats_df()))
         print("Relays:\t{}\n\n".format(self.__bed_gpio.get_gpio_pins()))
 
     # Getters/Setters
