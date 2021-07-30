@@ -9,11 +9,11 @@ class Patient(object):
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
                                    columns=['time', 'max_pressure'])
     __body = {
-        "first_name": "Slim",
-        "last_name": "Jim",
-        "age": 50,
-        "height": 0,
-        "weight": 0
+        "first_name": " Ben",
+        "last_name": "Dover",
+        "age": 36,
+        "height": 72,
+        "weight": 190
     }
 
     def __init__(self):
