@@ -16,7 +16,7 @@ def get_bed():
 def get_patient_pressure():
     bed = get_bed()
     patient = bed.get_patient()
-    df = pd.read_csv("../tests/test_files/body_stats_df.csv", index_col=0)
+    df = pd.read_csv("tests/test_files/body_stats_df.csv", index_col=0)
     patient.set_body_stats_df(df)
     return patient.get_body_stats_df()['max_pressure'].to_json()
     # return patient.get_body_stats_df_json()
