@@ -1,9 +1,10 @@
 import pandas as pd
 from flask import Blueprint, Flask, current_app, request
 import json
+import pathlib
 
+path = pathlib.Path().resolve()
 server_endpoints = Blueprint("server_endpoints", __name__)
-
 
 def get_bed():
     bed = current_app.config["bed"]
@@ -12,11 +13,12 @@ def get_bed():
     return bed
 
 
+# Currently a dummy function that returns dummy data.
 @server_endpoints.route('/patient/max_pressure', methods=["GET"])
 def get_patient_pressure():
     bed = get_bed()
     patient = bed.get_patient()
-    df = pd.read_csv("tests/test_files/body_stats_df.csv", index_col=0)
+    df = pd.read_csv(str(path) + "/../tests/test_files/body_stats_df.csv", index_col=0)
     patient.set_body_stats_df(df)
     return patient.get_body_stats_df()['max_pressure'].to_json()
     # return patient.get_body_stats_df_json()
