@@ -19,13 +19,16 @@ if __name__ == "__main__":
     watch = OnMyWatch(bed=bed, path=path)
     app = create_server(bed=bed)
 
-    if len(sys.argv) == 1:
-        watch.run()
-    elif sys.argv[1] == 'message':
-        message = Massage()
-        message.start()
-        threading.Thread(message.start())
-    else:
-        print("Invalid argument passed")
-
+    # if len(sys.argv) == 1:
+    #     threading.Thread(bed.get_pressure_sensor().start_sse_client())
+    #     # watch.run()
+    #     x = 5
+    # elif sys.argv[1] == 'message':
+    #     message = Massage()
+    #     message.start()
+    #     threading.Thread(message.start())
+    # else:
+    #     print("Invalid argument passed")
+    t1 = threading.Thread(target=bed.get_pressure_sensor().start_sse_client)
+    t1.start()
     threading.Thread(app.run(host='0.0.0.0', debug=False, use_reloader=False))

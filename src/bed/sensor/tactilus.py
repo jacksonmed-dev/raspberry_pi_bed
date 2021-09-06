@@ -1,12 +1,18 @@
+import threading
+
 import pandas as pd
 import numpy as np
+import threading
 from datetime import datetime, timedelta
+from sseclient import SSEClient
 
 
 # This class will be used when we have access to the api to get sensor data
-class PressureSensor:
+class PressureSensor(threading.Thread):
     # watchDirectory = OnMyWatch(path="/home/dev/Desktop/sensor")
     # gpio pin list used to control relays
+    __current_frame = pd.DataFrame()
+    __sensor_ip = "192.168.86.51"
     __sensor_data = pd.DataFrame()
     __sensor_threshold = 0.65
     __sensor_body_composition = {
@@ -19,14 +25,28 @@ class PressureSensor:
     }
     __sensor_rows = 65
     __sensor_columns = 27
-    ## Temp variable to store the sensor data.
-    __current_frame = pd.DataFrame()
     __path = "/home/dev/Desktop/sensor_data"
 
     def __init__(self, inflatable_regions):
-        temp = np.arange(int(self.__sensor_rows/inflatable_regions) + 1, self.__sensor_rows, int(self.__sensor_rows/inflatable_regions)+1)
+        temp = np.arange(int(self.__sensor_rows / inflatable_regions) + 1, self.__sensor_rows,
+                         int(self.__sensor_rows / inflatable_regions) + 1)
         self.__sensor_inflatable_composition = np.split(np.arange(0, self.__sensor_rows), temp)
+        self._callbacks = []
         return
+
+    def current_frame(self):
+        return self.__current_frame
+
+    def current_frame(self, new_value):
+        self.__current_frame = new_value
+        self._notify_observers(new_value)
+
+    def _notify_observers(self, new_value):
+        for callback in self._callbacks:
+            callback()
+
+    def register_callback(self, callback):
+        self._callbacks.append(callback)
 
     def load_current_frame(self):
         return
@@ -80,6 +100,16 @@ class PressureSensor:
             else:
                 return None
 
+    def get_sensor_ip_address(self):
+        return self.__sensor_ip
 
+    def start_sse_client(self):
+        url = "http://192.168.86.51/api/sse"
+        sse = SSEClient(url)
+        for response in sse:
+            df = pd.read_json(response.data)
+            if "readings" in df.columns:
+                self.current_frame(df)
 
-
+    def run(self):
+        self.start_sse_client()

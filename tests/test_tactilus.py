@@ -12,9 +12,9 @@ class TestPressureSensor(TestCase):
         cls.test_file = "test_files/data.csv"
         cls.bed = Bed(patient=Patient())
         data_df = load_sensor_dataframe(cls.test_file)
-        sensor = cls.bed.get_pressure_sensor()
-        sensor.append_sensor_data(data_df)
-        sensor.set_current_frame(data_df)
+        cls.sensor = cls.bed.get_pressure_sensor()
+        cls.sensor.append_sensor_data(data_df)
+        cls.sensor.set_current_frame(data_df)
 
     def test_append_sensor_data(self):
         current_frame_df = self.bed.get_pressure_sensor().get_current_frame()
@@ -56,3 +56,7 @@ class TestPressureSensor(TestCase):
         time_diff = sensor.get_time()
 
         self.assertEqual(None, time_diff), "time difference type should be None, recieved {}".format(type(time_diff))
+
+    def test_sensor_sse(self):
+        self.sensor.start_sse_client()
+

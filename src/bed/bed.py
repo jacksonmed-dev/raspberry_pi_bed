@@ -5,6 +5,7 @@ from bed.sensor.tactilus import PressureSensor
 from body.body import Patient
 from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
+import numpy as np
 import os
 
 from massage.massage import Massage
@@ -34,6 +35,7 @@ class Bed:
 
     def __init__(self, patient: Patient):
         self.__patient = patient
+        self.__pressure_sensor.register_callback(self.analyze_sensor_data)
         return
 
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
@@ -42,7 +44,10 @@ class Bed:
         ### function should generate a dataframe with pressure regions ###
         body_stats_df = self.__patient.get_body_stats_df()
         time_diff = self.__pressure_sensor.get_time()
-        sensor_data = extract_sensor_dataframe(self.__pressure_sensor.get_current_frame())
+        temp = self.__pressure_sensor.get_current_frame()
+        if temp.empty:
+            return
+        sensor_data = pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27))
         sensor_composition = self.__pressure_sensor.get_sensor_body_composition()
 
         # Identify regions of the body that are in a high pressure state
@@ -76,7 +81,7 @@ class Bed:
     # change
     def calculate_deflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
-        sensor_data_df = extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()).loc[sensor_region_body]
+        sensor_data_df = pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)
         sensor_data_row_max_indices = sensor_data_row_max.index.tolist()
@@ -92,7 +97,7 @@ class Bed:
 
     def calculate_inflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
-        sensor_data_df = extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()).loc[sensor_region_body]
+        sensor_data_df = pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)
 
