@@ -30,6 +30,7 @@ class PressureSensor(threading.Thread):
     def __init__(self, inflatable_regions):
         temp = np.arange(int(self.__sensor_rows / inflatable_regions) + 1, self.__sensor_rows,
                          int(self.__sensor_rows / inflatable_regions) + 1)
+        self.lock = threading.Lock()
         self.__sensor_inflatable_composition = np.split(np.arange(0, self.__sensor_rows), temp)
         self._callbacks = []
         return
@@ -38,8 +39,12 @@ class PressureSensor(threading.Thread):
         return self.__current_frame
 
     def current_frame(self, new_value):
-        self.__current_frame = new_value
-        self._notify_observers(new_value)
+        self.lock.acquire()
+        try:
+            self.__current_frame = new_value
+        finally:
+            self.lock.release()
+            self._notify_observers(new_value)
 
     def _notify_observers(self, new_value):
         for callback in self._callbacks:
@@ -104,7 +109,7 @@ class PressureSensor(threading.Thread):
         return self.__sensor_ip
 
     def start_sse_client(self):
-        url = "http://192.168.86.51/api/sse"
+        url = "http://10.0.0.1/api/sse"
         sse = SSEClient(url)
         for response in sse:
             df = pd.read_json(response.data)

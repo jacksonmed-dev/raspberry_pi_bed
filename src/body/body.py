@@ -25,10 +25,8 @@ class Patient(object):
         self.lock.acquire()
         try:
             self.__body_stats_df = new_df
-            print("Lock acquired")
         finally:
             self.lock.release()
-            print("Lock released")
 
     def get_body(self):
         return self.__body
