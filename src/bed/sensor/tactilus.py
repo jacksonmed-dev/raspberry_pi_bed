@@ -1,4 +1,5 @@
 import threading
+import time
 
 import pandas as pd
 import numpy as np
@@ -115,6 +116,8 @@ class PressureSensor(threading.Thread):
             df = pd.read_json(response.data)
             if "readings" in df.columns:
                 self.current_frame(df)
+                print(df)
+
 
     def run(self):
         self.start_sse_client()
