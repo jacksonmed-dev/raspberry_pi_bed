@@ -1,11 +1,11 @@
 import os
-# import sys
-# import threading
-# from bed.bed import Bed
-# from body.body import Patient
-# from bed.sensor.directory_monitor import OnMyWatch
-# from massage.massage import Massage
-# from server.flask_server import create_server
+import sys
+import threading
+from bed.bed import Bed
+from body.body import Patient
+from bed.sensor.directory_monitor import OnMyWatch
+from massage.massage import Massage
+from server.flask_server import create_server
 from bluetoothconnection import bluetooth_connection
 
 if os.uname()[4][:3] == 'arm':
@@ -19,7 +19,8 @@ if __name__ == "__main__":
     # bed = Bed(patient=p)
     # watch = OnMyWatch(bed=bed, path=path)
     # app = create_server(bed=bed)
-    bluetooth_connection.run()
+    bluetooth = bluetooth_connection.Bluetooth()
+    bluetooth.run()
     # Adding Bluetooth Feature
 
     # if len(sys.argv) == 1:
