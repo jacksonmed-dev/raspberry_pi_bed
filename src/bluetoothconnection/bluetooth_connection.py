@@ -63,7 +63,7 @@ class Bluetooth:
         #     pass
 
     def send_data(self, data):
-        self.client_sock.send(bytes(data))
+        self.client_sock.send(bytes(data, encoding='utf8'))
 
 
     def run(self):
