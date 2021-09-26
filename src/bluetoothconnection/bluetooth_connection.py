@@ -29,7 +29,7 @@ class Bluetooth:
 
         subprocess.check_output(self.cmd, shell=True)
         time.sleep(2)
-        print("Waiting for connection on RFCOMM channel %d" % self.port)
+        print("Waiting for connection on RFCOMM channel 1")
         self.client_sock, self.client_info = self.server_sock.accept()
         print("Accepted connection from ", self.client_info)
         self.client_sock.send(self.get_ip())
