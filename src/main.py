@@ -6,6 +6,7 @@ from body.body import Patient
 from bed.sensor.directory_monitor import OnMyWatch
 from massage.massage import Massage
 from server.flask_server import create_server
+from bluetoothconnection import bluetooth_connection
 
 if os.uname()[4][:3] == 'arm':
     path = "/home/pi/Desktop/sensor_data"
@@ -14,11 +15,11 @@ else:
 
 
 if __name__ == "__main__":
-    p = Patient()
-    bed = Bed(patient=p)
-    watch = OnMyWatch(bed=bed, path=path)
-    app = create_server(bed=bed)
-
+    # p = Patient()
+    # bed = Bed(patient=p)
+    # watch = OnMyWatch(bed=bed, path=path)
+    # app = create_server(bed=bed)
+    bluetooth_connection.run()
     # Adding Bluetooth Feature
 
     # if len(sys.argv) == 1:
@@ -31,5 +32,5 @@ if __name__ == "__main__":
     #     threading.Thread(message.start())
     # else:
     #     print("Invalid argument passed")
-    threading.Thread(target=bed.get_pressure_sensor().start_sse_client).start()
-    threading.Thread(app.run(host='0.0.0.0', debug=False, use_reloader=False))
+    # threading.Thread(target=bed.get_pressure_sensor().start_sse_client).start()
+    # threading.Thread(app.run(host='0.0.0.0', debug=False, use_reloader=False))
