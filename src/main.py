@@ -1,11 +1,11 @@
 import os
-import sys
-import threading
-from bed.bed import Bed
-from body.body import Patient
-from bed.sensor.directory_monitor import OnMyWatch
-from massage.massage import Massage
-from server.flask_server import create_server
+# import sys
+# import threading
+# from bed.bed import Bed
+# from body.body import Patient
+# from bed.sensor.directory_monitor import OnMyWatch
+# from massage.massage import Massage
+# from server.flask_server import create_server
 from bluetoothconnection import bluetooth_connection
 
 if os.uname()[4][:3] == 'arm':
