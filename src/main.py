@@ -19,6 +19,8 @@ if __name__ == "__main__":
     watch = OnMyWatch(bed=bed, path=path)
     app = create_server(bed=bed)
 
+    # Adding Bluetooth Feature
+
     # if len(sys.argv) == 1:
     #     threading.Thread(bed.get_pressure_sensor().start_sse_client())
     #     # watch.run()
