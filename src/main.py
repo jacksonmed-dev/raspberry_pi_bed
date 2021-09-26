@@ -15,12 +15,11 @@ else:
 
 
 if __name__ == "__main__":
-    # p = Patient()
-    # bed = Bed(patient=p)
-    # watch = OnMyWatch(bed=bed, path=path)
-    # app = create_server(bed=bed)
+    p = Patient()
+    bed = Bed(patient=p)
+    watch = OnMyWatch(bed=bed, path=path)
     bluetooth = bluetooth_connection.Bluetooth()
-    bluetooth.run()
+    app = create_server(bed=bed, bluetooth=bluetooth)
     # Adding Bluetooth Feature
 
     # if len(sys.argv) == 1:
@@ -34,4 +33,4 @@ if __name__ == "__main__":
     # else:
     #     print("Invalid argument passed")
     # threading.Thread(target=bed.get_pressure_sensor().start_sse_client).start()
-    # threading.Thread(app.run(host='0.0.0.0', debug=False, use_reloader=False))
+    threading.Thread(app.run(host='0.0.0.0', debug=False, use_reloader=False))
