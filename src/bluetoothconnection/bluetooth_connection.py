@@ -62,7 +62,8 @@ class Bluetooth:
         # except IOError:
         #     pass
 
-
+    def send_data(self, data):
+        self.client_sock.send(bytes(data))
 
 
     def run(self):

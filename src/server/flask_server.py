@@ -12,6 +12,12 @@ def get_bed():
         return None
     return bed
 
+def get_bluetooth():
+    bluetooth = current_app.config["bluetooth"]
+    if bluetooth is None:
+        return None
+    return bluetooth
+
 
 # Currently a dummy function that returns dummy data.
 @server_endpoints.route('/patient/max_pressure', methods=["GET"])
@@ -74,10 +80,19 @@ def bed_status():
     bed = get_bed()
     return bed.generate_bed_status_json()
 
+@server_endpoints.route('/bluetooth/send', methods=["GET"])
+def test_bluetooth():
+    data_set = {"key1": [1, 2, 3], "key2": [4, 5, 6]}
+    json_dump = json.dumps(data_set)
+    bluetooth = get_bluetooth()
+    bluetooth.send_data(json_dump)
 
-def create_server(bed):
+
+
+def create_server(bed, bluetooth):
     app = Flask(__name__)
     app.register_blueprint(server_endpoints)
     app.config["bed"] = bed
+    app.config["bluetooth"] = bluetooth
 
     return app
