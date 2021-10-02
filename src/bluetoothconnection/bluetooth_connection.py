@@ -68,9 +68,9 @@ class Bluetooth:
 
         for i in range(length + 1):
             if i == range(len(temp)):
-                self.client_sock.send(bytes(temp[i * 1024:len(temp)], encoding='utf8'))
+                self.client_sock.send(temp[i * 1024:len(temp)])
             else:
-                self.client_sock.send(bytes(temp[i * 1024:(i + 1) * 1024], encoding='utf8'))
+                self.client_sock.send(temp[i * 1024:(i + 1) * 1024])
 
     def run(self):
         serveron = True
