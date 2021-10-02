@@ -34,6 +34,7 @@ class PressureSensor(threading.Thread):
         self.lock = threading.Lock()
         self.__sensor_inflatable_composition = np.split(np.arange(0, self.__sensor_rows), temp)
         self._callbacks = []
+        self._bluetooth_callback = []
         return
 
     def current_frame(self):
@@ -45,14 +46,21 @@ class PressureSensor(threading.Thread):
             self.__current_frame = new_value
         finally:
             self.lock.release()
-            self._notify_observers(new_value)
+            self._notify_observers()
 
-    def _notify_observers(self, new_value):
+    def _notify_observers(self):
         for callback in self._callbacks:
             callback()
 
+    def _notify_bluetooth_observers(self, new_value):
+        for callback in self._bluetooth_callback:
+            callback(new_value)
+
     def register_callback(self, callback):
         self._callbacks.append(callback)
+
+    def register_bluetooth_callback(self, callback):
+        self._bluetooth_callback.append(callback)
 
     def load_current_frame(self):
         return
@@ -115,6 +123,7 @@ class PressureSensor(threading.Thread):
         for response in sse:
             df = pd.read_json(response.data)
             if "readings" in df.columns:
+                self._notify_bluetooth_observers(response.data)
                 self.current_frame(df)
                 print(df)
 
