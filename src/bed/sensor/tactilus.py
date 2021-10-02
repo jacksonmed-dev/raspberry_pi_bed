@@ -123,7 +123,8 @@ class PressureSensor(threading.Thread):
         for response in sse:
             df = pd.read_json(response.data)
             if "readings" in df.columns:
-                self._notify_bluetooth_observers(response.data)
+                readings_array = str(df["readings"][0])
+                self._notify_bluetooth_observers(readings_array)
                 self.current_frame(df)
                 print(df)
 
