@@ -126,7 +126,7 @@ class PressureSensor(threading.Thread):
                 readings_array = str(df["readings"][0])
                 self._notify_bluetooth_observers(readings_array)
                 self.current_frame(df)
-                print(df)
+                # print(df)
 
 
     def run(self):
