@@ -68,8 +68,15 @@ class Bluetooth:
 
         for i in range(length + 1):
             if i == range(len(temp)):
+                print("Sending: ")
+                print(temp[i * 1024:len(temp)])
+                print(len(temp[i * 1024:len(temp)]))
                 self.client_sock.send(temp[i * 1024:len(temp)])
+                time.sleep(0.2)
             else:
+                print("Sending Final: ")
+                print(temp[i * 1024:(i + 1) * 1024])
+                print(len(temp[i * 1024:(i + 1) * 1024]))
                 self.client_sock.send(temp[i * 1024:(i + 1) * 1024])
 
     def run(self):
