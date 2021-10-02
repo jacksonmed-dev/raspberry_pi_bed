@@ -22,6 +22,7 @@ if __name__ == "__main__":
     # watch = OnMyWatch(bed=bed, path=path)
     bluetooth = Bluetooth()
     app = create_server(bed=bed, bluetooth=bluetooth)
+
     bed.get_pressure_sensor().register_bluetooth_callback(bluetooth.send_data)
     # Adding Bluetooth Feature
 
