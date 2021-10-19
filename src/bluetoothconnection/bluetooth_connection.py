@@ -33,6 +33,7 @@ class Bluetooth:
         self.client_sock, self.client_info = self.server_sock.accept()
         print("Accepted connection from ", self.client_info)
         self.client_sock.send(self.get_ip())
+        print("IP address sent")
 
 
     def get_ip(self):
@@ -47,20 +48,18 @@ class Bluetooth:
             s.close()
         return IP
 
-
     def client_connect(self):
-        while True:
-            self.client_sock.send(bytes("Hello Back", "utf-8"))
-            time.sleep(5)
-        # try:
-        #     while True:
-        #         data = client_sock.recv(1024)
-        #         if len(data) == 0: break
-        #         print("received [%s]" % data)
-        #         # print("get ip: " + get_ip())
-        #         client_sock.send(bytes("Hello Back", "utf-8"))
-        # except IOError:
-        #     pass
+        # client_sock, client_info = self.server_sock.accept()
+        print("Accepted connection from ", self.client_info)
+        self.client_sock.send(self.get_ip())
+        try:
+            while True:
+                data = self.client_sock.recv(1024)
+                if len(data) == 0: break
+                print("received [%s]" % data)
+                # print("get ip: " + get_ip())
+        except IOError:
+            pass
 
     def send_data(self, data):
         temp = bytes(data, encoding='utf8')
@@ -79,10 +78,24 @@ class Bluetooth:
                 print(len(temp[i * 1024:(i + 1) * 1024]))
                 self.client_sock.send(temp[i * 1024:(i + 1) * 1024])
 
+    def send_dummy_data(self):
+        i = 0
+        while True:
+            self.send_data("Sending Dummy Data {}".format(i))
+            i = i + 1
+            time.sleep(5)
+
     def run(self):
         serveron = True
-        while (serveron == True):
-            self.client_connect()
-            print("disconnected")
-            # client_sock.close()
-            self.server_sock.close()
+        thread1 = threading.Thread(target=self.client_connect)
+        thread2 = threading.Thread(target=self.send_dummy_data)
+        thread1.start()
+        thread2.start()
+
+        # print("Starting run function")
+        # while (serveron == True):
+        #     print("Waiting for connection on RFCOMM channel %d" % self.port)
+        #     self.client_connect()
+        #     print("disconnected")
+        #     # client_sock.close()
+        #     self.server_sock.close()
