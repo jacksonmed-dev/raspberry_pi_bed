@@ -23,6 +23,7 @@ if __name__ == "__main__":
     bluetooth = Bluetooth()
     app = create_server(bed=bed, bluetooth=bluetooth)
 
+    # Register Bluetooth callback
     bed.get_pressure_sensor().register_bluetooth_callback(bluetooth.send_data)
     # Adding Bluetooth Feature
 
@@ -36,5 +37,6 @@ if __name__ == "__main__":
     #     threading.Thread(message.start())
     # else:
     #     print("Invalid argument passed")
+    bluetooth.run()
     threading.Thread(target=bed.get_pressure_sensor().start_sse_client).start()
     threading.Thread(app.run(host='0.0.0.0', debug=False, use_reloader=False))

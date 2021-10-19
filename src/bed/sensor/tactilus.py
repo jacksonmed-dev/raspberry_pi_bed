@@ -128,6 +128,5 @@ class PressureSensor(threading.Thread):
                 self.current_frame(df)
                 # print(df)
 
-
     def run(self):
         self.start_sse_client()
