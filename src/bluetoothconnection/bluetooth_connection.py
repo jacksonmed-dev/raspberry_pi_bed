@@ -2,6 +2,7 @@ from bluetooth import *
 import socket
 import subprocess
 import time
+import threading
 
 # Subprocess has to be run after bluetoothservice is up, therefore the sleep is there
 
