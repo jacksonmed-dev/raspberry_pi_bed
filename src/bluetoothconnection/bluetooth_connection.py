@@ -52,7 +52,7 @@ class Bluetooth:
     def client_connect(self):
         # client_sock, client_info = self.server_sock.accept()
         print("Accepted connection from ", self.client_info)
-        self.client_sock.send(self.get_ip())
+        #self.client_sock.send(self.get_ip())
         try:
             while True:
                 data = self.client_sock.recv(1024)
