@@ -33,8 +33,8 @@ class Bluetooth:
         print("Waiting for connection on RFCOMM channel 1")
         self.client_sock, self.client_info = self.server_sock.accept()
         print("Accepted connection from ", self.client_info)
-        self.client_sock.send(self.get_ip())
-        print("IP address sent")
+        # self.client_sock.send(self.get_ip())
+        # print("IP address sent")
 
 
     def get_ip(self):
