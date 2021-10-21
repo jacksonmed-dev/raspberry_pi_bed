@@ -82,7 +82,7 @@ class Bluetooth:
     def send_dummy_data(self):
         i = 0
         while True:
-            self.send_data("Sending Dummy Data {}".format(i))
+            self.send_data("@Sending Dummy Data {}*".format(i))
             i = i + 1
             time.sleep(5)
 
