@@ -63,27 +63,30 @@ class Bluetooth:
             pass
 
     def send_data(self, data):
+        header = bytes("!", encoding='utf8')
+        trailer = bytes("*", encoding="utf8")
         temp = bytes(data, encoding='utf8')
-        length = int(len(temp) / 1024)
+        message = header + temp + trailer
+        length = int(len(message) / 1024)
 
         for i in range(length + 1):
-            if i == range(len(temp)):
+            if i == range(len(message)):
                 print("Sending: ")
-                print(temp[i * 1024:len(temp)])
-                print(len(temp[i * 1024:len(temp)]))
-                self.client_sock.send(temp[i * 1024:len(temp)])
+                print(message[i * 1024:len(message)])
+                print(len(message[i * 1024:len(message)]))
+                self.client_sock.send(message[i * 1024:len(message)])
                 time.sleep(0.2)
             else:
                 print("Sending Final: ")
-                print(temp[i * 1024:(i + 1) * 1024])
-                print(len(temp[i * 1024:(i + 1) * 1024]))
-                self.client_sock.send(temp[i * 1024:(i + 1) * 1024])
+                print(message[i * 1024:(i + 1) * 1024])
+                print(len(message[i * 1024:(i + 1) * 1024]))
+                self.client_sock.send(message[i * 1024:(i + 1) * 1024])
 
     def send_dummy_data(self):
         time.sleep(4)
         i = 0
         while True:
-            self.send_data("@Sending Dummy Data {}*".format(i))
+            self.send_data("Sending Dummy Data {}".format(i))
             i = i + 1
             time.sleep(5)
 
@@ -93,11 +96,3 @@ class Bluetooth:
         # thread2 = threading.Thread(target=self.send_dummy_data)
         thread1.start()
         # thread2.start()
-
-        # print("Starting run function")
-        # while (serveron == True):
-        #     print("Waiting for connection on RFCOMM channel %d" % self.port)
-        #     self.client_connect()
-        #     print("disconnected")
-        #     # client_sock.close()
-        #     self.server_sock.close()
