@@ -89,9 +89,9 @@ class Bluetooth:
     def run(self):
         serveron = True
         thread1 = threading.Thread(target=self.client_connect)
-        # thread2 = threading.Thread(target=self.send_dummy_data)
+        thread2 = threading.Thread(target=self.send_dummy_data)
         thread1.start()
-        # thread2.start()
+        thread2.start()
 
         # print("Starting run function")
         # while (serveron == True):
