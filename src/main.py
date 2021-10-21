@@ -40,4 +40,4 @@ if __name__ == "__main__":
     bluetooth.run()
     bluetooth.send_dummy_data()
     threading.Thread(target=bed.get_pressure_sensor().start_sse_client).start()
-    threading.Thread(app.run(host='0.0.0.0', debug=False, use_reloader=False))
+    # threading.Thread(app.run(host='0.0.0.0', debug=False, use_reloader=False))
