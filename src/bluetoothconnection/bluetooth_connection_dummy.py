@@ -23,15 +23,41 @@ class Bluetooth:
         # self.client_sock, self.client_info = self.server_sock.accept()
         # print("Accepted connection from ", self.client_info)
         self._gpio_callbacks = []
+        self._bed_status_callbacks = []
+        self._bed_massage_callbacks = []
         # self.client_sock.send(self.get_ip())
         # print("IP address sent")
 
-    def send_data(self, data):
+    def _notify_bed_massage(self, value):
+        for callback in self._bed_massage_callbacks:
+            callback(value)
+
+    def register_bed_massage_callback(self, callback):
+        self._bed_massage_callbacks.append(callback)
+
+    def _notify_bed_status_observers(self):
+        for callback in self._bed_status_callbacks:
+            callback()
+
+    def register_bed_status_callback(self, callback):
+        self._bed_status_callbacks.append(callback)
+
+    def _notify_gpio_observers(self, new_value, state):
+        # Send callback to set_relay function in gpio.py
+        for callback in self._gpio_callbacks:
+            callback(new_value, state)
+
+    def register_gpio_callback(self, callback):
+        self._gpio_callbacks.append(callback)
+
+    def send_data(self, data, header_string):
+        header = bytes(header_string, encoding='utf8')
+        trailer = bytes("*", encoding="utf8")
         temp = bytes(data, encoding='utf8')
+        message = header + temp + trailer
         print("send_data function called")
         print("Data sent: ")
-        length = int(len(temp) / 1024)
-        length2 = len(temp) / 1024
+        length = int(len(message) / 1024)
 
         for i in range(length + 1):
             if i == range(len(temp)):
@@ -57,6 +83,16 @@ class Bluetooth:
             pin = int(temp[1])
             state = int(temp[2])
             self._notify_gpio_observers(pin, state)
+            return
+        if temp[0] == '@':
+            value = int(temp[1])
+            self._notify_bed_massage(value)
+            # setup massage
+            return
+        if temp[0] == '#':
+            self._notify_bed_status_observers()
+            # send the bed json message back
+            return
 
     def _notify_gpio_observers(self, new_value, state):
         # Send callback to set_relay function in gpio.py

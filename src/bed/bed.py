@@ -119,7 +119,7 @@ class Bed:
 
     def send_bed_status_bluetooth(self):
         data = str(self.generate_bed_status_json())
-        self.__bluetooth.send_data(bytes(data, encoding="utf8"), header_string="@")
+        self.__bluetooth.send_data(data, header_string="@")
 
     def print_stats(self):
         print("Directory Modified")
@@ -160,6 +160,9 @@ class Bed:
 
     def set_new_massage(self):
         self.__massage = Massage(gpio=self.__bed_gpio)
+
+    def get_bluetooth(self):
+        return self.__bluetooth
 
     def massage(self, state):
         if state == 0:

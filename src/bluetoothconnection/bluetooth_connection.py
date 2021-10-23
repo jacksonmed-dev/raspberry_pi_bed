@@ -74,12 +74,14 @@ class Bluetooth:
             pin = int(temp[1])
             state = int(temp[2])
             self._notify_gpio_observers(pin, state)
+            return
         if temp[0] == '@':
             value = int(temp[1])
             self._notify_bed_massage(value)
             #setup massage
             return
         if temp[0] == '#':
+            self._notify_bed_status_observers()
             # send the bed json message back
             return
 
