@@ -24,7 +24,7 @@ class Gpio:
             time.sleep(0.1)
 
     def set_relay(self, pin, state):
-        # enable all pins
+        # enable single pin
         self.__gpio_pins[pin]["state"] = state
 
     def set_relays(self, pins, state):

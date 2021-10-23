@@ -4,12 +4,12 @@ import subprocess
 import time
 import threading
 
+
 # Subprocess has to be run after bluetoothservice is up, therefore the sleep is there
 
 
 class Bluetooth:
     cmd = 'hciconfig hci0 piscan'
-
 
     def __init__(self):
 
@@ -33,9 +33,9 @@ class Bluetooth:
         print("Waiting for connection on RFCOMM channel 1")
         self.client_sock, self.client_info = self.server_sock.accept()
         print("Accepted connection from ", self.client_info)
+        self._gpio_callbacks = []
         # self.client_sock.send(self.get_ip())
         # print("IP address sent")
-
 
     def get_ip(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -52,15 +52,34 @@ class Bluetooth:
     def client_connect(self):
         # client_sock, client_info = self.server_sock.accept()
         print("Accepted connection from ", self.client_info)
-        #self.client_sock.send(self.get_ip())
+        # self.client_sock.send(self.get_ip())
         try:
             while True:
                 data = self.client_sock.recv(1024)
                 if len(data) == 0: break
+                self.switch_command(data)
                 print("received [%s]" % data)
+
                 # print("get ip: " + get_ip())
+
         except IOError:
             pass
+
+    def switch_command(self, data):
+        temp = data.decode("utf-8")
+        if len(temp) == 0: return
+        if temp[0] == '!':
+            pin = int(temp[1])
+            state = int(temp[2])
+            self._notify_gpio_observers(pin, state)
+
+    def _notify_gpio_observers(self, new_value, state):
+        # Send callback to set_relay function in gpio.py
+        for callback in self._gpio_callbacks:
+            callback(new_value, state)
+
+    def register_gpio_callback(self, callback):
+        self._gpio_callbacks.append(callback)
 
     def send_data(self, data):
         header = bytes("!", encoding='utf8')

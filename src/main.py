@@ -25,6 +25,7 @@ if __name__ == "__main__":
 
     # Register Bluetooth callback
     bed.get_pressure_sensor().register_bluetooth_callback(bluetooth.send_data)
+    bluetooth.register_gpio_callback(bed.get_gpio().set_relay)
     # Adding Bluetooth Feature
 
     # if len(sys.argv) == 1:
