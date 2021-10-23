@@ -115,7 +115,7 @@ class Bluetooth:
                 print(message[i * 1024:len(message)])
                 print(len(message[i * 1024:len(message)]))
                 self.client_sock.send(message[i * 1024:len(message)])
-                time.sleep(0.2)
+                # time.sleep(0.2)
             else:
                 print("Sending: ")
                 print(message[i * 1024:(i + 1) * 1024])
