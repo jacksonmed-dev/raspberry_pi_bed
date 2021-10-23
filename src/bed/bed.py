@@ -119,7 +119,7 @@ class Bed:
 
     def send_bed_status_bluetooth(self):
         data = str(self.generate_bed_status_json())
-        self.__bluetooth.send_data(bytes(data, encoding="utf8"))
+        self.__bluetooth.send_data(bytes(data, encoding="utf8"), header_string="@")
 
     def print_stats(self):
         print("Directory Modified")

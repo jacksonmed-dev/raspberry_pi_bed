@@ -79,6 +79,9 @@ class Bluetooth:
             self._notify_bed_massage(value)
             #setup massage
             return
+        if temp[0] == '#':
+            # send the bed json message back
+            return
 
     def _notify_bed_massage(self, value):
         for callback in self._bed_massage_callbacks:
@@ -102,8 +105,8 @@ class Bluetooth:
     def register_gpio_callback(self, callback):
         self._gpio_callbacks.append(callback)
 
-    def send_data(self, data):
-        header = bytes("!", encoding='utf8')
+    def send_data(self, data, header_string):
+        header = bytes(header_string, encoding='utf8')
         trailer = bytes("*", encoding="utf8")
         temp = bytes(data, encoding='utf8')
         message = header + temp + trailer
@@ -126,7 +129,7 @@ class Bluetooth:
         time.sleep(4)
         i = 0
         while True:
-            self.send_data("Sending Dummy Data {}".format(i))
+            self.send_data("Sending Dummy Data {}".format(i), header_string="@")
             i = i + 1
             time.sleep(5)
 

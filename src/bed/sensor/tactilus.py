@@ -54,7 +54,7 @@ class PressureSensor(threading.Thread):
 
     def _notify_bluetooth_observers(self, new_value):
         for callback in self._bluetooth_callback:
-            callback(new_value)
+            callback(new_value, "!")
 
     def register_callback(self, callback):
         self._callbacks.append(callback)
