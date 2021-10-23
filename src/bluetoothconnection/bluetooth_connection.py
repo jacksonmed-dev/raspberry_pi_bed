@@ -72,6 +72,9 @@ class Bluetooth:
             pin = int(temp[1])
             state = int(temp[2])
             self._notify_gpio_observers(pin, state)
+        if temp[0] == '@':
+            #setup massage
+            return
 
     def _notify_gpio_observers(self, new_value, state):
         # Send callback to set_relay function in gpio.py
