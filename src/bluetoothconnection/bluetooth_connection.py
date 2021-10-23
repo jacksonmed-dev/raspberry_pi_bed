@@ -110,14 +110,14 @@ class Bluetooth:
         length = int(len(message) / 1024)
 
         for i in range(length + 1):
-            if i == range(len(message)):
-                print("Sending: ")
+            if i * 1024 > len(message):
+                print("Sending Final: ")
                 print(message[i * 1024:len(message)])
                 print(len(message[i * 1024:len(message)]))
                 self.client_sock.send(message[i * 1024:len(message)])
                 time.sleep(0.2)
             else:
-                print("Sending Final: ")
+                print("Sending: ")
                 print(message[i * 1024:(i + 1) * 1024])
                 print(len(message[i * 1024:(i + 1) * 1024]))
                 self.client_sock.send(message[i * 1024:(i + 1) * 1024])
