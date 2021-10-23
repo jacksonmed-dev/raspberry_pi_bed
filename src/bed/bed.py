@@ -12,8 +12,10 @@ from massage.massage import Massage
 
 if os.uname()[4][:3] == 'arm':
     from bed.sensor.gpio import Gpio
+    from bluetoothconnection.bluetooth_connection import Bluetooth
 else:
     from bed.sensor.dummy_gpio import Gpio
+    from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
 
 
 # A bed contains the following:
@@ -33,9 +35,11 @@ class Bed:
 
     __massage = Massage(__bed_gpio)
 
-    def __init__(self, patient: Patient):
+    def __init__(self, patient: Patient, bluetooth: Bluetooth):
         self.__patient = patient
+        self.__bluetooth = bluetooth
         self.__pressure_sensor.register_callback(self.analyze_sensor_data)
+        self.__bluetooth.register_bed_massage_callback(self.massage)
         return
 
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
@@ -113,6 +117,10 @@ class Bed:
         })
         return json_final
 
+    def send_bed_status_bluetooth(self):
+        data = str(self.generate_bed_status_json())
+        self.__bluetooth.send_data(bytes(data, encoding="utf8"))
+
     def print_stats(self):
         print("Directory Modified")
         print("Body Stats:\n{}\n".format(self.__patient.get_body_stats_df()))
@@ -152,3 +160,14 @@ class Bed:
 
     def set_new_massage(self):
         self.__massage = Massage(gpio=self.__bed_gpio)
+
+    def massage(self, state):
+        if state == 0:
+            self.stop_massage()
+        if state == 1:
+            self.set_new_massage()
+            self.__massage.set_massage_status(True)
+            self.__massage.run()
+
+    def stop_massage(self):
+        self.__massage.set_massage_status(False)

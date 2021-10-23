@@ -18,14 +18,16 @@ else:
 
 if __name__ == "__main__":
     p = Patient()
-    bed = Bed(patient=p)
+
     # watch = OnMyWatch(bed=bed, path=path)
     bluetooth = Bluetooth()
+    bed = Bed(patient=p, bluetooth=bluetooth)
     app = create_server(bed=bed, bluetooth=bluetooth)
 
     # Register Bluetooth callback
     bed.get_pressure_sensor().register_bluetooth_callback(bluetooth.send_data)
     bluetooth.register_gpio_callback(bed.get_gpio().set_relay)
+    bluetooth.register_bed_status_callback(bed.send_bed_status_bluetooth)
     # Adding Bluetooth Feature
 
     # if len(sys.argv) == 1:
