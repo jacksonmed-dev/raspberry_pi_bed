@@ -167,7 +167,7 @@ class Bed:
         if state == 1:
             self.set_new_massage()
             self.__massage.set_massage_status(True)
-            self.__massage.run()
+            self.__massage.start()
 
     def stop_massage(self):
         self.__massage.set_massage_status(False)
