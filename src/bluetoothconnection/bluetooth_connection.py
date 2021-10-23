@@ -75,6 +75,8 @@ class Bluetooth:
             state = int(temp[2])
             self._notify_gpio_observers(pin, state)
         if temp[0] == '@':
+            value = int(temp[1])
+            self._notify_bed_massage(value)
             #setup massage
             return
 
