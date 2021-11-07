@@ -112,9 +112,14 @@ class PressureSensor(threading.Thread):
     def start_sse_client(self):
         url = "http://10.0.0.1/api/sse"
         sse = SSEClient(url)
+        i = 0
+        path = "/data/"
         for response in sse:
             df = pd.read_json(response.data)
+            filename = "data" + str(i) + ".csv"
+            i = i + 1
             if "readings" in df.columns:
+                df.to_csv(path + filename)
                 self.current_frame(df)
                 print(df)
 
