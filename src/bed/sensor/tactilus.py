@@ -138,6 +138,6 @@ class PressureSensor(threading.Thread):
         print(current_path)
         path = "/data/"
         filename = "data" + str(i) + ".csv"
-        df.to_csv(path + filename)
+        df.to_csv(current_path + path + filename)
     def run(self):
         self.start_sse_client()
