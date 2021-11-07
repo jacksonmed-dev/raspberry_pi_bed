@@ -1,3 +1,11 @@
+import pathlib
+import time
+from os import listdir
+from os.path import isfile, join
+
+import pandas as pd
+
+
 class Bluetooth:
 
     def __init__(self):
@@ -66,6 +74,16 @@ class Bluetooth:
             else:
                 print(temp[i * 1024:(i + 1) * 1024])
                 print(len(temp[i * 1024:(i + 1) * 1024]))
+
+    def send_dummy_data(self):
+        current_path = str(pathlib.Path(__file__).parent.resolve())
+        path_to_data = current_path + "/data/"
+        only_files = [f for f in listdir(path_to_data) if isfile(join(path_to_data, f))]
+        while True:
+            for file in only_files:
+                df = pd.read_csv(path_to_data + file)
+                self.send_data(df["readings"][0], header_string="@")
+                time.sleep(5)
 
     def client_connect(self, data):
         print("Accepted connection from ", "Python Test")

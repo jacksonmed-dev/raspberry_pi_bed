@@ -1,9 +1,13 @@
+import pathlib
+
+import pandas as pd
 from bluetooth import *
 import socket
 import subprocess
 import time
 import threading
-
+from os import listdir
+from os.path import isfile, join
 
 # Subprocess has to be run after bluetoothservice is up, therefore the sleep is there
 
@@ -128,16 +132,22 @@ class Bluetooth:
                 self.client_sock.send(message[i * 1024:(i + 1) * 1024])
 
     def send_dummy_data(self):
-        time.sleep(4)
-        i = 0
+        current_path = str(pathlib.Path(__file__).parent.resolve())
+        path_to_data = current_path + "/data/"
+        only_files = [f for f in listdir(path_to_data) if isfile(join(path_to_data, f))]
         while True:
-            self.send_data("Sending Dummy Data {}".format(i), header_string="@")
-            i = i + 1
-            time.sleep(5)
+            for file in only_files:
+                df = pd.read_csv(path_to_data + file)
+                self.send_data(df["readings"][0], header_string="@")
+                i = i + 1
+                time.sleep(5)
 
-    def run(self):
+    def run(self, send_dummy_data):
         serveron = True
         thread1 = threading.Thread(target=self.client_connect)
-        # thread2 = threading.Thread(target=self.send_dummy_data)
-        thread1.start()
-        # thread2.start()
+        if send_dummy_data:
+            thread2 = threading.Thread(target=self.send_dummy_data)
+            thread1.start()
+            thread2.start()
+        else:
+            thread1.start()

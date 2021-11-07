@@ -6,6 +6,7 @@ from body.body import Patient
 # from bed.sensor.directory_monitor import OnMyWatch
 from massage.massage import Massage
 from server.flask_server import create_server
+
 # from bluetoothconnection import bluetooth_connection
 
 if os.uname()[4][:3] == 'arm':
@@ -40,7 +41,6 @@ if __name__ == "__main__":
     #     threading.Thread(message.start())
     # else:
     #     print("Invalid argument passed")
-    bluetooth.run()
-    # bluetooth.send_dummy_data()
+    bluetooth.run(send_dummy_data=True)
     threading.Thread(target=bed.get_pressure_sensor().start_sse_client).start()
     # threading.Thread(app.run(host='0.0.0.0', debug=False, use_reloader=False))
