@@ -134,7 +134,7 @@ class PressureSensor(threading.Thread):
                 # print(df)
 
     def save_df(self, i, df):
-        current_path = pathlib.Path(__file__).parent.resolve()
+        current_path = str(pathlib.Path(__file__).parent.resolve())
         print(current_path)
         path = "/data/"
         filename = "data" + str(i) + ".csv"
