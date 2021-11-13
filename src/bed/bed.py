@@ -4,6 +4,7 @@ import pandas as pd
 from bed.sensor.tactilus import PressureSensor
 from body.body import Patient
 from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
+import bluetoothconnection.bluetooth_constants as bluetooth_constants
 from datetime import timedelta
 import numpy as np
 import os
@@ -119,7 +120,7 @@ class Bed:
 
     def send_bed_status_bluetooth(self):
         data = str(self.generate_bed_status_json())
-        self.__bluetooth.send_data(data, header_string="@")
+        self.__bluetooth.send_data(data, header_string=bluetooth_constants.BED_DATA_RESPONSE)
 
     def print_stats(self):
         print("Directory Modified")
