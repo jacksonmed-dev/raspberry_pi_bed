@@ -138,7 +138,7 @@ class Bluetooth:
         while True:
             for file in only_files:
                 df = pd.read_csv(path_to_data + file)
-                self.send_data(df["readings"][0], header_string="@")
+                self.send_data(df["readings"][0], header_string="!")
                 i = i + 1
                 time.sleep(5)
 
