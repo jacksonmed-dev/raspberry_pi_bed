@@ -72,20 +72,21 @@ class Bluetooth:
         except IOError:
             pass
 
+# Add error checking when receiving the data
     def switch_command(self, data):
         temp = data.decode("utf-8")
         if len(temp) == 0: return
-        if temp[0] == '!':
+        if temp[0] == bluetooth_constants.INFLATABLE_REGION_HEADER:
             pin = int(temp[1])
             state = int(temp[2])
             self._notify_gpio_observers(pin, state)
             return
-        if temp[0] == '@':
+        if temp[0] == bluetooth_constants.MASSAGE_HEADER:
             value = int(temp[1])
             self._notify_bed_massage(value)
             #setup massage
             return
-        if temp[0] == '#':
+        if temp[0] == bluetooth_constants.BED_DATA_RESPONSE:
             self._notify_bed_status_observers()
             # send the bed json message back
             return
@@ -114,7 +115,7 @@ class Bluetooth:
 
     def send_data(self, data, header_string):
         header = bytes(header_string, encoding='utf8')
-        trailer = bytes("*", encoding="utf8")
+        trailer = bytes(bluetooth_constants.TRAILER, encoding="utf8")
         temp = bytes(data, encoding='utf8')
         message = header + temp + trailer
         length = int(len(message) / 1024)
