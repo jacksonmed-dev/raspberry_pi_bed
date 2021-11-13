@@ -1,5 +1,6 @@
 import pathlib
 
+import bluetooth_constants
 import pandas as pd
 from bluetooth import *
 import socket
@@ -138,8 +139,8 @@ class Bluetooth:
         while True:
             for file in only_files:
                 df = pd.read_csv(path_to_data + file)
-                self.send_data(df["readings"][0], header_string="!")
-                time.sleep(5)
+                self.send_data(df["readings"][0], header_string=bluetooth_constants.BED_DATA_RESPONSE)
+                time.sleep(3)
 
     def run(self, send_dummy_data):
         serveron = True
