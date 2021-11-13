@@ -1,6 +1,6 @@
 import pathlib
 
-import bluetooth_constants
+import bluetoothconnection.bluetooth_constants as bluetooth_constants
 import pandas as pd
 from bluetooth import *
 import socket
