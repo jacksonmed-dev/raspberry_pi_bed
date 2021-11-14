@@ -173,6 +173,13 @@ class Bed:
             self.__bed_stats_automatic = True
         print("Bed Stats Automatic: {}".format(self.__bed_stats_automatic))
 
+    def generate_bed_status_json(self):
+        gpio = self.__bed_gpio.get_gpio_pins()
+        json_final = json.dumps({
+            "gpio_pins": [value for key, value in gpio.items()],
+        })
+        return json_final
+
     def massage(self, state):
         if state == 0:
             self.stop_massage()
