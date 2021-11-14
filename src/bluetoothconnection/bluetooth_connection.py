@@ -91,7 +91,7 @@ class Bluetooth:
             self._notify_bed_status_observers() # send the bed json message back
             return
         if temp[0] == bluetooth_constants.BED_DATA_RESPONSE_AUTOMATIC:
-            self._bed_status_automatic_callbacks  # send the bed json message back
+            self._notify_bed_status_automatic_observers() # send the bed json message back
             return
 
     def _notify_bed_massage(self, value):
