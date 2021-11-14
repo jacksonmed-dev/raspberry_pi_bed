@@ -29,6 +29,7 @@ if __name__ == "__main__":
     bed.get_pressure_sensor().register_bluetooth_callback(bluetooth.send_data)
     bluetooth.register_gpio_callback(bed.get_gpio().set_relay)
     bluetooth.register_bed_status_callback(bed.send_bed_status_bluetooth)
+    bluetooth.register_bed_status_automatic(bed.set_bed_stats_automatic)
     # Adding Bluetooth Feature
 
     # if len(sys.argv) == 1:

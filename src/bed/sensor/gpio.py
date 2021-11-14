@@ -1,3 +1,4 @@
+import json
 import time
 
 import RPi.GPIO as GPIO
@@ -6,8 +7,10 @@ import RPi.GPIO as GPIO
 class Gpio:
     __rasp_pi_available_gpio = []
     __gpio_pins = {}
+    __gpio_status_json = ""
 
     def __init__(self, inflatable_regions):
+        self._observers = []
         GPIO.setmode(GPIO.BCM)
         # GPIO.setmode(GPIO.BOARD)
 
@@ -26,6 +29,8 @@ class Gpio:
     def set_relay(self, pin, state):
         # enable single pin
         self.__gpio_pins[pin]["state"] = state
+        for callback in self._observers:
+            callback()
 
     def set_relays(self, pins, state):
         # enable all pins
@@ -34,6 +39,8 @@ class Gpio:
         else:
             for pin in pins:
                 self.__gpio_pins[pin]["state"] = state
+        for callback in self._observers:
+            callback()
 
     def change_relay_state(self):
         for key, value in self.__gpio_pins.items():
@@ -44,9 +51,14 @@ class Gpio:
                 GPIO.output(value["gpio_pin"], GPIO.LOW)  # Turn on
             else:
                 print("Error: GPIO pin could not be set, improper array value %d" % value)
+        for callback in self._observers:
+            callback()
 
     def get_num_gpio_pins(self):
         return len(self.__rasp_pi_available_gpio)
 
     def get_gpio_pins(self):
         return self.__gpio_pins
+
+    def register_observer(self, callback):
+        self._observers.append(callback)

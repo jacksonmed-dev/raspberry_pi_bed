@@ -40,6 +40,7 @@ class Bluetooth:
         print("Accepted connection from ", self.client_info)
         self._gpio_callbacks = []
         self._bed_status_callbacks = []
+        self._bed_status_automatic_callbacks = []
         self._bed_massage_callbacks = []
         # self.client_sock.send(self.get_ip())
         # print("IP address sent")
@@ -89,6 +90,9 @@ class Bluetooth:
         if temp[0] == bluetooth_constants.BED_DATA_RESPONSE:
             self._notify_bed_status_observers() # send the bed json message back
             return
+        if temp[0] == bluetooth_constants.BED_DATA_RESPONSE_AUTOMATIC:
+            self._bed_status_automatic_callbacks  # send the bed json message back
+            return
 
     def _notify_bed_massage(self, value):
         for callback in self._bed_massage_callbacks:
@@ -111,6 +115,14 @@ class Bluetooth:
 
     def register_gpio_callback(self, callback):
         self._gpio_callbacks.append(callback)
+
+    def _notify_bed_status_automatic_observers(self, new_value, state):
+        # Send callback to set_relay function in gpio.py
+        for callback in self._gpio_callbacks:
+            callback(new_value, state)
+
+    def register_bed_status_automatic(self, callback):
+        self._bed_status_automatic_callbacks.append(callback)
 
     def send_data(self, data, header_string):
         header = bytes(header_string, encoding='utf8')

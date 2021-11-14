@@ -31,6 +31,7 @@ class Bed:
     __relay_count = 8
     __bed_gpio = Gpio(inflatable_regions=__inflatable_regions)
     __pressure_sensor = PressureSensor(__inflatable_regions)
+    __bed_stats_automatic = False
     # __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
     #                                columns=['time', 'max_pressure'])
 
@@ -41,6 +42,7 @@ class Bed:
         self.__bluetooth = bluetooth
         self.__pressure_sensor.register_callback(self.analyze_sensor_data)
         self.__bluetooth.register_bed_massage_callback(self.massage)
+        self.__bed_gpio.register_observer(self.send_bed_status_bluetooth)
         return
 
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
@@ -111,16 +113,11 @@ class Bed:
                 self.__bed_gpio.set_relay(pin=index, state=1)
         return
 
-    def generate_bed_status_json(self):
-        gpio = self.__bed_gpio.get_gpio_pins()
-        json_final = json.dumps({
-            "gpio_pins": [value for key, value in gpio.items()],
-        })
-        return json_final
 
     def send_bed_status_bluetooth(self):
-        data = str(self.generate_bed_status_json())
-        self.__bluetooth.send_data(data, header_string=bluetooth_constants.BED_STATUS_RESPONSE)
+        if self.__bed_stats_automatic:
+            data = str(self.generate_bed_status_json())
+            self.__bluetooth.send_data(data, header_string=bluetooth_constants.BED_STATUS_RESPONSE)
 
     def print_stats(self):
         print("Directory Modified")
@@ -164,6 +161,12 @@ class Bed:
 
     def get_bluetooth(self):
         return self.__bluetooth
+
+    def set_bed_stats_automatic(self):
+        if self.__bed_stats_automatic:
+            self.__bed_stats_automatic = False
+        else:
+            self.__bed_stats_automatic = True
 
     def massage(self, state):
         if state == 0:
