@@ -41,6 +41,6 @@ if __name__ == "__main__":
     #     threading.Thread(message.start())
     # else:
     #     print("Invalid argument passed")
-    bluetooth.run(send_dummy_data=False)
+    bluetooth.run(send_dummy_data=True)
     threading.Thread(target=bed.get_pressure_sensor().start_sse_client).start()
     # threading.Thread(app.run(host='0.0.0.0', debug=False, use_reloader=False))
