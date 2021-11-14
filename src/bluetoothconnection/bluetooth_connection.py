@@ -118,7 +118,7 @@ class Bluetooth:
 
     def notify_bed_status_automatic_observers(self):
         # Send callback to set_relay function in gpio.py
-        for callback in self._gpio_callbacks:
+        for callback in self._bed_status_automatic_callbacks:
             callback()
 
     def register_bed_status_automatic(self, callback):
