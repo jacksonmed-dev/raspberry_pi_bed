@@ -115,6 +115,10 @@ class Bed:
 
 
     def send_bed_status_bluetooth(self):
+        data = str(self.generate_bed_status_json())
+        self.__bluetooth.send_data(data, header_string=bluetooth_constants.BED_STATUS_RESPONSE)
+
+    def send_bed_status_automatic_bluetooth(self):
         if self.__bed_stats_automatic:
             data = str(self.generate_bed_status_json())
             self.__bluetooth.send_data(data, header_string=bluetooth_constants.BED_STATUS_RESPONSE)
@@ -167,6 +171,7 @@ class Bed:
             self.__bed_stats_automatic = False
         else:
             self.__bed_stats_automatic = True
+        print("Bed Stats Automatic: {}".format(self.__bed_stats_automatic))
 
     def massage(self, state):
         if state == 0:
