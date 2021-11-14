@@ -91,7 +91,7 @@ class Bluetooth:
             self._notify_bed_status_observers() # send the bed json message back
             return
         if temp[0] == bluetooth_constants.BED_DATA_RESPONSE_AUTOMATIC:
-            self._notify_bed_status_automatic_observers() # send the bed json message back
+            self.notify_bed_status_automatic_observers() # send the bed json message back
             return
 
     def _notify_bed_massage(self, value):
@@ -116,10 +116,10 @@ class Bluetooth:
     def register_gpio_callback(self, callback):
         self._gpio_callbacks.append(callback)
 
-    def _notify_bed_status_automatic_observers(self, new_value, state):
+    def notify_bed_status_automatic_observers(self):
         # Send callback to set_relay function in gpio.py
         for callback in self._gpio_callbacks:
-            callback(new_value, state)
+            callback()
 
     def register_bed_status_automatic(self, callback):
         self._bed_status_automatic_callbacks.append(callback)
