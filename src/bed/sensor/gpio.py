@@ -29,8 +29,8 @@ class Gpio:
     def set_relay(self, pin, state):
         # enable single pin
         self.__gpio_pins[pin]["state"] = state
-        # for callback in self._observers:
-        #     callback()
+        for callback in self._observers:
+            callback()
 
     def set_relays(self, pins, state):
         # enable all pins
@@ -39,8 +39,8 @@ class Gpio:
         else:
             for pin in pins:
                 self.__gpio_pins[pin]["state"] = state
-        # for callback in self._observers:
-        #     callback()
+        for callback in self._observers:
+            callback()
 
     def change_relay_state(self):
         for key, value in self.__gpio_pins.items():
@@ -51,8 +51,8 @@ class Gpio:
                 GPIO.output(value["gpio_pin"], GPIO.LOW)  # Turn on
             else:
                 print("Error: GPIO pin could not be set, improper array value %d" % value)
-        # for callback in self._observers:
-        #     callback()
+        for callback in self._observers:
+            callback()
 
     def get_num_gpio_pins(self):
         return len(self.__rasp_pi_available_gpio)
