@@ -17,7 +17,7 @@ class PressureSensor(threading.Thread):
     __current_frame = pd.DataFrame()
     __sensor_ip = "192.168.86.51"
     __sensor_data = pd.DataFrame()
-    __sensor_threshold = 0.65
+    __sensor_threshold = 45
     __sensor_body_composition = {
         "head": [i for i in range(0, 9)],
         "shoulders": [i for i in range(10, 16)],
