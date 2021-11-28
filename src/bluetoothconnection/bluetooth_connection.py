@@ -131,18 +131,21 @@ class Bluetooth:
         message = header + temp + trailer
         length = int(len(message) / 1024)
 
-        for i in range(length + 1):
-            if i * 1024 > len(message):
-                print("Sending Final: ")
-                print(message[i * 1024:len(message)])
-                print(len(message[i * 1024:len(message)]))
-                self.client_sock.send(message[i * 1024:len(message)])
-                # time.sleep(0.2)
-            else:
-                print("Sending: ")
-                print(message[i * 1024:(i + 1) * 1024])
-                print(len(message[i * 1024:(i + 1) * 1024]))
-                self.client_sock.send(message[i * 1024:(i + 1) * 1024])
+        try:
+            for i in range(length + 1):
+                if i * 1024 > len(message):
+                    print("Sending Final: ")
+                    print(message[i * 1024:len(message)])
+                    print(len(message[i * 1024:len(message)]))
+                    self.client_sock.send(message[i * 1024:len(message)])
+                    # time.sleep(0.2)
+                else:
+                    print("Sending: ")
+                    print(message[i * 1024:(i + 1) * 1024])
+                    print(len(message[i * 1024:(i + 1) * 1024]))
+                    self.client_sock.send(message[i * 1024:(i + 1) * 1024])
+        except Exception as e:
+            print(e)
 
     def send_dummy_data(self):
         current_path = str(pathlib.Path(__file__).parent.resolve())
