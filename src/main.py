@@ -26,7 +26,7 @@ if __name__ == "__main__":
     app = create_server(bed=bed, bluetooth=bluetooth)
 
     # Register Bluetooth callback
-    bed.get_pressure_sensor().register_bluetooth_callback(bluetooth.send_data)
+    bed.get_pressure_sensor().register_bluetooth_callback(bluetooth.enqueue_bluetooth_data)
     bluetooth.register_gpio_callback(bed.get_gpio().set_relay)
     bluetooth.register_bed_status_callback(bed.send_bed_status_bluetooth)
     bluetooth.register_bed_status_automatic(bed.set_bed_stats_automatic)

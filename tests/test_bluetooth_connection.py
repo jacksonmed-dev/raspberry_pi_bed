@@ -1,5 +1,6 @@
 from unittest import TestCase
 from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
+import bluetoothconnection.bluetooth_constants as bluetooth_constants
 from bed.sensor.dummy_gpio import Gpio
 
 
@@ -9,6 +10,7 @@ class TestBluetoothConnection(TestCase):
     def setUpClass(cls):
         cls.test_file = "test_files/data.csv"
         cls.bluetooth_connection = Bluetooth()
+        cls.bluetooth_connection.run(send_dummy_data=False)
         cls.dummy_gpio = Gpio(inflatable_regions=20)
 
     def test_bluetooth_decode(self):
@@ -23,3 +25,17 @@ class TestBluetoothConnection(TestCase):
     def test_send_dummy_data(self):
         self.bluetooth_connection.send_dummy_data()
 
+    def test_bluetooth_queue_1(self):
+        try:
+            message = "Hello World"
+            self.bluetooth_connection.enqueue_bluetooth_data(message, bluetooth_constants.MASSAGE_START)
+        except Exception as e:
+            self.fail(e)
+
+    def test_bluetooth_queue_2(self):
+        try:
+            for i in range(1, 100):
+                message = "Hello World{}".format(i)
+                self.bluetooth_connection.enqueue_bluetooth_data(message, bluetooth_constants.MASSAGE_START)
+        except Exception as e:
+            self.fail(e)

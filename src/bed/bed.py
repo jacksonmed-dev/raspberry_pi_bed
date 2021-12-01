@@ -88,7 +88,9 @@ class Bed:
     # change
     def calculate_deflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
-        sensor_data_df = pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[sensor_region_body]
+        sensor_data_df = \
+        pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
+            sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)
         sensor_data_row_max_indices = sensor_data_row_max.index.tolist()
@@ -104,7 +106,9 @@ class Bed:
 
     def calculate_inflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
-        sensor_data_df = pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[sensor_region_body]
+        sensor_data_df = \
+        pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
+            sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)
 
@@ -113,15 +117,14 @@ class Bed:
                 self.__bed_gpio.set_relay(pin=index, state=1)
         return
 
-
     def send_bed_status_bluetooth(self):
         data = str(self.generate_bed_status_json())
-        self.__bluetooth.send_data(data, header_string=bluetooth_constants.BED_STATUS_RESPONSE)
+        self.__bluetooth.enqueue_bluetooth_data(data, header_string=bluetooth_constants.BED_STATUS_RESPONSE)
 
     def send_bed_status_automatic_bluetooth(self):
         if self.__bed_stats_automatic:
             data = str(self.generate_bed_status_json())
-            self.__bluetooth.send_data(data, header_string=bluetooth_constants.BED_STATUS_RESPONSE)
+            self.__bluetooth.enqueue_bluetooth_data(data, header_string=bluetooth_constants.BED_STATUS_RESPONSE)
 
     def print_stats(self):
         print("Directory Modified")
