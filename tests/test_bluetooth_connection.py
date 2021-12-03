@@ -1,3 +1,6 @@
+import random
+import string
+import time
 from unittest import TestCase
 from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
 import bluetoothconnection.bluetooth_constants as bluetooth_constants
@@ -32,6 +35,7 @@ class TestBluetoothConnection(TestCase):
         except Exception as e:
             self.fail(e)
 
+
     def test_bluetooth_queue_2(self):
         try:
             for i in range(1, 100):
@@ -39,3 +43,14 @@ class TestBluetoothConnection(TestCase):
                 self.bluetooth_connection.enqueue_bluetooth_data(message, bluetooth_constants.MASSAGE_START)
         except Exception as e:
             self.fail(e)
+
+    def test_bluetooth_queue_3(self):
+        try:
+            for i in range(1, 100):
+                message = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(1500)) + str(i)
+                self.bluetooth_connection.enqueue_bluetooth_data(message, bluetooth_constants.MASSAGE_START)
+        except Exception as e:
+            self.fail(e)
+        time.sleep(5)
+        return
+
