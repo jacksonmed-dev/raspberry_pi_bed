@@ -39,7 +39,12 @@ class Bluetooth:
         self.server_sock.listen(1)
         self.port = self.server_sock.getsockname()[1]
         self.uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
+        time.sleep(1)
 
+        self.establish_bluetooth_connection()
+
+
+    def establish_bluetooth_connection(self):
         advertise_service(self.server_sock, "SampleServer",
                           service_id=self.uuid,
                           service_classes=[self.uuid, SERIAL_PORT_CLASS],
@@ -48,12 +53,6 @@ class Bluetooth:
                           )
 
         subprocess.check_output(self.cmd, shell=True)
-        time.sleep(1)
-
-        self.establish_bluetooth_connection()
-
-
-    def establish_bluetooth_connection(self):
         print("Waiting for connection on RFCOMM channel 1")
         self.client_sock, self.client_info = self.server_sock.accept()
         print("Accepted connection from ", self.client_info)
