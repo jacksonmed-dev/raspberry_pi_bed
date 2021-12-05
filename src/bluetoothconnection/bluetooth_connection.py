@@ -33,11 +33,6 @@ class Bluetooth:
         self._bed_massage_callbacks = []
 
         self.queue = Queue()
-
-        self.server_sock = BluetoothSocket(RFCOMM)
-        self.server_sock.bind(("", PORT_ANY))
-        self.server_sock.listen(1)
-        self.port = self.server_sock.getsockname()[1]
         self.uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
         time.sleep(1)
 
@@ -45,6 +40,11 @@ class Bluetooth:
 
 
     def establish_bluetooth_connection(self):
+        self.server_sock = BluetoothSocket(RFCOMM)
+        self.server_sock.bind(("", PORT_ANY))
+        self.server_sock.listen(1)
+        self.port = self.server_sock.getsockname()[1]
+
         advertise_service(self.server_sock, "SampleServer",
                           service_id=self.uuid,
                           service_classes=[self.uuid, SERIAL_PORT_CLASS],
