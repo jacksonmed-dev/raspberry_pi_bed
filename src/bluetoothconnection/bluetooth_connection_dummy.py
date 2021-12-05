@@ -17,7 +17,7 @@ class Bluetooth:
         self._bed_massage_callbacks = []
 
     def run(self, send_dummy_data):
-        thread1 = threading.Thread(target=self.client_connect)
+        thread1 = threading.Thread(target=self.receive_data)
         thread2 = threading.Thread(target=self.loop_through_queue)
         if send_dummy_data:
             thread3 = threading.Thread(target=self.send_dummy_data)
@@ -67,7 +67,7 @@ class Bluetooth:
                 self.send_data(df["readings"][0], header_string="!")
                 time.sleep(5)
 
-    def client_connect(self):
+    def receive_data(self):
         print("Accepted connection from ", "Python Test")
 
     # Add error checking when receiving the data

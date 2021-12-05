@@ -47,6 +47,6 @@ class TestBed(TestCase):
     def test_bed_status_callback(self):
         self.bed.get_bluetooth().register_bed_status_callback(self.bed.send_bed_status_bluetooth)
         data = b'#'
-        self.bed.get_bluetooth().client_connect(data)
+        self.bed.get_bluetooth().receive_data(data)
         self.bed.send_bed_status_bluetooth()
 
