@@ -79,8 +79,11 @@ class Bluetooth:
                 if len(data) == 0: break
                 self.switch_command(data)
                 print("received [%s]" % data)
-        except IOError:
+        except Exception as e:
+            print(e)
             print("Connection Lost... Attempting to reestablish bluetooth connection")
+            self.server_sock.close()
+            self.client_sock.close()
             self.establish_bluetooth_connection()
 
     def enqueue_bluetooth_data(self, data, header_string):
@@ -109,6 +112,9 @@ class Bluetooth:
                     self.client_sock.send(message[i * 1024:(i + 1) * 1024])
         except Exception as e:
             print(e)
+            self.server_sock.close()
+            self.client_sock.close()
+            self.establish_bluetooth_connection()
 
     def send_dummy_data(self):
         current_path = str(pathlib.Path(__file__).parent.resolve())
