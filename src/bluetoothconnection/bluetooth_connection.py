@@ -83,6 +83,7 @@ class Bluetooth:
             print("Connection Lost... Attempting to reestablish bluetooth connection")
             self.server_sock.close()
             self.client_sock.close()
+            self.empty_queue()
             self.establish_bluetooth_connection()
 
     def enqueue_bluetooth_data(self, data, header_string):
@@ -93,6 +94,10 @@ class Bluetooth:
         while True:
             if not self.queue.empty():
                 self.send_data(self.queue.get())
+
+    def empty_queue(self):
+        while not self.queue.empty():
+            self.queue.get()
 
     def send_data(self, message):
         length = int(len(message) / 1024)
@@ -113,6 +118,7 @@ class Bluetooth:
             print(e)
             self.server_sock.close()
             self.client_sock.close()
+            self.empty_queue()
             self.establish_bluetooth_connection()
 
     def send_dummy_data(self):
