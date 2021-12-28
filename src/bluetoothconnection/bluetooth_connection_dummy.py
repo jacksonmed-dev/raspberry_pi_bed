@@ -15,6 +15,7 @@ class Bluetooth:
         self._gpio_callbacks = []
         self._bed_status_callbacks = []
         self._bed_massage_callbacks = []
+        self._patient_status_callbacks = []
 
     def run(self, send_dummy_data):
         thread1 = threading.Thread(target=self.client_connect)
@@ -120,3 +121,10 @@ class Bluetooth:
 
     def register_gpio_callback(self, callback):
         self._gpio_callbacks.append(callback)
+
+    def _notify_patient_status_observers(self):
+        for callback in self._patient_status_callbacks:
+            callback()
+
+    def register_patient_status_observers(self, callback):
+        self._patient_status_callbacks.append(callback)

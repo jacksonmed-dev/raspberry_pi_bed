@@ -1,9 +1,17 @@
 import json
 import threading
 from datetime import timedelta
-
 import pandas as pd
+import os
+import bluetoothconnection.bluetooth_constants as bluetooth_constants
 
+
+if os.uname()[4][:3] == 'arm':
+    from bed.sensor.gpio import Gpio
+    from bluetoothconnection.bluetooth_connection import Bluetooth
+else:
+    from bed.sensor.dummy_gpio import Gpio
+    from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
 
 class Patient(object):
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
@@ -16,9 +24,11 @@ class Patient(object):
         "weight": 190
     }
 
-    def __init__(self):
+    def __init__(self, bluetooth: Bluetooth):
+        self.__bluetooth = bluetooth
         self.__body_stats_df['time'] = timedelta(0)
         self.lock = threading.Lock()
+        self.__bluetooth.register_patient_status_observers(self.send_patient_status)
         pass
 
     def set_body_stats_df(self, new_df):
@@ -41,3 +51,9 @@ class Patient(object):
     def get_patient_info_json(self):
         temp = json.dumps(self.__body)
         return temp
+
+    def send_patient_status(self):
+        data = self.get_patient_info_json()
+        self.__bluetooth.enqueue_bluetooth_data(data, bluetooth_constants.PATIENT_STATUS_HEADER)
+        return
+

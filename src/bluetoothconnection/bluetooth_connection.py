@@ -52,6 +52,7 @@ class Bluetooth:
         self._bed_status_callbacks = []
         self._bed_status_automatic_callbacks = []
         self._bed_massage_callbacks = []
+        self._patient_status_callbacks = []
 
     def run(self, send_dummy_data):
         thread1 = threading.Thread(target=self.client_connect)
@@ -137,6 +138,9 @@ class Bluetooth:
         if temp[0] == bluetooth_constants.BED_DATA_RESPONSE_AUTOMATIC:
             self.notify_bed_status_automatic_observers()  # send the bed json message back
             return
+        if temp[0] == bluetooth_constants.PATIENT_STATUS_HEADER:
+            self._notify_patient_status_observers()
+            return
 
     def _notify_bed_massage(self, value):
         for callback in self._bed_massage_callbacks:
@@ -167,3 +171,10 @@ class Bluetooth:
 
     def register_bed_status_automatic(self, callback):
         self._bed_status_automatic_callbacks.append(callback)
+
+    def _notify_patient_status_observers(self):
+        for callback in self._patient_status_callbacks:
+            callback()
+
+    def register_patient_status_observers(self, callback):
+        self._patient_status_callbacks.append(callback)
