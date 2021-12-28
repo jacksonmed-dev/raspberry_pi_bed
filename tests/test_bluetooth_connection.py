@@ -18,12 +18,12 @@ class TestBluetoothConnection(TestCase):
 
     def test_bluetooth_decode(self):
         message = b'!Hello World*'
-        self.bluetooth_connection.client_connect(message)
+        self.bluetooth_connection.receive_data(message)
 
     def test_gpio_callback(self):
         self.bluetooth_connection.register_gpio_callback(self.dummy_gpio.set_relay)
         data = b'!11'
-        self.bluetooth_connection.client_connect(data)
+        self.bluetooth_connection.receive_data(data)
 
     def test_send_dummy_data(self):
         self.bluetooth_connection.send_dummy_data()

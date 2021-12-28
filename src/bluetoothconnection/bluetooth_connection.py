@@ -27,35 +27,39 @@ class Bluetooth:
     cmd = 'hciconfig hci0 piscan'
 
     def __init__(self):
-        self.queue = Queue()
-        self.server_sock = BluetoothSocket(RFCOMM)
-        self.server_sock.bind(("", PORT_ANY))
-        self.server_sock.listen(1)
-
-        self.port = self.server_sock.getsockname()[1]
-
-        uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
-
-        advertise_service(self.server_sock, "SampleServer",
-                          service_id=uuid,
-                          service_classes=[uuid, SERIAL_PORT_CLASS],
-                          profiles=[SERIAL_PORT_PROFILE],
-                          #                   protocols = [ OBEX_UUID ]
-                          )
-
-        subprocess.check_output(self.cmd, shell=True)
-        time.sleep(2)
-        print("Waiting for connection on RFCOMM channel 1")
-        self.client_sock, self.client_info = self.server_sock.accept()
-        print("Accepted connection from ", self.client_info)
         self._gpio_callbacks = []
         self._bed_status_callbacks = []
         self._bed_status_automatic_callbacks = []
         self._bed_massage_callbacks = []
         self._patient_status_callbacks = []
 
+        self.queue = Queue()
+        self.uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
+        time.sleep(1)
+
+        self.establish_bluetooth_connection()
+
+
+    def establish_bluetooth_connection(self):
+        self.server_sock = BluetoothSocket(RFCOMM)
+        self.server_sock.bind(("", PORT_ANY))
+        self.server_sock.listen(1)
+        self.port = self.server_sock.getsockname()[1]
+
+        advertise_service(self.server_sock, "SampleServer",
+                          service_id=self.uuid,
+                          service_classes=[self.uuid, SERIAL_PORT_CLASS],
+                          profiles=[SERIAL_PORT_PROFILE],
+                          #                   protocols = [ OBEX_UUID ]
+                          )
+
+        subprocess.check_output(self.cmd, shell=True)
+        print("Waiting for connection on RFCOMM channel 1")
+        self.client_sock, self.client_info = self.server_sock.accept()
+        print("Accepted connection from ", self.client_info)
+
     def run(self, send_dummy_data):
-        thread1 = threading.Thread(target=self.client_connect)
+        thread1 = threading.Thread(target=self.receive_data)
         thread2 = threading.Thread(target=self.loop_through_queue)
         if send_dummy_data:
             thread3 = threading.Thread(target=self.send_dummy_data)
@@ -66,7 +70,7 @@ class Bluetooth:
             thread1.start()
             thread2.start()
 
-    def client_connect(self):
+    def receive_data(self):
         # client_sock, client_info = self.server_sock.accept()
         print("Accepted connection from ", self.client_info)
         try:
@@ -75,11 +79,13 @@ class Bluetooth:
                 if len(data) == 0: break
                 self.switch_command(data)
                 print("received [%s]" % data)
-
-                # print("get ip: " + get_ip())
-
-        except IOError:
-            pass
+        except Exception as e:
+            print(e)
+            print("Connection Lost... Attempting to reestablish bluetooth connection")
+            self.server_sock.close()
+            self.client_sock.close()
+            self.empty_queue()
+            self.establish_bluetooth_connection()
 
     def enqueue_bluetooth_data(self, data, header_string):
         message = format_data(data, header_string)
@@ -89,6 +95,10 @@ class Bluetooth:
         while True:
             if not self.queue.empty():
                 self.send_data(self.queue.get())
+
+    def empty_queue(self):
+        while not self.queue.empty():
+            self.queue.get()
 
     def send_data(self, message):
         length = int(len(message) / 1024)
@@ -107,6 +117,10 @@ class Bluetooth:
                     self.client_sock.send(message[i * 1024:(i + 1) * 1024])
         except Exception as e:
             print(e)
+            self.server_sock.close()
+            self.client_sock.close()
+            self.empty_queue()
+            self.establish_bluetooth_connection()
 
     def send_dummy_data(self):
         current_path = str(pathlib.Path(__file__).parent.resolve())
