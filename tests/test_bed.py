@@ -19,7 +19,7 @@ class TestBed(TestCase):
     def setUpClass(cls):
         cls.test_file = "test_files/data.csv"
         bluetooth = Bluetooth()
-        cls.bed = Bed(patient=Patient(), bluetooth=bluetooth)
+        cls.bed = Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
         data_df = load_sensor_dataframe(cls.test_file)
         sensor = cls.bed.get_pressure_sensor()
         sensor.append_sensor_data(data_df)
@@ -28,6 +28,7 @@ class TestBed(TestCase):
 
 
     def test_analyze_sensor_data(self):
+        self.bed.analyze_sensor_data()
         self.fail()
 
     def test_calculate_deflatable_regions(self):
