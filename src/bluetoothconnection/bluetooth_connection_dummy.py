@@ -13,6 +13,7 @@ class Bluetooth:
     def __init__(self):
         self.queue = Queue()
         self._gpio_callbacks = []
+        self._bed_status_automatic_callbacks = []
         self._bed_status_callbacks = []
         self._bed_massage_callbacks = []
         self._patient_status_callbacks = []
@@ -128,3 +129,6 @@ class Bluetooth:
 
     def register_patient_status_observers(self, callback):
         self._patient_status_callbacks.append(callback)
+
+    def register_bed_status_automatic(self, callback):
+        self._bed_status_automatic_callbacks.append(callback)
