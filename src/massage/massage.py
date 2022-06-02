@@ -5,12 +5,12 @@ import time
 
 class Massage(threading.Thread):
     __composition = {
-        "head": [i for i in range(0, 3)],
-        "shoulders": [i for i in range(4, 5)],
-        "back": [i for i in range(6, 10)],
-        "butt": [i for i in range(11, 13)],
-        "calves": [i for i in range(14, 17)],
-        "feet": [i for i in range(18, 20)]
+        "head": [i for i in range(0, 1)],
+        "shoulders": [i for i in range(1, 2)],
+        "back": [i for i in range(3, 4)],
+        "butt": [i for i in range(5, 6)],
+        "calves": [i for i in range(6, 7)],
+        "feet": [i for i in range(7, 8)]
     }
     __massage_type = 1
     __massage_status = True
