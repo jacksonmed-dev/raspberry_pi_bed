@@ -7,7 +7,7 @@ import threading
 from datetime import datetime, timedelta
 from sseclient import SSEClient
 import pathlib
-
+import os
 
 
 # This class will be used when we have access to the api to get sensor data
@@ -37,6 +37,11 @@ class PressureSensor(threading.Thread):
         self.__sensor_inflatable_composition = np.split(np.arange(0, self.__sensor_rows), temp)
         self._callbacks = []
         self._bluetooth_callback = []
+
+        if os.uname()[4][:3] == 'arm':
+            self.isRaspberryPi = True
+        else:
+            self.isRaspberryPi = False
         return
 
     def current_frame(self):
@@ -120,15 +125,17 @@ class PressureSensor(threading.Thread):
         return self.__sensor_ip
 
     def start_sse_client(self):
-        url = "http://10.0.0.1/api/sse"
-        sse = SSEClient(url)
-        for response in sse:
-            df = pd.read_json(response.data)
-            if "readings" in df.columns:
-                readings_array = str(df["readings"][0])
-                self._notify_bluetooth_observers(readings_array)
-                self.current_frame(df)
-                # print(df)
+        if self.isRaspberryPi:
+            url = "http://10.0.0.1/api/sse"
+            sse = SSEClient(url)
+            for response in sse:
+                df = pd.read_json(response.data)
+                if "readings" in df.columns:
+                    readings_array = str(df["readings"][0])
+                    self._notify_bluetooth_observers(readings_array)
+                    self.current_frame(df)
+                    # print(df)
 
     def run(self):
-        self.start_sse_client()
+        if self.isRaspberryPi:
+            self.start_sse_client()
