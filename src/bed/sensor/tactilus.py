@@ -112,6 +112,7 @@ class PressureSensor(threading.Thread):
             try:
                 date_format = '%Y-%m-%d %H:%M:%S.%f'
                 length = len(self.__sensor_data)
+                sensordata = self.__sensor_data
                 time1 = self.__sensor_data.index.values[length - 1]
                 time2 = self.__sensor_data.index.values[length - 2]
                 time_diff = datetime.strptime(time1, date_format) - datetime.strptime(time2, date_format)

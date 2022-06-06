@@ -45,6 +45,17 @@ class Bed:
         self.__bed_gpio.register_observer(self.send_bed_status_bluetooth)
         return
 
+    def extract_sensor_dataframe(df):
+        data = df.iloc[0]
+        try:
+            if type(data) == str:
+                data = ast.literal_eval(data)
+            # df = pd.DataFrame(data)
+            return data
+        except Exception as e:
+            print(e)
+        else:
+            return None
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
     def analyze_sensor_data(self):
         #### Work on this ###
@@ -54,7 +65,13 @@ class Bed:
         temp = self.__pressure_sensor.get_current_frame()
         if temp.empty:
             return
-        sensor_data = pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27))
+        #data = extract_sensor_dataframe(df["readings"])
+        #test = self.__pressure_sensor.get_current_frame()['readings']
+        data = np.asarray(extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()['readings']),dtype=np.float64).reshape(64,27)
+        #temp = np.asarray(data, dtype=np.float64).reshape(64,27)
+        #temp = np.asarray(test, dtype=np.float64)
+        sensor_data = pd.DataFrame(data)
+
         sensor_composition = self.__pressure_sensor.get_sensor_body_composition()
 
         # Identify regions of the body that are in a high pressure state
