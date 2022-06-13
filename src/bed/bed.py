@@ -11,7 +11,7 @@ import os
 
 from massage.massage import Massage
 
-if os.uname()[4][:3] == 'arm':
+if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
     from bed.sensor.gpio import Gpio
     from bluetoothconnection.bluetooth_connection import Bluetooth
 else:

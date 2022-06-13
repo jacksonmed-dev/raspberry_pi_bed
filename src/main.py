@@ -9,7 +9,7 @@ from server.flask_server import create_server
 
 # from bluetoothconnection import bluetooth_connection
 
-if os.uname()[4][:3] == 'arm':
+if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
     path = "/home/pi/Desktop/sensor_data"
     from bluetoothconnection.bluetooth_connection import Bluetooth as Bluetooth
 
