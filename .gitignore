@@ -1,2 +1,4 @@
 # Project exclude paths
 /venv/
+.idea/misc.xml
+.idea/raspberry_pi_bed.iml
