@@ -2,6 +2,8 @@ import csv
 
 import numpy as np
 import ast
+
+from PIL.ImageColor import colormap
 from matplotlib import pyplot as plt
 import pandas as pd
 import imageio
@@ -28,6 +30,9 @@ csv_files = glob.glob(os.path.join(path, 'sensor_data_dataframe*.csv'))
 
 # loop over the list of csv files
 i = 0
+import cv2
+
+
 for f in csv_files:
     # read the csv file
     df = pd.read_csv(f)
@@ -41,6 +46,11 @@ for f in csv_files:
     # Rotate Image By 180 Degree
     rotated_image1 = Original_Image.rotate(180)
     imageio.imwrite("./test_files/test_image/" + str(i)  + '.jpg', rotated_image1)
+
+    #give picture hot color
+    #image = cv2.imread("./test_files/test_image/" + str(i)  + '.jpg')
+    #heatmap = cv2.applyColorMap(image, cv2.COLORMAP_JET)
+    #imageio.imwrite("./test_files/test_image/" + str(i) + '.jpg', heatmap)
     i += 1
 
 #sensor_data = pd.DataFrame(data)
