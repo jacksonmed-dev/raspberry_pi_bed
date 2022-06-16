@@ -41,7 +41,7 @@ class PressureSensor(threading.Thread):
         if os.uname()[4][:3] == 'arm':
             self.isRaspberryPi = True
         else:
-            self.isRaspberryPi = False
+            self.isRaspberryPi = True
         return
 
     def current_frame(self):
@@ -126,12 +126,18 @@ class PressureSensor(threading.Thread):
         return self.__sensor_ip
 
     def start_sse_client(self):
+        index = 64
         if self.isRaspberryPi:
             url = "http://10.0.0.1/api/sse"
             sse = SSEClient(url)
             for response in sse:
                 df = pd.read_json(response.data)
                 if "readings" in df.columns:
+                    print("data received {}".format(index))
+                    df.to_csv(
+                        "/home/cjstanfi/PycharmProjects/raspberry_pi_bed/tests/test_files/sensor_data_dataframe{}.csv".format(
+                            index))
+                    index = index + 1
                     readings_array = str(df["readings"][0])
                     self._notify_bluetooth_observers(readings_array)
                     self.current_frame(df)
