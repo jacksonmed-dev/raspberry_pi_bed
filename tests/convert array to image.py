@@ -38,11 +38,8 @@ for f in csv_files:
     # read the csv file
     df = pd.read_csv(f)
     data = np.asarray(extract_sensor_dataframe(df['readings']), dtype=np.float64).reshape(64, 27)
-
     plt.axis('scaled')
     plt.pcolormesh(data, cmap='hot')
-    #pc = example_plot(ax)
-    #ax0.pcolormesh(data, cmap='hot')
     plt.axis('off')
     plt.savefig("./test_files/test_image/" + str(i) + '.png')
 
