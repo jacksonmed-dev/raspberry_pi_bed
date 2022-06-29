@@ -24,6 +24,14 @@ class Patient(object):
         "weight": 190
     }
 
+    __patient_history = {
+
+    }
+
+    __patient_nutrition = {
+
+    }
+
     def __init__(self, bluetooth: Bluetooth):
         self.__bluetooth = bluetooth
         self.__body_stats_df['time'] = timedelta(0)

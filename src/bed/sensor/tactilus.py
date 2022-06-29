@@ -126,7 +126,6 @@ class PressureSensor(threading.Thread):
         return self.__sensor_ip
 
     def start_sse_client(self):
-        index = 272
         if self.isRaspberryPi:
             url = "http://10.0.0.1/api/sse"
             sse = SSEClient(url)
@@ -134,10 +133,6 @@ class PressureSensor(threading.Thread):
                 df = pd.read_json(response.data)
                 # self.save_sensor_data(df)
                 if "readings" in df.columns:
-                    print("data received {}".format(index))
-                    df.to_csv(
-                        "/Users/colestanfield/PycharmProjects/raspberry_pi_bed/tests/test_files/test_image/sensor_data_dataframe{}.csv".format(
-                            index))
                     index = index + 1
                     readings_array = str(df["readings"][0])
                     self._notify_bluetooth_observers(readings_array)
@@ -155,3 +150,8 @@ class PressureSensor(threading.Thread):
     def run(self):
         if self.isRaspberryPi:
             self.start_sse_client()
+
+# print("data received {}".format(index))
+# df.to_csv(
+#     "/Users/colestanfield/PycharmProjects/raspberry_pi_bed/tests/test_files/test_image/sensor_data_dataframe{}.csv".format(
+#         index))

@@ -2,7 +2,7 @@ import csv
 
 import numpy as np
 import ast
-import cv2
+# import cv2
 import imageio
 from PIL.ImageColor import colormap
 from matplotlib import pyplot as plt
@@ -31,7 +31,7 @@ csv_files = glob.glob(os.path.join(path, 'sensor_data_dataframe*.csv'))
 
 # loop over the list of csv files
 i = 0
-import cv2
+# import cv2
 
 
 for f in csv_files:
@@ -42,6 +42,7 @@ for f in csv_files:
     plt.pcolormesh(data, cmap='hot')
     plt.axis('off')
     plt.savefig("./test_files/test_image/" + str(i) + '.png')
+    print("Generated image: {}".format(i))
 
     i += 1
 
