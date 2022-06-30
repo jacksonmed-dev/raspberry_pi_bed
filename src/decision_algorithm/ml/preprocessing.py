@@ -26,23 +26,25 @@ def extract_sensor_dataframe(df):
 
 # use glob to get all the csv files
 # in the folder
-path = '/home/justin/PycharmProjects/raspberry_pi_bed/tests/test_files'
-csv_files = glob.glob(os.path.join(path, 'sensor_data_dataframe122.csv'))
+def convert_to_image(testpath):
 
-# loop over the list of csv files
-i = 0
-# import cv2
+    csv_files = glob.glob(os.path.join(testpath, 'sensor_data_dataframe122.csv'))
+
+    # loop over the list of csv files
+    i = 0
+    # import cv2
 
 
-for f in csv_files:
-    # read the csv file
-    df = pd.read_csv(f)
-    data = np.asarray(extract_sensor_dataframe(df['readings']), dtype=np.float64).reshape(64, 27)
-    plt.axis('scaled')
-    plt.pcolormesh(data, cmap='hot')
-    plt.axis('off')
-    plt.savefig("/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/test_img/" + str(i) + '.png')
-    print("Generated image: {}".format(i))
+    for f in csv_files:
+        # read the csv file
+        df = pd.read_csv(f)
+        data = np.asarray(extract_sensor_dataframe(df['readings']), dtype=np.float64).reshape(64, 27)
+        plt.axis('scaled')
+        plt.pcolormesh(data, cmap='hot')
+        plt.axis('off')
+        plt.savefig("/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/test_img/" + str(i) + '.png')
+        print("Generated image: {}".format(i))
 
-    i += 1
+        i += 1
+    return True
 
