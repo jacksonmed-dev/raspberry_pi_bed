@@ -16,8 +16,7 @@ class BradenScore:  # class braden score accepts json string with scores for eac
 
         else:
             self.__scores_df = pd.DataFrame([2, 2, 2, 2, 2, 2],
-                                            index=['sensory', 'moisture', 'activity', 'mobility', 'nutrition',
-                                                   'friction'],
+                                            index=['activity',  'friction',  'mobility',  'moisture',  'nutrition',  'sensory'],
                                             columns=['score'])
 
             self.__combined_score = 12
@@ -33,6 +32,12 @@ class BradenScore:  # class braden score accepts json string with scores for eac
 
     def get_risk(self):
         return self.__risk
+
+    def get_braden_df(self):
+        df = (self.__scores_df).T
+        df['Braden'] = self.__combined_score
+        df['risk'] = self.__risk
+        return df
 
     def set_scores_recalculate(self, new_json):
         temp = pd.read_json(new_json)
