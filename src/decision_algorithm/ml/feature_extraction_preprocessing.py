@@ -1,12 +1,30 @@
 import pandas as pd
 
-from body.body import Patient
+#from body.body import Patient
+from decision_algorithm.ml.braden_score import BradenScore
 
 
-def patient_history_preprocessing():
-    patient_data = Patient.get_body()
+def patient_history_feature_extraction_df():
+    #patient_data = Patient.get_body()
+    patient_data = {
+        "first_name": " Ben",
+        "last_name": "Dover",
+        "age": 36,
+        "height": 72,
+        "weight": 190
+    }
 
-    history = Patient.get_patient_history()
+    #history = Patient.get_patient_history()
+    history = {
+        "gender": 'male',
+        "BMI": 19,
+        "ulcer_history": ['arm', 'leg'],
+        "ICU_days": 5,
+        "temperature": 101.2,
+        "diabetes": 'type_1',
+        "systolic_blood_pressure": 125,
+        "diastolic_blood_pressure": 77
+    }
 
     history_df = pd.DataFrame(0, index=['data'], columns=['age','age_cat','sex','BMI', 'BMI_cat', 'ulcer_head',
                                                           'ulcer_arm', 'ulcer_shoulder', 'ulcer_buttocks',
@@ -97,7 +115,14 @@ def patient_history_preprocessing():
     elif 140 <= sys and 90 <= dia:
         history_df.at['data', 'blood_pressure_cat'] = 4
 
-    print(history_df)
-    print(history_df.dtypes)
+    #print(history_df)
+    #print(history_df.dtypes)
 
     return history_df
+
+def combine_features_df():
+    history_df = patient_history_feature_extraction_df()
+    braden_df = BradenScore().get_braden_df()
+    braden_df.index = ['data']
+    combined = pd.concat([history_df,braden_df], axis=1)
+    return combined
