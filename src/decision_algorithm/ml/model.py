@@ -6,8 +6,6 @@ from matplotlib import pyplot
 from matplotlib.patches import Rectangle
 from Mask_RCNN.mrcnn.visualize import display_instances
 
-IMAGE_DIR = '/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/test_img/0.png' # change your file path here
-MODEL_DIR = '/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5' # change your file path here
 # draw an image with detected objects
 
 # define the test configuration
@@ -21,7 +19,7 @@ class Model():
      def load_model(self,image_dir,model_dir):
           model = MaskRCNN(mode='inference', model_dir='./', config=TestConfig())
           # load coco model weights
-          model.load_weights(MODEL_DIR, by_name=True)
+          model.load_weights(model_dir, by_name=True)
           class_names = ['BG','head','shoulder','buttocks','leg','arm','heel']
           # visualize the results
           # load photograph
@@ -38,4 +36,3 @@ class Model():
           dic1["shoulder"] = [[[0, 1], [1, 1], [2, 1], [3, 0]]]
           dic1["arm"] = [[[0, 1], [1, 1], [2, 1], [3, 0]]]
           return dic1
-print(Model().load_model(IMAGE_DIR,MODEL_DIR))
