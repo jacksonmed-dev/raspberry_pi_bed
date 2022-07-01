@@ -1,7 +1,14 @@
 import pandas as pd
 
+import os
+import sys
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+full_path = os.path.join(dir_path, "..\\src\\decision_algorithm\\ml")
+sys.path.append(os.path.abspath(full_path))
+
 #from body.body import Patient
-from decision_algorithm.ml.braden_score import BradenScore
+from braden_score import BradenScore
 
 
 def patient_history_feature_extraction_df():
