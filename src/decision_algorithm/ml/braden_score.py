@@ -1,5 +1,18 @@
-import json
+#import json
 import pandas as pd
+from os.path import *
+import sys
+
+# import configparser
+# dir_path = dirname(realpath(__file__))
+# file = join(dir_path, '..\\config.ini')
+# config = configparser.ConfigParser()
+# config.read(file)
+
+#full_path = join(dir_path, config['PATHS']['BODY'])
+#sys.path.append(abspath(full_path))
+
+#from body.body import Patient
 
 
 # once different conditions e.g. BMI are classified maybe those will be recorded and incorporated?

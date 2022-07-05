@@ -5,9 +5,19 @@ import pandas as pd
 import os
 import sys
 
+import configparser
 dir_path = os.path.dirname(os.path.realpath(__file__))
-full_path = os.path.join(dir_path, "..\\src\\decision_algorithm\\ml")
+file = os.path.join(dir_path, '..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+
+print(config.sections())
+
+full_path = os.path.join(dir_path, config['PATHS']['ML'])
 sys.path.append(os.path.abspath(full_path))
+
+from pprint import pprint
+pprint(sys.path)
 
 from braden_score import BradenScore
 

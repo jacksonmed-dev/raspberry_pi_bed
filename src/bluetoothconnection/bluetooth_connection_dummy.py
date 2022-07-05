@@ -2,10 +2,17 @@ import pathlib
 import threading
 import time
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join,dirname, realpath
 import bluetoothconnection.bluetooth_constants as bluetooth_constants
 import pandas as pd
 from queue import Queue
+
+
+dir_path = dirname(realpath(__file__))
+file = join(dir_path, '..\\..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+config_blue = config['BLUETOOTHCONNECTION']
 
 
 class Bluetooth:
@@ -40,9 +47,9 @@ class Bluetooth:
                 self.send_data(self.queue.get())
 
     def format_data(self, data, header_string):
-        header = bytes(header_string, encoding='utf8')
-        trailer = bytes(bluetooth_constants.TRAILER, encoding="utf8")
-        temp = bytes(data, encoding='utf8')
+        header = bytes(header_string, config_blue['ENCODING'])
+        trailer = bytes(config_blue['TRAILER'], config_blue['ENCODING'])
+        temp = bytes(data, config_blue['ENCODING'])
         message = header + temp + trailer
         return message
 
@@ -74,22 +81,22 @@ class Bluetooth:
 
     # Add error checking when receiving the data
     def switch_command(self, data):
-        temp = data.decode("utf-8")
+        temp = data.decode(config_blue['ENCODING'])
         if len(temp) == 0: return
-        if temp[0] == bluetooth_constants.INFLATABLE_REGION_HEADER:
+        if temp[0] == config_blue['INFLATABLE_REGION_HEADER']:
             pin = int(temp[1])
             state = int(temp[2])
             self._notify_gpio_observers(pin, state)
             return
-        if temp[0] == bluetooth_constants.MASSAGE_HEADER:
+        if temp[0] == config_blue['MASSAGE_HEADER']:
             value = int(temp[1])
             self._notify_bed_massage(value)
             # setup massage
             return
-        if temp[0] == bluetooth_constants.BED_DATA_RESPONSE:
+        if temp[0] == config_blue['BED_DATA_RESPONSE']:
             self._notify_bed_status_observers()  # send the bed json message back
             return
-        if temp[0] == bluetooth_constants.BED_DATA_RESPONSE_AUTOMATIC:
+        if temp[0] == config_blue['BED_DATA_RESPONSE_AUTOMATIC']:
             self.notify_bed_status_automatic_observers()  # send the bed json message back
             return
 

@@ -3,7 +3,14 @@ import threading
 from datetime import timedelta
 import pandas as pd
 import os
-import bluetoothconnection.bluetooth_constants as bluetooth_constants
+import bluetoothconnection.bluetooth_constants as bluetooth_constants #if config is ok remove
+
+import configparser
+dir_path = os.path.dirname(os.path.realpath(__file__))
+file = os.path.join(dir_path, '..\\..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+config_blue = config['BLUETOOTHCONNECTION']
 
 
 if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
@@ -81,6 +88,6 @@ class Patient(object):
 
     def send_patient_status(self):
         data = self.get_patient_info_json()
-        self.__bluetooth.enqueue_bluetooth_data(data, bluetooth_constants.PATIENT_STATUS_HEADER)
+        self.__bluetooth.enqueue_bluetooth_data(data, config_blue['PATIENT_STATUS_HEADER'])
         return
 

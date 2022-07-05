@@ -1,11 +1,7 @@
 import pandas as pd
 
-import os
+from os.path import *
 import sys
-
-dir_path = os.path.dirname(os.path.realpath(__file__))
-full_path = os.path.join(dir_path, "..\\src\\decision_algorithm\\ml")
-sys.path.append(os.path.abspath(full_path))
 
 #from body.body import Patient
 from braden_score import BradenScore
