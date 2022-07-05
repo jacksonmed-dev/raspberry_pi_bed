@@ -29,10 +29,30 @@ class Model():
           results = model.detect([img], verbose=0)
           # get dictionary for first prediction
           r = results[0]
-          # show photo with bounding boxes, masks, class labels and scores
-          #display_instances(img, r['rois'], r['masks'], r['class_ids'], class_names, r['scores'])
-          dic1 = {}
-          dic1["head"] = [[[0, 1], [1, 1], [2, 1], [3, 0]]]
-          dic1["shoulder"] = [[[0, 1], [1, 1], [2, 1], [3, 0]]]
-          dic1["arm"] = [[[0, 1], [1, 1], [2, 1], [3, 0]]]
+
+          dic1 = {"head":[],"shoulder":[],"buttocks":[],"leg":[],"arm":[],"heel":[]}
+          for item1, item2 in zip(r['rois'], r['class_ids']):
+               name = ""
+               if item2 == 1:
+                    name = "head"
+               elif item2 == 2:
+                    name = "shoulder"
+               elif item2 == 3:
+                    name = "buttocks"
+               elif item2 == 4:
+                    name = "leg"
+               elif item2 == 5:
+                    name = "arm"
+               elif item2 == 6:
+                    name = "heel"
+               x1 = [int(item1[0]/6),int(item1[1]/6)]
+               x2 = [int(item1[0]/6),int(item1[3]/6)]
+               y1 = [int(item1[2]/6),int(item1[1]/6)]
+               y2 = [int(item1[2]/6), int(item1[3]/6)]
+               dic1[name].append(x1)
+               dic1[name].append(x2)
+               dic1[name].append(y1)
+               dic1[name].append(y2)
+          print(dic1)
           return dic1
+#Model().load_model('/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/test_img/237.png','/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5')
