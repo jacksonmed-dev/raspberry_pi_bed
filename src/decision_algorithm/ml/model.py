@@ -49,10 +49,9 @@ class Model():
                x2 = [int(item1[0]/6),int(item1[3]/6)]
                y1 = [int(item1[2]/6),int(item1[1]/6)]
                y2 = [int(item1[2]/6), int(item1[3]/6)]
-               dic1[name].append(x1)
-               dic1[name].append(x2)
-               dic1[name].append(y1)
-               dic1[name].append(y2)
+               list =[x1,x2,y1,y2]
+               dic1[name].append(list)
+
           print(dic1)
           return dic1
 #Model().load_model('/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/test_img/237.png','/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5')
