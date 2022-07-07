@@ -6,6 +6,17 @@ import pathlib
 path = pathlib.Path().resolve()
 server_endpoints = Blueprint("server_endpoints", __name__)
 
+from os.path import isfile, join, realpath, dirname
+import configparser
+
+dir_path = dirname(realpath(__file__)) #is path and pathlib the same?
+
+file = join(dir_path, '..\\..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+config_blue = config['BLUETOOTHCONNECTION']
+config_paths = config['PATHS']
+
 def get_bed():
     bed = current_app.config["bed"]
     if bed is None:

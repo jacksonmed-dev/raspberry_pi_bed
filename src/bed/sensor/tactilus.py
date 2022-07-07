@@ -8,6 +8,15 @@ from datetime import datetime, timedelta
 from sseclient import SSEClient
 import pathlib
 import os
+from os.path import isfile, join, realpath, dirname
+import configparser
+
+dir_path = dirname(realpath(__file__))
+file = join(dir_path, '..\\..\\..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+config_bed = config['BED']
+config_paths = config['PATHS']
 
 
 # This class will be used when we have access to the api to get sensor data
@@ -15,9 +24,9 @@ class PressureSensor(threading.Thread):
     # watchDirectory = OnMyWatch(path="/home/dev/Desktop/sensor")
     # gpio pin list used to control relays
     __current_frame = pd.DataFrame()
-    __sensor_ip = "192.168.86.51"
+    __sensor_ip = config_bed['SENSOR_IP']
     __sensor_data = pd.DataFrame()
-    __sensor_threshold = 45
+    __sensor_threshold = int(config_bed['SENSOR_THRESHOLD'])
     __sensor_body_composition = {
         "head": [i for i in range(0, 9)],
         "shoulders": [i for i in range(10, 16)],
@@ -26,9 +35,9 @@ class PressureSensor(threading.Thread):
         "calves": [i for i in range(44, 57)],
         "feet": [i for i in range(58, 64)]
     }
-    __sensor_rows = 65
-    __sensor_columns = 27
-    __path = "/home/dev/Desktop/sensor_data"
+    __sensor_rows = int(config_bed['SENSOR_ROWS'])
+    __sensor_columns = int(config_bed['SENSOR_COLUMNS'])
+    __path = config_paths['BED']
 
     def __init__(self, inflatable_regions):
         temp = np.arange(int(self.__sensor_rows / inflatable_regions) + 1, self.__sensor_rows,
@@ -110,7 +119,7 @@ class PressureSensor(threading.Thread):
             return timedelta(0)
         else:
             try:
-                date_format = '%Y-%m-%d %H:%M:%S.%f'
+                date_format = config_bed['DATE_FORMAT']
                 length = len(self.__sensor_data)
                 sensordata = self.__sensor_data
                 time1 = self.__sensor_data.index.values[length - 1]
@@ -127,7 +136,7 @@ class PressureSensor(threading.Thread):
 
     def start_sse_client(self):
         if self.isRaspberryPi:
-            url = "http://10.0.0.1/api/sse"
+            url = config_bed['URL']
             sse = SSEClient(url)
             for response in sse:
                 df = pd.read_json(response.data)
@@ -139,7 +148,7 @@ class PressureSensor(threading.Thread):
                     self.current_frame(df)
                     # print(df)
 
-    def save_sensor_data(self, df: pd.DataFrame):
+    def save_sensor_data(self, df: pd.DataFrame): #should I leave it all this way or try and add some stuff to config?
         directory = os.getcwd()
         temp = "{}/sensor_data".format(directory)
         files = os.listdir(r"{}/test_files/sensor_data".format(directory))

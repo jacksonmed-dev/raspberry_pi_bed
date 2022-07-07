@@ -2,6 +2,15 @@ import random
 import threading
 import time
 
+from os.path import isfile, join, realpath, dirname
+import configparser
+
+dir_path = dirname(realpath(__file__))
+file = join(dir_path, '..\\..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+config_massage = config['MASSAGE']
+config_paths = config['PATHS']
 
 class Massage(threading.Thread):
     __composition = {
@@ -12,8 +21,8 @@ class Massage(threading.Thread):
         "calves": [i for i in range(6, 7)],
         "feet": [i for i in range(7, 8)]
     }
-    __massage_type = 1
-    __massage_status = True
+    __massage_type = int(config_massage['TYPE'])
+    __massage_status = config_massage.getboolean('STATUS')
 
     def __init__(self, gpio):
         super(Massage, self).__init__()

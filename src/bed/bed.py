@@ -4,12 +4,20 @@ import pandas as pd
 from bed.sensor.tactilus import PressureSensor
 from body.body import Patient
 from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
-import bluetoothconnection.bluetooth_constants as bluetooth_constants
 from datetime import timedelta
 import numpy as np
 import os
+from os.path import isfile, join, realpath, dirname
 
 from massage.massage import Massage
+
+import configparser
+
+dir_path = dirname(realpath(__file__))
+file = join(dir_path, '..\\..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+config_blue = config['BLUETOOTHCONNECTION']
 
 if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
     from bed.sensor.gpio import Gpio
@@ -136,12 +144,12 @@ class Bed:
 
     def send_bed_status_bluetooth(self):
         data = str(self.generate_bed_status_json())
-        self.__bluetooth.enqueue_bluetooth_data(data, header_string=bluetooth_constants.BED_STATUS_RESPONSE)
+        self.__bluetooth.enqueue_bluetooth_data(data, header_string=config_blue['BED_STATUS_RESPONSE'])
 
     def send_bed_status_automatic_bluetooth(self):
         if self.__bed_stats_automatic:
             data = str(self.generate_bed_status_json())
-            self.__bluetooth.enqueue_bluetooth_data(data, header_string=bluetooth_constants.BED_STATUS_RESPONSE)
+            self.__bluetooth.enqueue_bluetooth_data(data, header_string=config_blue['BED_STATUS_RESPONSE'])
 
     def print_stats(self):
         print("Directory Modified")
