@@ -14,7 +14,7 @@ with ZipFile(MODEL_DIR + '/mask_rcnn_body parts_0050.zip', 'r') as zipObj:
    zipObj.extractall(MODEL_DIR)
 MODEL_DIR = os.path.join(dir_path, "../src/decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
 TEST_DIR = os.path.join(dir_path, "test_files/sensor_data_dataframe237.csv")
-IMAGE_DIR = os.path.join(dir_path, "../src/decision_algorithm/ml/test_img/237.png")# change your file path here
+IMAGE_DIR = os.path.join(dir_path, "../src/decision_algorithm/ml/test_img/0.png")# change your file path here
 sys.path.append("../src/decision_algorithm/ml")
 class MyTestCase(unittest.TestCase):
     def test_something(self):

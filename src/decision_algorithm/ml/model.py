@@ -2,18 +2,27 @@ from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 from Mask_RCNN.mrcnn.config import Config
 from Mask_RCNN.mrcnn.model import MaskRCNN
-from matplotlib import pyplot
-from matplotlib.patches import Rectangle
-from Mask_RCNN.mrcnn.visualize import display_instances
+
+
+from os.path import isfile, join, realpath, dirname
+import configparser
+
+dir_path = dirname(realpath(__file__))
+file = join(dir_path, '../../../config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+
+config_model = config['MODEL']
+config_paths = config['PATHS']
 
 # draw an image with detected objects
 
 # define the test configuration
 class TestConfig(Config):
-     NAME = "test"
-     GPU_COUNT = 1
-     IMAGES_PER_GPU = 1
-     NUM_CLASSES = 1 + 6
+     NAME = config_model['NAME']
+     GPU_COUNT = int(config_model['GPU_COUNT'])
+     IMAGES_PER_GPU = int(config_model['IMAGES_PER_GPU'])
+     NUM_CLASSES = int(config_model['NUM_CLASSES'])
 # define the model
 class Model():
      def load_model(self,image_dir,model_dir):
