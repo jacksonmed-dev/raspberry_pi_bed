@@ -5,21 +5,18 @@ import sys
 
 # import configparser
 # dir_path = dirname(realpath(__file__))
-# file = join(dir_path, '..\\config.ini')
+# file = join(dir_path, '..\\..\\..\\config.ini')
 # config = configparser.ConfigParser()
 # config.read(file)
-
-#full_path = join(dir_path, config['PATHS']['BODY'])
-#sys.path.append(abspath(full_path))
-
-#from body.body import Patient
-
+#
+# full_path = join(dir_path, config['PATHS']['BODY'])
+# sys.path.append(abspath(full_path))
 
 # once different conditions e.g. BMI are classified maybe those will be recorded and incorporated?
 # from body.body import Patient
 
 
-class BradenScore:  # class braden score accepts json string with scores for each category
+class BradenScore:
 
     def __init__(self, json_scores=None):
         # if json string "scores" carrying the input scores is passed

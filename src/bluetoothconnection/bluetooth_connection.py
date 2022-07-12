@@ -1,6 +1,5 @@
 import pathlib
 
-import bluetoothconnection.bluetooth_constants as bluetooth_constants #have ben added to config
 from queue import Queue
 import pandas as pd
 from bluetooth import *
@@ -10,12 +9,14 @@ import time
 import threading
 from os import listdir
 from os.path import isfile, join, realpath, dirname
+import configparser
 
 dir_path = dirname(realpath(__file__))
-file = join(dir_path, '..\\..\\config.ini')
+file = join(dir_path, '..\\config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 config_blue = config['BLUETOOTHCONNECTION']
+config_paths = config['PATHS']
 
 
 # Subprocess has to be run after bluetoothservice is up, therefore the sleep is there
@@ -30,7 +31,7 @@ def format_data(data, header_string):
 
 
 class Bluetooth:
-    cmd = 'hciconfig hci0 piscan'
+    cmd = config_blue['CMD']
 
     def __init__(self):
         self._gpio_callbacks = []
@@ -130,12 +131,12 @@ class Bluetooth:
 
     def send_dummy_data(self):
         current_path = str(pathlib.Path(__file__).parent.resolve())
-        path_to_data = current_path + "/data/" #Should figure out how to add this path to config?
+        path_to_data = current_path + config_paths['DATA']
         only_files = [f for f in listdir(path_to_data) if isfile(join(path_to_data, f))]
         while True:
             for file in only_files:
                 df = pd.read_csv(path_to_data + file)
-                self.enqueue_bluetooth_data(df["readings"][0], header_string=bluetooth_constants.BED_DATA_RESPONSE)
+                self.enqueue_bluetooth_data(df["readings"][0], header_string=config_blue['BED_DATA_RESPONSE'])
                 time.sleep(3)
 
     # Add error checking when receiving the data
@@ -147,7 +148,7 @@ class Bluetooth:
             state = int(temp[2])
             self._notify_gpio_observers(pin, state)
             return
-        if temp[0] == config_blue['MESSAGE_HEADER']:
+        if temp[0] == config_blue['MASSAGE_HEADER']:
             value = int(temp[1])
             self._notify_bed_massage(value)
             # setup massage

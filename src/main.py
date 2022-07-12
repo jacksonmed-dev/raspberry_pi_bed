@@ -9,12 +9,21 @@ from server.flask_server import create_server
 
 # from bluetoothconnection import bluetooth_connection
 
+from os.path import isfile, join, realpath, dirname
+import configparser
+
+dir_path = dirname(realpath(__file__))
+file = join(dir_path, '..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+config_paths = config['PATHS']
+
 if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
-    path = "/home/pi/Desktop/sensor_data"
+    path = config_paths['MAIN_ARM']
     from bluetoothconnection.bluetooth_connection import Bluetooth as Bluetooth
 
 else:
-    path = "/home/cjstanfi/Desktop/sensor_data"
+    path = config_paths['MAIN_MAC']
     from bluetoothconnection.bluetooth_connection_dummy import Bluetooth as Bluetooth
 
 if __name__ == "__main__":

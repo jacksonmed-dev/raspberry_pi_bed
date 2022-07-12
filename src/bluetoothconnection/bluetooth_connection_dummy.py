@@ -3,9 +3,9 @@ import threading
 import time
 from os import listdir
 from os.path import isfile, join,dirname, realpath
-import bluetoothconnection.bluetooth_constants as bluetooth_constants
 import pandas as pd
 from queue import Queue
+import configparser
 
 
 dir_path = dirname(realpath(__file__))
@@ -13,6 +13,7 @@ file = join(dir_path, '..\\..\\config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 config_blue = config['BLUETOOTHCONNECTION']
+config_paths = config['PATHS']
 
 
 class Bluetooth:
@@ -68,7 +69,7 @@ class Bluetooth:
 
     def send_dummy_data(self):
         current_path = str(pathlib.Path(__file__).parent.resolve())
-        path_to_data = current_path + "/data/"
+        path_to_data = current_path + config_paths['DATA']
         only_files = [f for f in listdir(path_to_data) if isfile(join(path_to_data, f))]
         while True:
             for file in only_files:

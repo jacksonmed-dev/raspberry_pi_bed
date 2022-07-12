@@ -3,9 +3,8 @@ import threading
 from datetime import timedelta
 import pandas as pd
 import os
-import bluetoothconnection.bluetooth_constants as bluetooth_constants #if config is ok remove
-
 import configparser
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 file = os.path.join(dir_path, '..\\..\\config.ini')
 config = configparser.ConfigParser()
