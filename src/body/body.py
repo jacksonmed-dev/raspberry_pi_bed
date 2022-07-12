@@ -1,9 +1,23 @@
 import json
 import threading
 from datetime import timedelta
-
 import pandas as pd
+import os
+import configparser
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+file = os.path.join(dir_path, '..\\..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+config_blue = config['BLUETOOTHCONNECTION']
+
+
+if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
+    from bed.sensor.gpio import Gpio
+    from bluetoothconnection.bluetooth_connection import Bluetooth
+else:
+    from bed.sensor.dummy_gpio import Gpio
+    from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
 
 class Patient(object):
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
@@ -16,9 +30,26 @@ class Patient(object):
         "weight": 190
     }
 
-    def __init__(self):
+    __patient_history = {
+        "gender": 'male',
+        "BMI": 19,
+        "ulcer_history": ['arm','leg'],
+        "ICU_days": 5,
+        "temperature": 101.2,
+        "diabetes": 'type_1',
+        "systolic_blood_pressure": 125,
+        "diastolic_blood_pressure": 77
+    }
+
+    __patient_nutrition = {
+
+    }
+
+    def __init__(self, bluetooth: Bluetooth):
+        self.__bluetooth = bluetooth
         self.__body_stats_df['time'] = timedelta(0)
         self.lock = threading.Lock()
+        self.__bluetooth.register_patient_status_observers(self.send_patient_status)
         pass
 
     def set_body_stats_df(self, new_df):
@@ -41,3 +72,21 @@ class Patient(object):
     def get_patient_info_json(self):
         temp = json.dumps(self.__body)
         return temp
+
+    def get_patient_history(self):
+        return self.__patient_history
+
+    def get_patient_history_json(self):
+        temp = json.dumps(self.__patient_history)
+        return temp
+
+    def set_patient_history_json(self, new_patient_history):
+        temp = json.loads(new_patient_history)
+        self.__patient_history = temp
+        return
+
+    def send_patient_status(self):
+        data = self.get_patient_info_json()
+        self.__bluetooth.enqueue_bluetooth_data(data, config_blue['PATIENT_STATUS_HEADER'])
+        return
+

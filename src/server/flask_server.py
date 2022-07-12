@@ -6,11 +6,28 @@ import pathlib
 path = pathlib.Path().resolve()
 server_endpoints = Blueprint("server_endpoints", __name__)
 
+from os.path import isfile, join, realpath, dirname
+import configparser
+
+dir_path = dirname(realpath(__file__)) #is path and pathlib the same?
+
+file = join(dir_path, '..\\..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+config_blue = config['BLUETOOTHCONNECTION']
+config_paths = config['PATHS']
+
 def get_bed():
     bed = current_app.config["bed"]
     if bed is None:
         return None
     return bed
+
+def get_bluetooth():
+    bluetooth = current_app.config["bluetooth"]
+    if bluetooth is None:
+        return None
+    return bluetooth
 
 
 # Currently a dummy function that returns dummy data.
@@ -74,10 +91,19 @@ def bed_status():
     bed = get_bed()
     return bed.generate_bed_status_json()
 
+@server_endpoints.route('/bluetooth/send', methods=["GET"])
+def test_bluetooth():
+    data_set = {"key1": [1, 2, 3], "key2": [4, 5, 6]}
+    json_dump = json.dumps(data_set)
+    bluetooth = get_bluetooth()
+    bluetooth.send_data(json_dump)
 
-def create_server(bed):
+
+
+def create_server(bed, bluetooth):
     app = Flask(__name__)
     app.register_blueprint(server_endpoints)
     app.config["bed"] = bed
+    app.config["bluetooth"] = bluetooth
 
     return app

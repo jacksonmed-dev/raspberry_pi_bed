@@ -3,14 +3,17 @@ from bed.bed import Bed
 from body.body import Patient
 from bed.sensor.util.sensor_data_utils import load_sensor_dataframe
 from pandas._testing import assert_frame_equal
+from bluetoothconnection.bluetooth_connection_dummy import Bluetooth as Bluetooth
 from datetime import timedelta
+import pandas as pd
 
 
 class TestPressureSensor(TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.test_file = "test_files/data.csv"
-        cls.bed = Bed(patient=Patient())
+        cls.test_file = "test_files/sensor_data/sensor_data_dataframe8.csv"
+        bluetooth = Bluetooth()
+        cls.bed = Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
         data_df = load_sensor_dataframe(cls.test_file)
         cls.sensor = cls.bed.get_pressure_sensor()
         cls.sensor.append_sensor_data(data_df)
@@ -59,4 +62,8 @@ class TestPressureSensor(TestCase):
 
     def test_sensor_sse(self):
         self.sensor.start_sse_client()
+
+    def test_save_sensor_data(self):
+        df = pd.DataFrame()
+        self.sensor.save_sensor_data(df)
 

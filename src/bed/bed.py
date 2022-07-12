@@ -7,13 +7,24 @@ from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
 import numpy as np
 import os
+from os.path import isfile, join, realpath, dirname
 
 from massage.massage import Massage
 
-if os.uname()[4][:3] == 'arm':
+import configparser
+
+dir_path = dirname(realpath(__file__))
+file = join(dir_path, '..\\..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+config_blue = config['BLUETOOTHCONNECTION']
+
+if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
     from bed.sensor.gpio import Gpio
+    from bluetoothconnection.bluetooth_connection import Bluetooth
 else:
     from bed.sensor.dummy_gpio import Gpio
+    from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
 
 
 # A bed contains the following:
@@ -28,16 +39,31 @@ class Bed:
     __relay_count = 8
     __bed_gpio = Gpio(inflatable_regions=__inflatable_regions)
     __pressure_sensor = PressureSensor(__inflatable_regions)
+    __bed_stats_automatic = False
     # __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
     #                                columns=['time', 'max_pressure'])
 
     __massage = Massage(__bed_gpio)
 
-    def __init__(self, patient: Patient):
+    def __init__(self, patient: Patient, bluetooth: Bluetooth):
         self.__patient = patient
+        self.__bluetooth = bluetooth
         self.__pressure_sensor.register_callback(self.analyze_sensor_data)
+        self.__bluetooth.register_bed_massage_callback(self.massage)
+        self.__bed_gpio.register_observer(self.send_bed_status_bluetooth)
         return
 
+    def extract_sensor_dataframe(df):
+        data = df.iloc[0]
+        try:
+            if type(data) == str:
+                data = ast.literal_eval(data)
+            # df = pd.DataFrame(data)
+            return data
+        except Exception as e:
+            print(e)
+        else:
+            return None
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
     def analyze_sensor_data(self):
         #### Work on this ###
@@ -47,7 +73,13 @@ class Bed:
         temp = self.__pressure_sensor.get_current_frame()
         if temp.empty:
             return
-        sensor_data = pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27))
+        #data = extract_sensor_dataframe(df["readings"])
+        #test = self.__pressure_sensor.get_current_frame()['readings']
+        data = np.asarray(extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()['readings']),dtype=np.float64).reshape(64,27)
+        #temp = np.asarray(data, dtype=np.float64).reshape(64,27)
+        #temp = np.asarray(test, dtype=np.float64)
+        sensor_data = pd.DataFrame(data)
+
         sensor_composition = self.__pressure_sensor.get_sensor_body_composition()
 
         # Identify regions of the body that are in a high pressure state
@@ -81,7 +113,9 @@ class Bed:
     # change
     def calculate_deflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
-        sensor_data_df = pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[sensor_region_body]
+        sensor_data_df = \
+        pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
+            sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)
         sensor_data_row_max_indices = sensor_data_row_max.index.tolist()
@@ -97,7 +131,9 @@ class Bed:
 
     def calculate_inflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
-        sensor_data_df = pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[sensor_region_body]
+        sensor_data_df = \
+        pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
+            sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)
 
@@ -106,12 +142,14 @@ class Bed:
                 self.__bed_gpio.set_relay(pin=index, state=1)
         return
 
-    def generate_bed_status_json(self):
-        gpio = self.__bed_gpio.get_gpio_pins()
-        json_final = json.dumps({
-            "gpio_pins": [value for key, value in gpio.items()],
-        })
-        return json_final
+    def send_bed_status_bluetooth(self):
+        data = str(self.generate_bed_status_json())
+        self.__bluetooth.enqueue_bluetooth_data(data, header_string=config_blue['BED_STATUS_RESPONSE'])
+
+    def send_bed_status_automatic_bluetooth(self):
+        if self.__bed_stats_automatic:
+            data = str(self.generate_bed_status_json())
+            self.__bluetooth.enqueue_bluetooth_data(data, header_string=config_blue['BED_STATUS_RESPONSE'])
 
     def print_stats(self):
         print("Directory Modified")
@@ -152,3 +190,31 @@ class Bed:
 
     def set_new_massage(self):
         self.__massage = Massage(gpio=self.__bed_gpio)
+
+    def get_bluetooth(self):
+        return self.__bluetooth
+
+    def set_bed_stats_automatic(self):
+        if self.__bed_stats_automatic:
+            self.__bed_stats_automatic = False
+        else:
+            self.__bed_stats_automatic = True
+        print("Bed Stats Automatic: {}".format(self.__bed_stats_automatic))
+
+    def generate_bed_status_json(self):
+        gpio = self.__bed_gpio.get_gpio_pins()
+        json_final = json.dumps({
+            "gpio_pins": [value for key, value in gpio.items()],
+        })
+        return json_final
+
+    def massage(self, state):
+        if state == 0:
+            self.stop_massage()
+        if state == 1:
+            self.set_new_massage()
+            self.__massage.set_massage_status(True)
+            self.__massage.start()
+
+    def stop_massage(self):
+        self.__massage.set_massage_status(False)

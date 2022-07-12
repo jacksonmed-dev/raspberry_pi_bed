@@ -6,6 +6,17 @@ import numpy as np
 import threading
 from datetime import datetime, timedelta
 from sseclient import SSEClient
+import pathlib
+import os
+from os.path import isfile, join, realpath, dirname
+import configparser
+
+dir_path = dirname(realpath(__file__))
+file = join(dir_path, '..\\..\\..\\config.ini')
+config = configparser.ConfigParser()
+config.read(file)
+config_bed = config['BED']
+config_paths = config['PATHS']
 
 
 # This class will be used when we have access to the api to get sensor data
@@ -13,9 +24,9 @@ class PressureSensor(threading.Thread):
     # watchDirectory = OnMyWatch(path="/home/dev/Desktop/sensor")
     # gpio pin list used to control relays
     __current_frame = pd.DataFrame()
-    __sensor_ip = "192.168.86.51"
+    __sensor_ip = config_bed['SENSOR_IP']
     __sensor_data = pd.DataFrame()
-    __sensor_threshold = 0.65
+    __sensor_threshold = int(config_bed['SENSOR_THRESHOLD'])
     __sensor_body_composition = {
         "head": [i for i in range(0, 9)],
         "shoulders": [i for i in range(10, 16)],
@@ -24,9 +35,9 @@ class PressureSensor(threading.Thread):
         "calves": [i for i in range(44, 57)],
         "feet": [i for i in range(58, 64)]
     }
-    __sensor_rows = 65
-    __sensor_columns = 27
-    __path = "/home/dev/Desktop/sensor_data"
+    __sensor_rows = int(config_bed['SENSOR_ROWS'])
+    __sensor_columns = int(config_bed['SENSOR_COLUMNS'])
+    __path = config_paths['BED']
 
     def __init__(self, inflatable_regions):
         temp = np.arange(int(self.__sensor_rows / inflatable_regions) + 1, self.__sensor_rows,
@@ -34,6 +45,12 @@ class PressureSensor(threading.Thread):
         self.lock = threading.Lock()
         self.__sensor_inflatable_composition = np.split(np.arange(0, self.__sensor_rows), temp)
         self._callbacks = []
+        self._bluetooth_callback = []
+
+        if os.uname()[4][:3] == 'arm':
+            self.isRaspberryPi = True
+        else:
+            self.isRaspberryPi = True
         return
 
     def current_frame(self):
@@ -45,14 +62,21 @@ class PressureSensor(threading.Thread):
             self.__current_frame = new_value
         finally:
             self.lock.release()
-            self._notify_observers(new_value)
+            self._notify_observers()
 
-    def _notify_observers(self, new_value):
+    def _notify_observers(self):
         for callback in self._callbacks:
             callback()
 
+    def _notify_bluetooth_observers(self, new_value):
+        for callback in self._bluetooth_callback:
+            callback(new_value, "!")
+
     def register_callback(self, callback):
         self._callbacks.append(callback)
+
+    def register_bluetooth_callback(self, callback):
+        self._bluetooth_callback.append(callback)
 
     def load_current_frame(self):
         return
@@ -95,8 +119,9 @@ class PressureSensor(threading.Thread):
             return timedelta(0)
         else:
             try:
-                date_format = '%Y-%m-%d %H:%M:%S.%f'
+                date_format = config_bed['DATE_FORMAT']
                 length = len(self.__sensor_data)
+                sensordata = self.__sensor_data
                 time1 = self.__sensor_data.index.values[length - 1]
                 time2 = self.__sensor_data.index.values[length - 2]
                 time_diff = datetime.strptime(time1, date_format) - datetime.strptime(time2, date_format)
@@ -110,19 +135,32 @@ class PressureSensor(threading.Thread):
         return self.__sensor_ip
 
     def start_sse_client(self):
-        url = "http://10.0.0.1/api/sse"
-        sse = SSEClient(url)
-        i = 0
-        path = "/data/"
-        for response in sse:
-            df = pd.read_json(response.data)
-            filename = "data" + str(i) + ".csv"
-            i = i + 1
-            if "readings" in df.columns:
-                df.to_csv(path + filename)
-                self.current_frame(df)
-                print(df)
+        if self.isRaspberryPi:
+            url = config_bed['URL']
+            sse = SSEClient(url)
+            for response in sse:
+                df = pd.read_json(response.data)
+                # self.save_sensor_data(df)
+                if "readings" in df.columns:
+                    index = index + 1
+                    readings_array = str(df["readings"][0])
+                    self._notify_bluetooth_observers(readings_array)
+                    self.current_frame(df)
+                    # print(df)
 
+    def save_sensor_data(self, df: pd.DataFrame): #should I leave it all this way or try and add some stuff to config?
+        directory = os.getcwd()
+        temp = "{}/sensor_data".format(directory)
+        files = os.listdir(r"{}/test_files/sensor_data".format(directory))
+        index1 = files[(len(files)-1)][21:]
+        index = int(files[(len(files)-1)][21:][:len(index1)-4])
+        df.to_csv("{}/test_files/sensor_data_dataframe{}.csv".format(temp, index + 1))
 
     def run(self):
-        self.start_sse_client()
+        if self.isRaspberryPi:
+            self.start_sse_client()
+
+# print("data received {}".format(index))
+# df.to_csv(
+#     "/Users/colestanfield/PycharmProjects/raspberry_pi_bed/tests/test_files/test_image/sensor_data_dataframe{}.csv".format(
+#         index))

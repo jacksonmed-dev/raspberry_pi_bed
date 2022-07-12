@@ -3,6 +3,7 @@ class Gpio:
     __gpio_pins = {}
 
     def __init__(self, inflatable_regions):
+        self._observers = []
         self.__rasp_pi_available_gpio = [i for i in range(inflatable_regions)]
         for index in range(inflatable_regions):
             self.__gpio_pins[index] = {"gpio_pin": self.__rasp_pi_available_gpio[index], "state": 1}
@@ -27,3 +28,6 @@ class Gpio:
 
     def get_gpio_pins(self):
         return self.__gpio_pins
+
+    def register_observer(self, callback):
+        self._observers.append(callback)
