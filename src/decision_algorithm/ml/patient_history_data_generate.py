@@ -69,5 +69,88 @@ def bmi_cat_assign(x):
 
 df1['BMI_cat'] = df1['BMI'].apply(bmi_cat_assign)
 df2['BMI_cat'] = df2['BMI'].apply(bmi_cat_assign)
-# print(df1)
-# output = pd.DataFrame(0, index=['data'], columns=['age','age_cat','sex','BMI', 'BMI_cat', 'ulcer_head',
+
+#reencoding diabetes column
+df1['diabetes'] = np.where(df1['class'] == 'Negative',0,1)
+df2['diabetes'] = df2['Outcome']
+
+#Adding random temperatures and fever
+df1['temp'] = 'NaN'
+df2['temp'] = 'NaN'
+df1['fever'] = 'NaN'
+df2['fever'] = 'NaN'
+
+df1['temp'] = df1['temp'].apply(lambda x : random.randrange(9000,15000)/100)
+df2['temp'] = df2['temp'].apply(lambda x : random.randrange(9000,15000)/100)
+
+def fever_assign(x):
+    if x > 100.4:
+        return 1
+    elif x<= 100.4:
+        return 0
+    else:
+        return
+
+df1['fever'] = df1['temp'].apply(fever_assign)
+df2['fever'] = df2['temp'].apply(fever_assign)
+
+# Setting dia and sys pressure and blood pressure category
+df1['dia_pressure'] = 'NaN'
+df2['dia_pressure'] = 'NaN'
+df1['sys_pressure'] = 'NaN'
+df2['sys_pressure'] = 'NaN'
+df1['blood_pressure_cat'] = 'NaN'
+df2['blood_pressure_cat'] = 'NaN'
+
+df1['dia_pressure'] = df1['dia_pressure'].apply(lambda x : random.randrange(0,100))
+df2['dia_pressure'] = df2['BloodPressure']
+
+def sys_pressure_assign(x):
+    print(x)
+    if x >= 40 and x <= 90:
+        return random.randrange(x+30,x+60)
+    elif x < 40:
+        return random.randrange(70,x+71)
+    elif x > 90:
+        return random.randrange(x,170)
+    else:
+        return 'NaN'
+
+df1['sys_pressure'] = df1['dia_pressure'].apply(sys_pressure_assign)
+df2['sys_pressure'] = df2['dia_pressure'].apply(sys_pressure_assign)
+
+def bp_cat_assign(x,y):
+    dia= x
+    sys= y
+    print(dia,sys)
+    if sys < 90 and dia < 60:
+        return 1
+    elif 90 <= sys < 120 and 60 <= dia < 80:
+        return 2
+    elif 120 <= sys <= 139 and 80 <= dia <= 89:
+        return 3
+    elif 140 <= sys and 90 <= dia:
+        return 4
+    else:
+        return 0
+
+#potential problem... more that half are not in any of categories
+df1['blood_pressure_cat'] = df1.apply(lambda x: bp_cat_assign(x['dia_pressure'],x['sys_pressure']), axis = 1)
+df2['blood_pressure_cat'] = df2.apply(lambda x: bp_cat_assign(x['dia_pressure'],x['sys_pressure']), axis = 1)
+
+#Selecting the columns for our features and joining the two dataframes
+df1_final = df1[['Age','age_cat','Gender','BMI', 'BMI_cat', 'ulcer_head','ulcer_arm', 'ulcer_shoulder', 'ulcer_buttocks',
+                                                          'ulcer_leg', 'ulcer_heel',
+                                                          'ICU_stay', 'temp',
+                                                          'fever', 'diabetes', 'sys_pressure',
+                                                          'dia_pressure',
+                                                          'blood_pressure_cat']]
+df2_final = df2[['Age','age_cat','Gender','BMI', 'BMI_cat', 'ulcer_head','ulcer_arm', 'ulcer_shoulder', 'ulcer_buttocks',
+                                                          'ulcer_leg', 'ulcer_heel',
+                                                          'ICU_stay', 'temp',
+                                                          'fever', 'diabetes', 'sys_pressure',
+                                                          'dia_pressure',
+                                                          'blood_pressure_cat']]
+
+
+# combine the 2 dfs and write to csv
