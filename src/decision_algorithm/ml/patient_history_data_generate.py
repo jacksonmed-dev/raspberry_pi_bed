@@ -8,7 +8,7 @@ import sys
 import configparser
 
 dir_path = dirname(realpath(__file__))
-file = join(dir_path, '..\\..\\..\\config.ini')
+file = join(dir_path, '..//..//..//config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 
@@ -29,13 +29,13 @@ sys.path.append(abspath(full_path))
 # ulcer formation)
 
 # dataset taken from https://www.kaggle.com/datasets/ishandutta/early-stage-diabetes-risk-prediction-dataset
-df1 = pd.read_csv('data\kaggle_ishan_dutta_diabetes_data_upload.csv')
+df1 = pd.read_csv('data/kaggle_ishan_dutta_diabetes_data_upload.csv')
 #Index(['Age', 'Gender', 'Polyuria', 'Polydipsia', 'sudden weight loss','weakness', 'Polyphagia', 'Genital thrush', 'visual blurring',
 # 'Itching', 'Irritability', 'delayed healing', 'partial paresis','muscle stiffness', 'Alopecia', 'Obesity', 'class'],
 #     dtype='object')
 
 # dataset taken from https://www.kaggle.com/datasets/mathchi/diabetes-data-set
-df2 = pd.read_csv('data\diabetes.csv')
+df2 = pd.read_csv('data/diabetes.csv')
 # Index(['Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness', 'Insulin','BMI', 'DiabetesPedigreeFunction', 'Age', 'Outcome', 'Gender'],
 # dtype='object')
 
@@ -69,5 +69,40 @@ def bmi_cat_assign(x):
 
 df1['BMI_cat'] = df1['BMI'].apply(bmi_cat_assign)
 df2['BMI_cat'] = df2['BMI'].apply(bmi_cat_assign)
+
+df1['Ulcer_head'] = np.random.choice([0, 1], df1.shape[0])
+df2['Ulcer_head'] = np.random.choice([0, 1],df2.shape[0])
+df1['Ulcer_arm'] = np.random.choice([0, 1],df1.shape[0])
+df2['Ulcer_arm'] = np.random.choice([0, 1],df2.shape[0])
+df1['Ulcer_shoulder'] = np.random.choice([0, 1],df1.shape[0])
+df2['Ulcer_shoulder'] = np.random.choice([0, 1], df2.shape[0])
+df1['Ulcer_buttocks'] = np.random.choice([0, 1],df1.shape[0])
+df2['Ulcer_buttocks'] = np.random.choice([0, 1], df2.shape[0])
+df1['Ulcer_leg'] = np.random.choice([0, 1], df1.shape[0])
+df2['Ulcer_leg'] = np.random.choice([0, 1], df2.shape[0])
+df1['Ulcer_heel'] = np.random.choice([0, 1], df1.shape[0])
+df2['Ulcer_heel'] = np.random.choice([0, 1], df2.shape[0])
+df1['Surgery_head'] = np.random.choice([0, 1],df1.shape[0])
+df2['Surgery_head'] = np.random.choice([0, 1],df2.shape[0])
+df1['Surgery_arm'] = np.random.choice([0, 1], df1.shape[0])
+df2['Surgery_arm'] = np.random.choice([0, 1], df2.shape[0])
+df1['Surgery_shoulder'] = np.random.choice([0, 1], df1.shape[0])
+df2['Surgery_shoulder'] = np.random.choice([0, 1], df2.shape[0])
+df1['Surgery_buttocks'] = np.random.choice([0, 1], df1.shape[0])
+df2['Surgery_buttocks'] = np.random.choice([0, 1],df2.shape[0])
+df1['Injury_head'] = np.random.choice([0, 1], df1.shape[0])
+df2['Injury_head'] = np.random.choice([0, 1], df2.shape[0])
+df1['Injury_arm'] = np.random.choice([0, 1], df1.shape[0])
+df2['Injury_arm'] = np.random.choice([0, 1], df2.shape[0])
+df1['Injury_shoulder'] = np.random.choice([0, 1],df1.shape[0])
+df2['Injury_shoulder'] = np.random.choice([0, 1], df2.shape[0])
+df1['Injury_buttocks'] = np.random.choice([0, 1],df1.shape[0])
+df2['Injury_buttocks'] = np.random.choice([0, 1],df2.shape[0])
+df1['Injury_leg'] = np.random.choice([0, 1], df1.shape[0])
+df2['Injury_leg'] = np.random.choice([0, 1],df2.shape[0])
+df1['Injury_heel'] = np.random.choice([0, 1], df1.shape[0])
+df2['Injury_heel'] = np.random.choice([0, 1], df2.shape[0])
+df1['hospitalization'] = np.random.randint(0, 28, df1.shape[0])
+df2['hospitalization'] = np.random.randint(0, 28,  df2.shape[0])
 # print(df1)
 # output = pd.DataFrame(0, index=['data'], columns=['age','age_cat','sex','BMI', 'BMI_cat', 'ulcer_head',
