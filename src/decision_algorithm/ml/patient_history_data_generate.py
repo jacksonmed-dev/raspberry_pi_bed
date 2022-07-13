@@ -104,5 +104,6 @@ df1['Injury_heel'] = np.random.choice([0, 1], df1.shape[0])
 df2['Injury_heel'] = np.random.choice([0, 1], df2.shape[0])
 df1['hospitalization'] = np.random.randint(0, 28, df1.shape[0])
 df2['hospitalization'] = np.random.randint(0, 28,  df2.shape[0])
+
 # print(df1)
 # output = pd.DataFrame(0, index=['data'], columns=['age','age_cat','sex','BMI', 'BMI_cat', 'ulcer_head',
