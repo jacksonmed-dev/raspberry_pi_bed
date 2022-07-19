@@ -2,16 +2,11 @@ import pathlib
 import threading
 import time
 from os import listdir
-from os.path import isfile, join,dirname, realpath
+from os.path import isfile, join
 import pandas as pd
 from queue import Queue
-import configparser
+from config import config
 
-
-dir_path = dirname(realpath(__file__))
-file = join(dir_path, '../config/config.ini')
-config = configparser.ConfigParser()
-config.read(file)
 config_blue = config['BLUETOOTHCONNECTION']
 config_paths = config['PATHS']
 
