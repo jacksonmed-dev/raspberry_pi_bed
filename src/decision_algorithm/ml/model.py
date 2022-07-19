@@ -2,18 +2,16 @@ from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 from Mask_RCNN.mrcnn.config import Config
 from Mask_RCNN.mrcnn.model import MaskRCNN
-from matplotlib import pyplot
-from matplotlib.patches import Rectangle
-from Mask_RCNN.mrcnn.visualize import display_instances
-from os.path import isfile, join, realpath, dirname
-import ast
 
+
+from os.path import isfile, join, realpath, dirname
 import configparser
 
 dir_path = dirname(realpath(__file__))
-file = join(dir_path, '..\\..\\..\\config.ini')
+file = join(dir_path, '../../../config.ini')
 config = configparser.ConfigParser()
 config.read(file)
+
 config_model = config['MODEL']
 config_paths = config['PATHS']
 
