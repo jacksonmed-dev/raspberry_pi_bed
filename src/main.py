@@ -13,12 +13,12 @@ from os.path import isfile, join, realpath, dirname
 import configparser
 
 dir_path = dirname(realpath(__file__))
-file = join(dir_path, '..\\config.ini')
+file = join(dir_path, '../config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 config_paths = config['PATHS']
 
-if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
+if os.uname()[4][:3] == 'arm' and "Linux" in os.uname().nodename:
     path = config_paths['MAIN_ARM']
     from bluetoothconnection.bluetooth_connection import Bluetooth as Bluetooth
 

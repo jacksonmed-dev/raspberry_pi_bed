@@ -6,6 +6,7 @@ from pandas._testing import assert_frame_equal
 from bluetoothconnection.bluetooth_connection_dummy import Bluetooth as Bluetooth
 from datetime import timedelta
 import pandas as pd
+import os
 
 
 class TestPressureSensor(TestCase):

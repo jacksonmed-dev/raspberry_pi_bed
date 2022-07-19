@@ -6,13 +6,13 @@ import os
 import configparser
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-file = os.path.join(dir_path, '..\\..\\config.ini')
+file = os.path.join(dir_path, '../../config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 config_blue = config['BLUETOOTHCONNECTION']
 
 
-if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
+if os.uname()[4][:3] == 'arm' and "Linux" in os.uname().sysname:
     from bed.sensor.gpio import Gpio
     from bluetoothconnection.bluetooth_connection import Bluetooth
 else:

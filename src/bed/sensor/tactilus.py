@@ -12,7 +12,7 @@ from os.path import isfile, join, realpath, dirname
 import configparser
 
 dir_path = dirname(realpath(__file__))
-file = join(dir_path, '..\\..\\..\\config.ini')
+file = join(dir_path, '../../../config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 config_bed = config['BED']
@@ -140,7 +140,7 @@ class PressureSensor(threading.Thread):
             sse = SSEClient(url)
             for response in sse:
                 df = pd.read_json(response.data)
-                # self.save_sensor_data(df)
+                self.save_sensor_data(df)
                 if "readings" in df.columns:
                     index = index + 1
                     readings_array = str(df["readings"][0])

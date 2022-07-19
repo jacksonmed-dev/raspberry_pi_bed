@@ -14,19 +14,20 @@ from massage.massage import Massage
 import configparser
 
 dir_path = dirname(realpath(__file__))
-file = join(dir_path, '..\\..\\config.ini')
+file = join(dir_path, '../../config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 config_blue = config['BLUETOOTHCONNECTION']
 
-if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
+if os.uname()[4][:3] == 'arm' and "Linux" in os.uname().nodename:
+    temp = os.uname().nodename
     from bed.sensor.gpio import Gpio
     from bluetoothconnection.bluetooth_connection import Bluetooth
 else:
     from bed.sensor.dummy_gpio import Gpio
     from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
 
-
+temp = 5
 # A bed contains the following:
 #   Patient
 #   Sensor

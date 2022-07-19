@@ -2,14 +2,15 @@ import unittest
 from os.path import dirname, join, realpath, abspath
 import sys
 import ast
-
+import bluetoothconnection.bluetooth_constants as bluetooth_constants
 import configparser
 
 dir_path = dirname(realpath(__file__))
-file1 = join(dir_path, '..\\config.ini')
-file2 = join(dir_path, '..\\config_for_tests.ini')
+file1 = join(dir_path, '../config.ini')
+file2 = join(dir_path, '../config_for_tests.ini')
 config = configparser.ConfigParser()
 config.read(file1)
+sections = config.sections()
 bluetooth = config['BLUETOOTHCONNECTION']
 massage = config['MASSAGE']
 model = config['MODEL']
@@ -17,11 +18,10 @@ config_tests = configparser.ConfigParser()
 config_tests.read(file2)
 tests_blue = config_tests['BLUETOOTHCONNECTION']
 
-
 full_path = join(dir_path, config['PATHS']['BLUE'])
 sys.path.append(abspath(full_path))
 
-import bluetooth_constants as bluetooth_constants
+
 
 class TestConfig(unittest.TestCase):
     def setUp(self):
@@ -31,7 +31,7 @@ class TestConfig(unittest.TestCase):
         pass
 
     def test_paths(self):
-        self.assertEqual(config.sections(), ['PATHS','BED','BLUETOOTHCONNECTION','MODEL', 'MASSAGE','SERVER'])
+        self.assertEqual(config.sections(), ['PATHS', 'BED', 'BLUETOOTHCONNECTION', 'MODEL', 'MASSAGE', 'SERVER'])
         self.assertEqual(config['PATHS']['ML'], '..\src\decision_algorithm\ml')
 
     def test_bluetooth(self):
@@ -49,7 +49,8 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(int(massage['TYPE']), 1)
 
     def test_model(self):
-        self.assertEqual(['BG','head','shoulder','buttocks','leg','arm','heel'], ast.literal_eval(model['CLASS_NAMES']))
+        self.assertEqual(['BG', 'head', 'shoulder', 'buttocks', 'leg', 'arm', 'heel'],
+                         ast.literal_eval(model['CLASS_NAMES']))
 
     def test_config_for_tests(self):
         self.assertFalse(tests_blue.getboolean('SEND_DUMMY'))
