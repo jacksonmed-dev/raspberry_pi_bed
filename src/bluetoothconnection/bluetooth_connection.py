@@ -8,19 +8,11 @@ import subprocess
 import time
 import threading
 from os import listdir
-from os.path import isfile, join, realpath, dirname
-import configparser
+from os.path import isfile, join
+from config import config
 
-dir_path = dirname(realpath(__file__))
-file = join(dir_path, '..\\config.ini')
-config = configparser.ConfigParser()
-config.read(file)
 config_blue = config['BLUETOOTHCONNECTION']
 config_paths = config['PATHS']
-
-
-# Subprocess has to be run after bluetoothservice is up, therefore the sleep is there
-
 
 def format_data(data, header_string):
     header = bytes(header_string, config_blue['ENCODING'])
