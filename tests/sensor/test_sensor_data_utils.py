@@ -8,7 +8,7 @@ from pandas._testing import assert_frame_equal
 class Test(TestCase):
     def test_extract_sensor_dataframe(self):
         # First test: Data correct format
-        test_file = "test_files/data.csv"
+        test_file = "../test_files/temp/data.csv"
         df = pd.read_csv(test_file, index_col=0)
 
         data = df["data"].iloc[0]
@@ -21,13 +21,13 @@ class Test(TestCase):
         assert_frame_equal(df_correct, test_df)
 
         # Second Test: Incorrect data format that is commonly used throughout the program
-        test_file = "test_files/incorrect_data_format.csv"
+        test_file = "../test_files/temp/incorrect_data_format.csv"
         df = pd.read_csv(test_file, index_col=0)
         self.assertEqual(None, extract_sensor_dataframe(df))
 
     def test_load_sensor_dataframe(self):
         # First Test is a dataframe with one entry
-        test_file_correct = "test_files/data.csv"
+        test_file_correct = "../test_files/temp/data.csv"
         correct_df = pd.read_csv(test_file_correct, index_col=0)
         data = extract_sensor_dataframe(correct_df)
         correct_df.at[correct_df.index.values[0], "data"] = data.astype(float)
@@ -42,7 +42,7 @@ class Test(TestCase):
         self.assertEqual(None, temp)
 
         # Third test is a dataframe with multiple entries
-        test_file_multiple = "test_files/data_multiple_entries.csv"
+        test_file_multiple = "../test_files/temp/data_multiple_entries.csv"
         correct_df = pd.read_csv(test_file_multiple, index_col=0)
         for index, row in correct_df.iterrows():
             temp = pd.DataFrame(row).T

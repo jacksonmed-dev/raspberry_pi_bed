@@ -2,22 +2,15 @@ import json
 import threading
 from datetime import timedelta
 import pandas as pd
-import os
-import configparser
+from configuration import config, is_raspberry_pi
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-file = os.path.join(dir_path, '..\\..\\config.ini')
-config = configparser.ConfigParser()
-config.read(file)
-config_blue = config['BLUETOOTHCONNECTION']
-
-
-if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
-    from bed.sensor.gpio import Gpio
-    from bluetoothconnection.bluetooth_connection import Bluetooth
+if is_raspberry_pi:
+    from bluetoothconnection.bluetooth_connection import Bluetooth as Bluetooth
 else:
-    from bed.sensor.dummy_gpio import Gpio
-    from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
+    from bluetoothconnection.bluetooth_connection_dummy import Bluetooth as Bluetooth
+
+config_bluetooth = config['BLUETOOTHCONNECTION']
+
 
 class Patient(object):
     __body_stats_df = pd.DataFrame(0, index=['head', 'shoulders', 'back', 'butt', 'calves', 'feet'],
@@ -33,7 +26,7 @@ class Patient(object):
     __patient_history = {
         "gender": 'male',
         "BMI": 19,
-        "ulcer_history": ['arm','leg'],
+        "ulcer_history": ['arm', 'leg'],
         "ICU_days": 5,
         "temperature": 101.2,
         "diabetes": 'type_1',
@@ -87,6 +80,5 @@ class Patient(object):
 
     def send_patient_status(self):
         data = self.get_patient_info_json()
-        self.__bluetooth.enqueue_bluetooth_data(data, config_blue['PATIENT_STATUS_HEADER'])
+        self.__bluetooth.enqueue_bluetooth_data(data, config_bluetooth['PATIENT_STATUS_HEADER'])
         return
-

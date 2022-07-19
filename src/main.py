@@ -1,34 +1,17 @@
 import os
-import sys
 import threading
 from bed.bed import Bed
 from body.body import Patient
-# from bed.sensor.directory_monitor import OnMyWatch
-from massage.massage import Massage
 from server.flask_server import create_server
+from configuration import is_raspberry_pi
 
-# from bluetoothconnection import bluetooth_connection
-
-from os.path import isfile, join, realpath, dirname
-import configparser
-
-dir_path = dirname(realpath(__file__))
-file = join(dir_path, '..\\config.ini')
-config = configparser.ConfigParser()
-config.read(file)
-config_paths = config['PATHS']
-
-if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
-    path = config_paths['MAIN_ARM']
+if is_raspberry_pi:
     from bluetoothconnection.bluetooth_connection import Bluetooth as Bluetooth
-
 else:
-    path = config_paths['MAIN_MAC']
     from bluetoothconnection.bluetooth_connection_dummy import Bluetooth as Bluetooth
 
 if __name__ == "__main__":
 
-    # watch = OnMyWatch(bed=bed, path=path)
     bluetooth = Bluetooth()
     p = Patient(bluetooth=bluetooth)
     bed = Bed(patient=p, bluetooth=bluetooth)

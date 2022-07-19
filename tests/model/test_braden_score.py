@@ -7,7 +7,7 @@ import sys
 
 import configparser
 dir_path = os.path.dirname(os.path.realpath(__file__))
-file = os.path.join(dir_path, '..\\config.ini')
+file = os.path.join(dir_path, '../../src/configuration/config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 

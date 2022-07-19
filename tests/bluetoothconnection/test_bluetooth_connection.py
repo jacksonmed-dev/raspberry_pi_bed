@@ -3,14 +3,13 @@ import string
 import time
 from unittest import TestCase
 from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
-import bluetoothconnection.bluetooth_constants as bluetooth_constants
 from bed.sensor.dummy_gpio import Gpio
 
 import os
 import configparser
 dir_path = os.path.dirname(os.path.realpath(__file__))
-file1 = os.path.join(dir_path, '..\\config.ini')
-file2 = os.path.join(dir_path, '..\\config_for_tests.ini')
+file1 = os.path.join(dir_path, '../../src/configuration/config.ini')
+file2 = os.path.join(dir_path, '../../src/configuration/config_for_tests.ini')
 config = configparser.ConfigParser()
 config.read(file1)
 config_blue = config['BLUETOOTHCONNECTION']

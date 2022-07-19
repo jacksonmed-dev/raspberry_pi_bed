@@ -26,7 +26,7 @@ def extract_sensor_dataframe(df):
 
 # use glob to get all the csv files
 # in the folder
-path = './test_files/'
+path = '../test_files/'
 csv_files = glob.glob(os.path.join(path, 'sensor_data_dataframe*.csv'))
 
 # loop over the list of csv files

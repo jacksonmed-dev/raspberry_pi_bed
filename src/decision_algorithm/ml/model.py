@@ -8,7 +8,7 @@ from os.path import isfile, join, realpath, dirname
 import configparser
 
 dir_path = dirname(realpath(__file__))
-file = join(dir_path, '../../../config.ini')
+file = join(dir_path, '../../configuration/config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 
