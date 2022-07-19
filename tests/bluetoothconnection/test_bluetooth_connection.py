@@ -3,7 +3,6 @@ import string
 import time
 from unittest import TestCase
 from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
-import bluetoothconnection.bluetooth_constants as bluetooth_constants
 from bed.sensor.dummy_gpio import Gpio
 
 import os

@@ -2,7 +2,6 @@ import unittest
 from os.path import dirname, join, realpath, abspath
 import sys
 import ast
-import bluetoothconnection.bluetooth_constants as bluetooth_constants
 import configparser
 
 dir_path = dirname(realpath(__file__))
@@ -35,14 +34,15 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(config['PATHS']['ML'], '..\src\decision_algorithm\ml')
 
     def test_bluetooth(self):
-        self.assertEqual(bluetooth_constants.INFLATABLE_REGION_HEADER, bluetooth['INFLATABLE_REGION_HEADER'])
-        self.assertEqual(bluetooth_constants.PATIENT_STATUS_HEADER, bluetooth['PATIENT_STATUS_HEADER'])
-        self.assertEqual(bluetooth_constants.BED_DATA_RESPONSE_AUTOMATIC, bluetooth['BED_DATA_RESPONSE_AUTOMATIC'])
-        self.assertEqual(bluetooth_constants.BED_STATUS_RESPONSE, bluetooth['BED_STATUS_RESPONSE'])
-        self.assertEqual(bluetooth_constants.TRAILER, bluetooth['TRAILER'])
-        self.assertEqual(bluetooth_constants.BED_DATA_RESPONSE, bluetooth['BED_DATA_RESPONSE'])
-
-        self.assertEqual(bluetooth_constants.MASSAGE_START, bluetooth['MASSAGE_START'])
+        # self.assertEqual(bluetooth_constants.INFLATABLE_REGION_HEADER, bluetooth['INFLATABLE_REGION_HEADER'])
+        # self.assertEqual(bluetooth_constants.PATIENT_STATUS_HEADER, bluetooth['PATIENT_STATUS_HEADER'])
+        # self.assertEqual(bluetooth_constants.BED_DATA_RESPONSE_AUTOMATIC, bluetooth['BED_DATA_RESPONSE_AUTOMATIC'])
+        # self.assertEqual(bluetooth_constants.BED_STATUS_RESPONSE, bluetooth['BED_STATUS_RESPONSE'])
+        # self.assertEqual(bluetooth_constants.TRAILER, bluetooth['TRAILER'])
+        # self.assertEqual(bluetooth_constants.BED_DATA_RESPONSE, bluetooth['BED_DATA_RESPONSE'])
+        #
+        # self.assertEqual(bluetooth_constants.MASSAGE_START, bluetooth['MASSAGE_START'])
+        self.fail()
 
     def test_massage(self):
         self.assertTrue(massage.getboolean('STATUS'))
