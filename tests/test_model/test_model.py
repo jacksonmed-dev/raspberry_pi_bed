@@ -21,10 +21,10 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(preprocessing.convert_to_image(TEST_DIR), True)  # add assertion here
         a = {"head": [[[10, 51], [10, 56], [15, 51], [15, 56]]]}
         #print(a.items())
-        #print(model.Model().load_model(IMAGE_DIR,MODEL_DIR).items())
+        #print(test_model.Model().load_model(IMAGE_DIR,MODEL_DIR).items())
 
         self.assertEqual(model.Model().load_model(IMAGE_DIR,MODEL_DIR), {'head': [[[10, 51], [10, 56], [15, 51], [15, 56]]], 'shoulder': [], 'buttocks': [], 'leg': [[[42, 42], [42, 49], [55, 42], [55, 49]], [[42, 53], [42, 59], [54, 53], [54, 59]]], 'arm': [[[8, 61], [8, 65], [14, 61], [14, 65]], [[9, 38], [9, 42], [13, 38], [13, 42]]], 'heel': []})  # add assertion here
         self.assertLessEqual(a.items(), model.Model().load_model(IMAGE_DIR,MODEL_DIR).items())
 if __name__ == '__main__':
     unittest.main()
-    #model.load_model()
+    #test_model.load_model()

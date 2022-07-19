@@ -7,11 +7,11 @@ from bluetoothconnection.bluetooth_connection_dummy import Bluetooth as Bluetoot
 
 # if os.uname()[4][:3] == 'arm':
 #     path = "/home/pi/Desktop/sensor_data"
-#     from bluetoothconnection.bluetooth_connection import Bluetooth as Bluetooth
+#     from test_bluetoothconnection.bluetooth_connection import Bluetooth as Bluetooth
 #
 # else:
 #     path = "/home/cjstanfi/Desktop/sensor_data"
-#     from bluetoothconnection.bluetooth_connection_dummy import Bluetooth as Bluetooth
+#     from test_bluetoothconnection.bluetooth_connection_dummy import Bluetooth as Bluetooth
 
 class TestBed(TestCase):
 
@@ -24,7 +24,7 @@ class TestBed(TestCase):
         sensor = cls.bed.get_pressure_sensor()
         sensor.append_sensor_data(data_df)
         sensor.set_current_frame(data_df)
-        # cls.bed.analyze_sensor_data()
+        # cls.test_bed.analyze_sensor_data()
 
 
     def test_analyze_sensor_data(self):
