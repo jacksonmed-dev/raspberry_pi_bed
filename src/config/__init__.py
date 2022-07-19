@@ -7,6 +7,10 @@ file = join(dir_path, 'config/config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 
+file2 = join(dir_path, "config/config_for_tests.ini")
+test_config = configparser.ConfigParser()
+test_config.read()
+
 is_raspberry_pi = False
 
 if os.uname()[4][:3] == 'arm' and "Linux" in os.uname().nodename:
