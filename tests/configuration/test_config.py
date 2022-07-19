@@ -6,8 +6,8 @@ import bluetoothconnection.bluetooth_constants as bluetooth_constants
 import configparser
 
 dir_path = dirname(realpath(__file__))
-file1 = join(dir_path, '../../config.ini')
-file2 = join(dir_path, '../../config_for_tests.ini')
+file1 = join(dir_path, '../../src/config/config.ini')
+file2 = join(dir_path, '../../src/config/config_for_tests.ini')
 config = configparser.ConfigParser()
 config.read(file1)
 sections = config.sections()

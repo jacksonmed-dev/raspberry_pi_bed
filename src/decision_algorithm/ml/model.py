@@ -11,7 +11,7 @@ import ast
 import configparser
 
 dir_path = dirname(realpath(__file__))
-file = join(dir_path, '..\\..\\..\\config.ini')
+file = join(dir_path, '../../config/config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 config_model = config['MODEL']
