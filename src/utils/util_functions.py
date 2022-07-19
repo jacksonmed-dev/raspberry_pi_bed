@@ -9,7 +9,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 dir_path = dirname(realpath(__file__))
-file = join(dir_path, '../config/config.ini')
+file = join(dir_path, '../configuration/config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 config_paths = config['PATHS']

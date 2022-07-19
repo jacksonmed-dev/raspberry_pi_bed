@@ -12,7 +12,7 @@ from os.path import isfile, join, realpath, dirname
 import configparser
 
 dir_path = dirname(realpath(__file__))
-file = join(dir_path, '../../config/config.ini')
+file = join(dir_path, '../../configuration/config.ini')
 config = configparser.ConfigParser()
 config.read(file)
 config_bed = config['BED']
@@ -148,7 +148,7 @@ class PressureSensor(threading.Thread):
                     self.current_frame(df)
                     # print(df)
 
-    def save_sensor_data(self, df: pd.DataFrame): #should I leave it all this way or try and add some stuff to config?
+    def save_sensor_data(self, df: pd.DataFrame): #should I leave it all this way or try and add some stuff to configuration?
         directory = os.getcwd()
         temp = "{}/sensor_data".format(directory)
         files = os.listdir(r"{}/test_files/sensor_data".format(directory))

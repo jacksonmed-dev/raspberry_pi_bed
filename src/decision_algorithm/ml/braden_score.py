@@ -5,11 +5,11 @@ import sys
 
 # import configparser
 # dir_path = dirname(realpath(__file__))
-# file = join(dir_path, '..\\..\\..\\config.ini')
-# config = configparser.ConfigParser()
-# config.read(file)
+# file = join(dir_path, '..\\..\\..\\configuration.ini')
+# configuration = configparser.ConfigParser()
+# configuration.read(file)
 #
-# full_path = join(dir_path, config['PATHS']['BODY'])
+# full_path = join(dir_path, configuration['PATHS']['BODY'])
 # sys.path.append(abspath(full_path))
 
 # once different conditions e.g. BMI are classified maybe those will be recorded and incorporated?

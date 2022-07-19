@@ -5,7 +5,7 @@ from os import listdir
 from os.path import isfile, join
 import pandas as pd
 from queue import Queue
-from config import config
+from configuration import config
 
 config_blue = config['BLUETOOTHCONNECTION']
 config_paths = config['PATHS']

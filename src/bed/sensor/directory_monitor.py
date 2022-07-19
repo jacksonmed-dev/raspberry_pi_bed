@@ -44,7 +44,7 @@ class Handler(FileSystemEventHandler):
     def __init__(self, bed: Bed, path):
         self.__bed = bed
         self.__file = path + "/data.csv"
-        # Fix the file path!!!! Should I put permanent file path into config?
+        # Fix the file path!!!! Should I put permanent file path into configuration?
 
     def on_modified(self, event):
         df = pd.read_csv(self.__file, index_col=0)

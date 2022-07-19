@@ -2,7 +2,7 @@ import json
 import threading
 from datetime import timedelta
 import pandas as pd
-from config import config, is_raspberry_pi
+from configuration import config, is_raspberry_pi
 
 if is_raspberry_pi:
     from bluetoothconnection.bluetooth_connection import Bluetooth as Bluetooth

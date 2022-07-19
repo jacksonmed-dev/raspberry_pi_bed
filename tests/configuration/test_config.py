@@ -1,6 +1,6 @@
 import unittest
 import ast
-from config import config, test_config
+from configuration import config, test_config
 
 sections = config.sections()
 bluetooth = config['BLUETOOTHCONNECTION']

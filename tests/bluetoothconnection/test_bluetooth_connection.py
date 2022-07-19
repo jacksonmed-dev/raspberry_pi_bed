@@ -8,8 +8,8 @@ from bed.sensor.dummy_gpio import Gpio
 import os
 import configparser
 dir_path = os.path.dirname(os.path.realpath(__file__))
-file1 = os.path.join(dir_path, '../../src/config/config.ini')
-file2 = os.path.join(dir_path, '../../src/config/config_for_tests.ini')
+file1 = os.path.join(dir_path, '../../src/configuration/config.ini')
+file2 = os.path.join(dir_path, '../../src/configuration/config_for_tests.ini')
 config = configparser.ConfigParser()
 config.read(file1)
 config_blue = config['BLUETOOTHCONNECTION']

@@ -1,14 +1,8 @@
 import random
 import threading
 import time
+from configuration import config
 
-from os.path import isfile, join, realpath, dirname
-import configparser
-
-dir_path = dirname(realpath(__file__))
-file = join(dir_path, '../config/config.ini')
-config = configparser.ConfigParser()
-config.read(file)
 config_massage = config['MASSAGE']
 config_paths = config['PATHS']
 

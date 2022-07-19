@@ -9,7 +9,7 @@ import time
 import threading
 from os import listdir
 from os.path import isfile, join
-from config import config
+from configuration import config
 
 config_blue = config['BLUETOOTHCONNECTION']
 config_paths = config['PATHS']
@@ -100,7 +100,7 @@ class Bluetooth:
             self.queue.get()
 
     def send_data(self, message):
-        length = int(len(message) / 1024) #should I ad this number in config?
+        length = int(len(message) / 1024) #should I ad this number in configuration?
         try:
             for i in range(length + 1):
                 if i * 1024 > len(message):
