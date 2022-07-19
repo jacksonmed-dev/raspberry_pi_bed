@@ -1,18 +1,12 @@
 import ast
 import pathlib
 from datetime import datetime
-from os.path import isfile, join, realpath, dirname
-import configparser
-
 import numpy as np
-import pandas as pd
 from matplotlib import pyplot as plt
+from configuration import config
 
-dir_path = dirname(realpath(__file__))
-file = join(dir_path, '../configuration/config.ini')
-config = configparser.ConfigParser()
-config.read(file)
 config_paths = config['PATHS']
+
 
 def save_df(self, i, df):
     current_path = str(pathlib.Path(__file__).parent.resolve())
@@ -20,6 +14,7 @@ def save_df(self, i, df):
     path = config_paths['DATA']
     filename = "data" + str(i) + ".csv"
     df.to_csv(current_path + path + filename)
+
 
 def extract_sensor_dataframe(df):
     data = df.iloc[0]
@@ -32,6 +27,7 @@ def extract_sensor_dataframe(df):
         print(e)
     else:
         return None
+
 
 # Write Unit Test for this
 def convert_sensor_data_to_png(df):
