@@ -6,28 +6,19 @@ from body.body import Patient
 from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
 import numpy as np
-import os
-from os.path import isfile, join, realpath, dirname
-
 from massage.massage import Massage
+from configuration import config, is_raspberry_pi
 
-import configparser
-
-dir_path = dirname(realpath(__file__))
-file = join(dir_path, '../configuration/config.ini')
-config = configparser.ConfigParser()
-config.read(file)
 config_blue = config['BLUETOOTHCONNECTION']
 
-if os.uname()[4][:3] == 'arm' and "Linux" in os.uname().nodename:
-    temp = os.uname().nodename
+if is_raspberry_pi:
     from bed.sensor.gpio import Gpio
     from bluetoothconnection.bluetooth_connection import Bluetooth
 else:
     from bed.sensor.dummy_gpio import Gpio
     from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
 
-temp = 5
+
 # A bed contains the following:
 #   Patient
 #   Sensor
@@ -65,6 +56,7 @@ class Bed:
             print(e)
         else:
             return None
+
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
     def analyze_sensor_data(self):
         #### Work on this ###
@@ -74,11 +66,12 @@ class Bed:
         temp = self.__pressure_sensor.get_current_frame()
         if temp.empty:
             return
-        #data = extract_sensor_dataframe(df["readings"])
-        #test = self.__pressure_sensor.get_current_frame()['readings']
-        data = np.asarray(extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()['readings']),dtype=np.float64).reshape(64,27)
-        #temp = np.asarray(data, dtype=np.float64).reshape(64,27)
-        #temp = np.asarray(test, dtype=np.float64)
+        # data = extract_sensor_dataframe(df["readings"])
+        # test = self.__pressure_sensor.get_current_frame()['readings']
+        data = np.asarray(extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()['readings']),
+                          dtype=np.float64).reshape(64, 27)
+        # temp = np.asarray(data, dtype=np.float64).reshape(64,27)
+        # temp = np.asarray(test, dtype=np.float64)
         sensor_data = pd.DataFrame(data)
 
         sensor_composition = self.__pressure_sensor.get_sensor_body_composition()
@@ -115,8 +108,8 @@ class Bed:
     def calculate_deflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
         sensor_data_df = \
-        pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
-            sensor_region_body]
+            pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
+                sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)
         sensor_data_row_max_indices = sensor_data_row_max.index.tolist()
@@ -133,8 +126,8 @@ class Bed:
     def calculate_inflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
         sensor_data_df = \
-        pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
-            sensor_region_body]
+            pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
+                sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)
 

@@ -3,7 +3,7 @@ import threading
 from bed.bed import Bed
 from body.body import Patient
 from server.flask_server import create_server
-from configuration import config, is_raspberry_pi
+from configuration import is_raspberry_pi
 
 if is_raspberry_pi:
     from bluetoothconnection.bluetooth_connection import Bluetooth as Bluetooth
