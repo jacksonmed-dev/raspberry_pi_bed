@@ -12,7 +12,7 @@ import os
 class TestPressureSensor(TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.test_file = "test_files/sensor_data/sensor_data_dataframe8.csv"
+        cls.test_file = "../test_files/sensor_data/sensor_data_dataframe8.csv"
         bluetooth = Bluetooth()
         cls.bed = Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
         data_df = load_sensor_dataframe(cls.test_file)
@@ -31,7 +31,7 @@ class TestPressureSensor(TestCase):
 
     def test_get_time(self):
         # Test 1: Correct format. Time delta should be one day
-        file = "test_files/data_multiple_entries.csv"
+        file = "../test_files/temp/data_multiple_entries.csv"
         bed = Bed(patient=Patient())
         data_df = load_sensor_dataframe(file)
         sensor = bed.get_pressure_sensor()
@@ -41,7 +41,7 @@ class TestPressureSensor(TestCase):
         self.assertEqual(timedelta(days=1), time_diff)
 
         # Second test: data_df contains one entry. if len(data) <= 1
-        file = "test_files/data.csv"
+        file = "../test_files/temp/data.csv"
         data_df = load_sensor_dataframe(file)
         sensor.set_sensor_data(data_df)
         time_diff = sensor.get_time()
@@ -54,7 +54,7 @@ class TestPressureSensor(TestCase):
         self.assertEqual(None, time_diff), "time difference type should be None, recieved {}".format(type(time_diff))
 
         # Fourth test: Date in in the wrong format
-        file = "test_files/incorrect_date_format.csv"
+        file = "../test_files/temp/incorrect_date_format.csv"
         data_df = load_sensor_dataframe(file)
         sensor.set_sensor_data(data_df)
         time_diff = sensor.get_time()

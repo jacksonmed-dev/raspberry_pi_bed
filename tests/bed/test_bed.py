@@ -18,7 +18,7 @@ class TestBed(TestCase):
     @classmethod
     def setUpClass(cls):
 
-        cls.test_file = "test_files/sensor_data/sensor_data_dataframe8.csv"
+        cls.test_file = "../test_files/sensor_data/sensor_data_dataframe8.csv"
         bluetooth = Bluetooth()
         cls.bed = Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
         data_df = load_sensor_dataframe(cls.test_file)
