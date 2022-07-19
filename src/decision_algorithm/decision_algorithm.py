@@ -9,6 +9,7 @@ from datetime import timedelta
 import numpy as np
 import os
 import sys
+from configuration import config, is_raspberry_pi
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 sys.path.append(os.path.join(dir_path, "ml/"))
@@ -16,7 +17,7 @@ import model
 import preprocessing
 from massage.massage import Massage
 
-if os.uname()[4][:3] == 'arm' and not "MacBook" in os.uname().nodename:
+if is_raspberry_pi:
     from bed.sensor.gpio import Gpio
     from bluetoothconnection.bluetooth_connection import Bluetooth
 else:
