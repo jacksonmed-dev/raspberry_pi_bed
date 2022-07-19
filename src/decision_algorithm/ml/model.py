@@ -3,14 +3,18 @@ from keras.preprocessing.image import img_to_array
 from Mask_RCNN.mrcnn.config import Config
 from Mask_RCNN.mrcnn.model import MaskRCNN
 
+import pandas as pd
+
+from keras.models import Model, load_model
+from sklearn.model_selection import train_test_split
+from keras.layers import Input,LSTM, GRU, Dense, Activation, Dropout, Bidirectional
+from keras.callbacks import EarlyStopping
+from sklearn import preprocessing
+
+
 
 from os.path import isfile, join, realpath, dirname
-import configparser
-
-dir_path = dirname(realpath(__file__))
-file = join(dir_path, '../../configuration/config.ini')
-config = configparser.ConfigParser()
-config.read(file)
+from configuration import config
 
 config_model = config['MODEL']
 config_paths = config['PATHS']
@@ -63,4 +67,64 @@ class Model():
 
           print(dic1)
           return dic1
+
+     def train_GRU(input_data):
+          data = pd.read_csv(input_data, encoding='utf-8')
+          data = data.drop(['timestamp'], axis=1)
+          X_All = data.iloc[:, :19]
+          X_All = X_All.values
+
+          StandardScaler_scaler = preprocessing.StandardScaler()
+          StandardScaler_scaler = StandardScaler_scaler.fit(X_All)
+          X_All = StandardScaler_scaler.transform(X_All)
+
+          X_All = X_All.reshape(len(X_All), 1, 19)
+
+          y_all = data.iloc[:, 19:].values
+
+          validation_sample = 20000
+
+          # =============testing==============#
+          X_v = X_All[validation_sample:]
+          y_v = y_all[validation_sample:]
+
+          # =============training===============#
+          X = X_All[:validation_sample]
+          y = y_all[:validation_sample]
+
+          X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+          input_data = Input(shape=(1, 19))
+          m = Bidirectional(GRU(256, return_sequences=True))(input_data)
+          m = Dropout(0.3)(m)
+          m = GRU(256)(m)
+          m = Dropout(0.3)(m)
+
+          m = Dense(256, activation='relu')(m)
+          m = Dropout(0.3)(m)
+          m = Dense(256, activation='relu')(m)
+          m = Dropout(0.3)(m)
+          m = Dense(256, activation='relu')(m)
+          m = Dropout(0.3)(m)
+          output = Dense(6, activation=None)(m)
+
+          model = Model(inputs=input_data, outputs=output)
+
+          callback = EarlyStopping(monitor="val_loss", patience=100, verbose=1, mode="auto")
+          model.compile(optimizer='adam', loss=['mse'], metrics=['mae', 'mape'])
+          result = model.fit(X_train, y_train, epochs=500, batch_size=128, validation_data=(X_test, y_test),
+                             callbacks=[callback])
+          model.save('training/model_file/GRU_model.h5')
+          score = model.evaluate(X_v, y_v)
+          print("MSE:", "%.4f" % score[0], " / MAE:", "%.4f" % score[1], "/ MAPE:", "%.4f" % score[2])
+          return
+
+     def predict_GRU(input_data):
+          model = load_model('training/model_file/GRU_model.h5') #need to make sur that pretrained model is there
+          df = model.predict(input_data)
+          df = pd.DataFrame(df, columns=['outcome_head', 'outcome_shoulder', 'outcome_arm', 'outcome_buttocks',
+                                         'outcome_leg',
+                                         'outcome_heel'])
+          return df
+
 #Model().load_model('/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/test_img/237.png','/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5')
