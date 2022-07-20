@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 
 from bed.bed import Bed
@@ -11,12 +13,13 @@ import os
 import sys
 from configuration import config, is_raspberry_pi
 from decision_algorithm.ml import preprocessing, model
+from massage.massage import Massage
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-full_path = os.path.join(dir_path, config['BODY'])
-sys.path.append(os.path.abspath(full_path))
-full_path = os.path.join(dir_path, config['ML'])
-sys.path.append(os.path.abspath(full_path))
+#full_path = os.path.join(dir_path, config['BODY'])
+#sys.path.append(os.path.abspath(full_path))
+#full_path = os.path.join(dir_path, config['ML'])
+#sys.path.append(os.path.abspath(full_path))
 
 # config_blue = config['BLUETOOTHCONNECTION']
 config_paths = config['PATHS']
@@ -30,31 +33,31 @@ BODY_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/mask_rcnn_body p
 LSTM_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/LSTM_model.h5")
 IMAGE_DIR = os.path.join(dir_path, "ml/test_img/1.png")
 
-from ml.feature_extraction_preprocessing import combine_features_df
+#from ml.feature_extraction_preprocessing import combine_features_df
 
 
-def part1_adjustment(bed: Bed):
-    ulcer = combine_features_df()
-    ulcer = ulcer.filter(like='ulcer')
-
-    # if a body part has ulcer history make an immediate adjustment to alleviate pressure for that body part
-
-    # the labels in tactilus for PressureSensor.__sensor_body_composition do not match these
-    # also these might still be fixed coordinates in tactilus script
-    if ulcer.at['data', 'ulcer_head'] == 1:
-        bed.calculate_deflatable_regions('head')
-    elif ulcer.at['data', 'ulcer_arm'] == 1:
-        bed.calculate_deflatable_regions('arm')
-    elif ulcer.at['data', 'ulcer_shoulder'] == 1:
-        bed.calculate_deflatable_regions('shoulder')
-    elif ulcer.at['data', 'ulcer_buttocks'] == 1:
-        bed.calculate_deflatable_regions('buttocks')
-    elif ulcer.at['data', 'ulcer_leg'] == 1:
-        bed.calculate_deflatable_regions('leg')
-    elif ulcer.at['data', 'ulcer_heel'] == 1:
-        bed.calculate_deflatable_regions('heel')
-
-    return
+# def part1_adjustment(bed: Bed):
+#     ulcer = combine_features_df()
+#     ulcer = ulcer.filter(like='ulcer')
+#
+#     # if a body part has ulcer history make an immediate adjustment to alleviate pressure for that body part
+#
+#     # the labels in tactilus for PressureSensor.__sensor_body_composition do not match these
+#     # also these might still be fixed coordinates in tactilus script
+#     if ulcer.at['data', 'ulcer_head'] == 1:
+#         bed.calculate_deflatable_regions('head')
+#     elif ulcer.at['data', 'ulcer_arm'] == 1:
+#         bed.calculate_deflatable_regions('arm')
+#     elif ulcer.at['data', 'ulcer_shoulder'] == 1:
+#         bed.calculate_deflatable_regions('shoulder')
+#     elif ulcer.at['data', 'ulcer_buttocks'] == 1:
+#         bed.calculate_deflatable_regions('buttocks')
+#     elif ulcer.at['data', 'ulcer_leg'] == 1:
+#         bed.calculate_deflatable_regions('leg')
+#     elif ulcer.at['data', 'ulcer_heel'] == 1:
+#         bed.calculate_deflatable_regions('heel')
+#
+#     return
 
 
 class Decision_Algorithm:
@@ -93,7 +96,7 @@ class Decision_Algorithm:
 
         sensor_data = pd.DataFrame(data)
         preprocessing.convert_to_image(data)
-        sensor_composition = model.Model().load_model(IMAGE_DIR, MODEL_DIR)
+        sensor_composition = model.Model().load_Body_Parts_Model(IMAGE_DIR, BODY_MODEL_DIR)
 
         # Identify regions of the body that are in a high pressure state
         body_position = {"head": [], "shoulder": [], "buttocks": [], "leg": [], "arm": [], "heel": []}

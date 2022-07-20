@@ -1,7 +1,8 @@
 from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
-from Mask_RCNN.mrcnn.config import Config
 from Mask_RCNN.mrcnn.model import MaskRCNN
+from Mask_RCNN.mrcnn.config import Config
+
 
 import pandas as pd
 
@@ -10,6 +11,7 @@ from sklearn.model_selection import train_test_split
 from keras.layers import Input,LSTM, GRU, Dense, Activation, Dropout, Bidirectional
 from keras.callbacks import EarlyStopping
 from sklearn import preprocessing
+import ast
 
 
 
@@ -129,6 +131,7 @@ class Model():
 
 
      def load_LSTM_Model(self, model_dir):
+
           model = load_model(model_dir)
           model_result = model.predict(x_v)
           return model_result

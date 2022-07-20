@@ -2,7 +2,7 @@ import pathlib
 
 from queue import Queue
 import pandas as pd
-from bluetooth import *
+#from bluetooth import *
 import socket
 import subprocess
 import time
