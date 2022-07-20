@@ -9,6 +9,7 @@ from bed.sensor.tactilus import PressureSensor
 import os
 import sys
 from configuration import config, is_raspberry_pi
+from decision_algorithm.ml import preprocessing, model
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 full_path = os.path.join(dir_path, config['BODY'])
