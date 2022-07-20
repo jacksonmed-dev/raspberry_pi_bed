@@ -29,7 +29,7 @@ class TestConfig(Config):
      NUM_CLASSES = int(config_model['NUM_CLASSES'])
 # define the model
 class Model():
-     def load_model(self,image_dir,model_dir):
+     def load_Body_Parts_Model(self,image_dir,model_dir):
           model = MaskRCNN(mode='inference', model_dir='./', config=TestConfig())
           # load coco model weights
           model.load_weights(model_dir, by_name=True)
@@ -127,4 +127,9 @@ class Model():
                                          'outcome_heel'])
           return df
 
+
+     def load_LSTM_Model(self, model_dir):
+          model = load_model(model_dir)
+          model_result = model.predict(x_v)
+          return model_result
 #Model().load_model('/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/test_img/237.png','/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5')
