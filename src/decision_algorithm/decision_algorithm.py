@@ -1,5 +1,6 @@
 import pandas as pd
 
+from bed.bed import Bed
 from body.body import Patient
 from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
 import bluetoothconnection.bluetooth_connection as bluetooth_constants
@@ -17,9 +18,7 @@ sys.path.append(os.path.abspath(full_path))
 full_path = os.path.join(dir_path, config['ML'])
 sys.path.append(os.path.abspath(full_path))
 
-from ml.model import Model
-
-#config_blue = config['BLUETOOTHCONNECTION']
+# config_blue = config['BLUETOOTHCONNECTION']
 config_paths = config['PATHS']
 if is_raspberry_pi:
     from bed.sensor.gpio import Gpio
@@ -31,38 +30,32 @@ BODY_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/mask_rcnn_body p
 LSTM_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/LSTM_model.h5")
 IMAGE_DIR = os.path.join(dir_path, "ml/test_img/1.png")
 
+from ml.feature_extraction_preprocessing import combine_features_df
 
 
-# class Decision_Algorithm():
-#     def __init__(self, bed:Bed):
-#         self.__bed = bed
-#         return
-#
-#     def part1_adjustment(self):
-#         ulcer = combine_features_df()
-#         ulcer = ulcer.filter(like='ulcer')
-#         # sensor threshold should be changed to data frame having a threshld for each body part?
-#         # if changing the threshold is the logic we are going with
-#         #sensor_threshold = self.__bed.__pressure_sensor.get_sensor_threshold()
-#
-#         # if a body part has ulcer history make an immediate adjustment to aleviate pressure and
-#         # change the max pressure attribute for that body part
-#
-#         if ulcer.at['data', 'ulcer_head'] == 1:
-#             self.__bed.__pressure_sensor.set_sensor_threshold(35)
-#             return
-#         elif ulcer.at['data', 'ulcer_head'] == 1:
-#             self.__bed.__pressure_sensor.set_sensor_threshold(35)
-#             return
-#         elif ulcer.at['data', 'ulcer_head'] == 1:
-#             self.__bed.__pressure_sensor.set_sensor_threshold(35)
-#             return
-#         elif ulcer.at['data', 'ulcer_head'] == 1:
-#             self.__bed.__pressure_sensor.set_sensor_threshold(35)
-#             return
-#         elif ulcer.at['data', 'ulcer_head'] == 1:
-#             self.__bed.__pressure_sensor.set_sensor_threshold(35)
-#             return
+def part1_adjustment(bed: Bed):
+    ulcer = combine_features_df()
+    ulcer = ulcer.filter(like='ulcer')
+
+    # if a body part has ulcer history make an immediate adjustment to alleviate pressure for that body part
+
+    # the labels in tactilus for PressureSensor.__sensor_body_composition do not match these
+    # also these might still be fixed coordinates in tactilus script
+    if ulcer.at['data', 'ulcer_head'] == 1:
+        bed.calculate_deflatable_regions('head')
+    elif ulcer.at['data', 'ulcer_arm'] == 1:
+        bed.calculate_deflatable_regions('arm')
+    elif ulcer.at['data', 'ulcer_shoulder'] == 1:
+        bed.calculate_deflatable_regions('shoulder')
+    elif ulcer.at['data', 'ulcer_buttocks'] == 1:
+        bed.calculate_deflatable_regions('buttocks')
+    elif ulcer.at['data', 'ulcer_leg'] == 1:
+        bed.calculate_deflatable_regions('leg')
+    elif ulcer.at['data', 'ulcer_heel'] == 1:
+        bed.calculate_deflatable_regions('heel')
+
+    return
+
 
 class Decision_Algorithm:
     # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
@@ -85,32 +78,6 @@ class Decision_Algorithm:
         self.__bed_gpio.register_observer(self.send_bed_status_bluetooth)
         return
 
-    # def part1_adjustment(self):
-    #     ulcer = combine_features_df()
-    #     ulcer = ulcer.filter(like='ulcer')
-    #     # sensor threshold should be changed to data frame having a threshld for each body part?
-    #     # if changing the threshold is the logic we are going with
-    #     # sensor_threshold = self.__bed.__pressure_sensor.get_sensor_threshold()
-    #
-    #     # if a body part has ulcer history make an immediate adjustment to aleviate pressure and
-    #     # change the max pressure attribute for that body part
-    #
-    #     if ulcer.at['data', 'ulcer_head'] == 1:
-    #         self.__bed.__pressure_sensor.set_sensor_threshold(35)
-    #         return
-    #     elif ulcer.at['data', 'ulcer_head'] == 1:
-    #         self.__bed.__pressure_sensor.set_sensor_threshold(35)
-    #         return
-    #     elif ulcer.at['data', 'ulcer_head'] == 1:
-    #         self.__bed.__pressure_sensor.set_sensor_threshold(35)
-    #         return
-    #     elif ulcer.at['data', 'ulcer_head'] == 1:
-    #         self.__bed.__pressure_sensor.set_sensor_threshold(35)
-    #         return
-    #     elif ulcer.at['data', 'ulcer_head'] == 1:
-    #         self.__bed.__pressure_sensor.set_sensor_threshold(35)
-    #         return
-
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
     def analyze_sensor_data(self):
         #### Work on this ###
@@ -121,14 +88,15 @@ class Decision_Algorithm:
         if temp.empty:
             return
 
-        data = np.asarray(extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()['readings']),dtype=np.float64).reshape(64,27)
+        data = np.asarray(extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()['readings']),
+                          dtype=np.float64).reshape(64, 27)
 
         sensor_data = pd.DataFrame(data)
         preprocessing.convert_to_image(data)
-        sensor_composition = model.Model().load_model(IMAGE_DIR,MODEL_DIR)
+        sensor_composition = model.Model().load_model(IMAGE_DIR, MODEL_DIR)
 
         # Identify regions of the body that are in a high pressure state
-        body_position = {"head":[],"shoulder":[],"buttocks":[],"leg":[],"arm":[],"heel":[]}
+        body_position = {"head": [], "shoulder": [], "buttocks": [], "leg": [], "arm": [], "heel": []}
         for body_part, value in sensor_composition.items():
             print(body_part)
             max = 0
@@ -139,13 +107,11 @@ class Decision_Algorithm:
                         max = item[0]
                     if item[0] < min:
                         min = item[0]
-            for i in range(min,max):
+            for i in range(min, max):
                 body_position[body_part].append(i)
 
         # part2 EMA of predict result
         LSTM_model_data = model.Model().load_LSTM_Model(LSTM_MODEL_DIR)
-
-
 
         for body_part, value in body_position.items():
             data = sensor_data.loc[value]
@@ -178,8 +144,8 @@ class Decision_Algorithm:
     def calculate_deflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
         sensor_data_df = \
-        pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
-            sensor_region_body]
+            pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
+                sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)
         sensor_data_row_max_indices = sensor_data_row_max.index.tolist()
@@ -196,8 +162,8 @@ class Decision_Algorithm:
     def calculate_inflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
         sensor_data_df = \
-        pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
-            sensor_region_body]
+            pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
+                sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)
 
