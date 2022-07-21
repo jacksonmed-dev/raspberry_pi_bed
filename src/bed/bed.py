@@ -36,6 +36,14 @@ class Bed:
     #                                columns=['time', 'max_pressure'])
 
     __massage = Massage(__bed_gpio)
+    __tube_body_composition = {
+        "head": [i for i in range(0, 1)],
+        "arm": [i for i in range(2, 4)],
+        "shoulder": [i for i in range(1, 2)],
+        "buttocks": [i for i in range(4, 5)],
+        "leg": [i for i in range(5, 7)],
+        "heel": [i for i in range(7, 8)]
+    }
 
     def __init__(self, patient: Patient, bluetooth: Bluetooth):
         self.__patient = patient
@@ -201,6 +209,38 @@ class Bed:
             "gpio_pins": [value for key, value in gpio.items()],
         })
         return json_final
+
+    def set_tube_body_composition(self, new_dict):
+        scaling_coeff = 65/8
+        temp = {"head": [], "shoulder": [], "arm": [], "buttocks": [], "leg": [], "heel": []}
+        for key in temp:
+            a = len(new_dict[key])
+            if a == 1:
+                min_y = new_dict[key][0][0][0]
+                min_y = int(min_y / scaling_coeff)
+                max_y = new_dict[key][0][2][0]
+                max_y = int(max_y / scaling_coeff)
+                print(min_y, max_y)
+                temp_list = [i for i in range(min_y, max_y + 1)]  # model output is 0 indexed?
+                temp[key] = temp_list
+
+            # in the case of arm, leg, shoulder and heel we might have two objects so take lowest and highes toint of both
+            elif a == 2:
+                min_y = min(new_dict[key][0][0][0], new_dict[key][1][0][0])
+                min_y = int(min_y / scaling_coeff)
+                max_y = max(new_dict[key][0][2][0], new_dict[key][1][2][0])
+                max_y = int(max_y / scaling_coeff)
+                print(min_y, max_y)
+                temp_list = [i for i in range(min_y, max_y + 1)]  # model output is 0 indexed?
+                temp[key] = temp_list
+
+            # if there is no signal in shoulder area keep the default coordinates
+            elif a == 0:
+                temp[key] = self.__tube_body_composition[key]
+
+            temp_list = [i for i in range(min_y, max_y + 1)]  # model output is 0 indexed?
+            temp[key] = temp_list
+        self.__tube_body_composition = temp
 
     def massage(self, state):
         if state == 0:
