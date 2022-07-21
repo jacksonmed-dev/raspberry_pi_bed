@@ -29,11 +29,11 @@ class PressureSensor(threading.Thread):
     __sensor_threshold = int(config_bed['SENSOR_THRESHOLD'])
     __sensor_body_composition = {
         "head": [i for i in range(0, 9)],
-        "shoulders": [i for i in range(10, 16)],
-        "back": [i for i in range(17, 33)],
-        "butt": [i for i in range(34, 43)],
-        "calves": [i for i in range(44, 57)],
-        "feet": [i for i in range(58, 64)]
+        "shoulder": [i for i in range(10, 16)],
+        "arm": [i for i in range(17, 33)],
+        "buttocks": [i for i in range(34, 43)],
+        "leg": [i for i in range(44, 57)],
+        "heels": [i for i in range(58, 64)]
     }
     __sensor_rows = int(config_bed['SENSOR_ROWS'])
     __sensor_columns = int(config_bed['SENSOR_COLUMNS'])
@@ -47,11 +47,13 @@ class PressureSensor(threading.Thread):
         self._callbacks = []
         self._bluetooth_callback = []
 
-        if os.uname()[4][:3] == 'arm':
-            self.isRaspberryPi = True
-        else:
-            self.isRaspberryPi = True
-        return
+        # if os.uname()[4][:3] == 'arm':
+        #     self.isRaspberryPi = True
+        # else:
+        #     self.isRaspberryPi = True
+        # return
+
+        self.isRaspberryPi = True
 
     def current_frame(self):
         return self.__current_frame
@@ -108,6 +110,32 @@ class PressureSensor(threading.Thread):
 
     def set_sensor_inflatable_composition(self, values):
         self.__sensor_inflatable_composition = values
+
+    def set_sensor_body_composition(self, new_dict):
+        temp = {"head": [], "shoulder": [], "arm": [], "buttocks": [], "leg": [], "heel": []}
+        for key in temp:
+            a = len(new_dict[key])
+
+            if a == 1:
+                min_y = new_dict[key][0][0][0]
+                max_y = new_dict[key][0][2][0]
+                print(min_y, max_y)
+                temp_list = [i for i in range(min_y, max_y + 1)]  # model output is 0 indexed?
+                temp[key] = temp_list
+
+            # in the case of arm, leg, shoulder and heel we might have two objects so take lowest and highes toint of both
+            elif a == 2:
+                min_y = min(new_dict[key][0][0][0], new_dict[key][1][0][0])
+                max_y = max(new_dict[key][0][2][0], new_dict[key][1][2][0])
+                print(min_y, max_y)
+                temp_list = [i for i in range(min_y, max_y + 1)]  # model output is 0 indexed?
+                temp[key] = temp_list
+
+            # if there is no signal in shoulder area keep the default coordinates
+            elif a == 0:
+                temp[key] = self.__sensor_body_composition[key]
+
+        self.__sensor_body_composition = temp
 
     def append_sensor_data(self, df):
         self.__sensor_data = self.__sensor_data.append(df)
