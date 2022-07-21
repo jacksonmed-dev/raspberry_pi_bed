@@ -13,7 +13,7 @@ from bed.sensor.tactilus import PressureSensor
 import os
 import sys
 from configuration import config, is_raspberry_pi
-from decision_algorithm.ml import preprocessing, model
+from ml import preprocessing, model
 from massage.massage import Massage
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -36,28 +36,28 @@ IMAGE_DIR = os.path.join(dir_path, "ml/test_img/135.png")
 
 from ml.feature_extraction_preprocessing import combine_features_df
 
-def part1_adjustment(bed: Bed):
-    ulcer = combine_features_df()
-    ulcer = ulcer.filter(like='ulcer')
-
-    # if a body part has ulcer history make an immediate adjustment to alleviate pressure for that body part
-
-    # the labels in tactilus for PressureSensor.__sensor_body_composition do not match these
-    # also these might still be fixed coordinates in tactilus script
-    if ulcer.at['data', 'ulcer_head'] == 1:
-        bed.calculate_deflatable_regions('head')
-    elif ulcer.at['data', 'ulcer_arm'] == 1:
-        bed.calculate_deflatable_regions('arm')
-    elif ulcer.at['data', 'ulcer_shoulder'] == 1:
-        bed.calculate_deflatable_regions('shoulder')
-    elif ulcer.at['data', 'ulcer_buttocks'] == 1:
-        bed.calculate_deflatable_regions('buttocks')
-    elif ulcer.at['data', 'ulcer_leg'] == 1:
-        bed.calculate_deflatable_regions('leg')
-    elif ulcer.at['data', 'ulcer_heel'] == 1:
-        bed.calculate_deflatable_regions('heel')
-
-    return
+# def part1_adjustment(bed: Bed):
+#     ulcer = combine_features_df()
+#     ulcer = ulcer.filter(like='ulcer')
+#
+#     # if a body part has ulcer history make an immediate adjustment to alleviate pressure for that body part
+#
+#     # the labels in tactilus for PressureSensor.__sensor_body_composition do not match these
+#     # also these might still be fixed coordinates in tactilus script
+#     if ulcer.at['data', 'ulcer_head'] == 1:
+#         bed.calculate_deflatable_regions('head')
+#     elif ulcer.at['data', 'ulcer_arm'] == 1:
+#         bed.calculate_deflatable_regions('arm')
+#     elif ulcer.at['data', 'ulcer_shoulder'] == 1:
+#         bed.calculate_deflatable_regions('shoulder')
+#     elif ulcer.at['data', 'ulcer_buttocks'] == 1:
+#         bed.calculate_deflatable_regions('buttocks')
+#     elif ulcer.at['data', 'ulcer_leg'] == 1:
+#         bed.calculate_deflatable_regions('leg')
+#     elif ulcer.at['data', 'ulcer_heel'] == 1:
+#         bed.calculate_deflatable_regions('heel')
+#
+#     return
 
 
 # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
@@ -135,6 +135,30 @@ def algorithm():
         buttocks_df = buttocks_df.append(LSTM_model_data[3],ignore_index=True)
         leg_df = leg_df.append(LSTM_model_data[4],ignore_index=True)
         heel_df = heel_df.append(LSTM_model_data[5],ignore_index=True)
+        head_ema = head_df.ewm(com=0.2).mean()
+        shoulder_ema = shoulder_df.ewm(com=0.2).mean()
+        arm_ema = arm_df.ewm(com=0.2).mean()
+        buttocks_ema = buttocks_df.ewm(com=0.2).mean()
+        leg_ema = leg_df.ewm(com=0.2).mean()
+        heel_ema = heel_df.ewm(com=0.2).mean()
+
+        if head_ema[i] < head_df[i]:
+            bed.calculate_deflatable_regions('head')
+
+        if shoulder_ema[i] < shoulder_df[i]:
+            bed.calculate_deflatable_regions('shoulder')
+
+        if arm_ema[i] < arm_df[i]:
+            bed.calculate_deflatable_regions('arm')
+
+        if buttocks_ema[i] < buttocks_df[i]:
+            bed.calculate_deflatable_regions('buttocks')
+
+        if leg_ema[i] < leg_df[i]:
+            bed.calculate_deflatable_regions('leg')
+
+        if heel_ema[i] < heel_df[i]:
+            bed.calculate_deflatable_regions('heel')
     return
     # part2 EMA of predict result
     #head_df = pd.DataFrame(columns = ['Name', 'Scores', 'Questions']
