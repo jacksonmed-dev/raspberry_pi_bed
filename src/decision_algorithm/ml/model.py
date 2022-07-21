@@ -130,7 +130,8 @@ class Model():
           return df
 
 
-     def load_LSTM_Model(self, model_dir):
+     def load_LSTM_Model(self, model_dir,x_v):
+
 
           model = load_model(model_dir)
           model_result = model.predict(x_v)
