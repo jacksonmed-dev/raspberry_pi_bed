@@ -154,6 +154,7 @@ def analyze_sensor_data(self):
 
 
 
+
     for body_part, value in body_position.items():
         data = sensor_data.loc[value]
         max_value = data.max().max()
