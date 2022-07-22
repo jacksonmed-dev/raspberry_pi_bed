@@ -13,7 +13,7 @@ from bed.sensor.tactilus import PressureSensor
 import os
 import sys
 from configuration import config, is_raspberry_pi
-from decision_algorithm.ml import preprocessing, model
+from ml import preprocessing, model
 from massage.massage import Massage
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -34,7 +34,7 @@ BODY_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/mask_rcnn_body p
 LSTM_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/LSTM_model.h5")
 IMAGE_DIR = os.path.join(dir_path, "ml/test_img/135.png")
 
-from decision_algorithm.ml import feature_extraction_preprocessing as fep
+#from decision_algorithm.ml import feature_extraction_preprocessing as fep
 # from ml.model import Model
 
 # bluetooth = Bluetooth()
@@ -99,18 +99,18 @@ def __init__(self, patient: Patient, bluetooth: Bluetooth):
 
 # Main algorithm to make decision. Only looks at time spent under "high pressure"
 def algorithm():
-    test_file = "/home/justin/PycharmProjects/raspberry_pi_bed/tests/test_files/sensor_data/sensor_data_dataframe135.csv"
+    test_file = "/home/justin/PycharmProjects/raspberry_pi_bed/tests/test_files/sensor_data/sensor_data_dataframe168.csv"
     bluetooth = Bluetooth()
     Bed = bed.bed.Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
     data_df = load_sensor_dataframe(test_file)
     sensor = Bed.get_pressure_sensor()
     sensor.append_sensor_data(data_df)
     sensor.set_current_frame(data_df)
-    # data = np.asarray(extract_sensor_dataframe(__pressure_sensor.get_current_frame()['readings']),
-    #                    dtype=np.float64).reshape(64, 27)
+    data = np.asarray(extract_sensor_dataframe(data_df['readings']),
+                       dtype=np.float64).reshape(64, 27)
 
-    #sensor_data = pd.DataFrame(data)
-    # preprocessing.convert_to_image(data)
+    sensor_data = pd.DataFrame(data)
+    preprocessing.convert_to_image(data)
 
     sensor_composition = model.Model().load_Body_Parts_Model(IMAGE_DIR, BODY_MODEL_DIR)
 

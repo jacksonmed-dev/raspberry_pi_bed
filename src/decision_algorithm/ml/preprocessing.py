@@ -46,10 +46,11 @@ def convert_to_image(data):
     #     print("Generated image: {}".format(i))
     #
     #     i += 1
+    #plt.figure(facecolor='#94F008')
     plt.pcolormesh(data, cmap='hot')
     plt.axis('scaled')
+    #plt.axis('off')
 
-    plt.axis('off')
 #    plt.show()
     plt.savefig("/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/test_img/" + "1.png")
     return True
