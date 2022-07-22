@@ -13,7 +13,7 @@ from bed.sensor.tactilus import PressureSensor
 import os
 import sys
 from configuration import config, is_raspberry_pi
-from ml import preprocessing, model
+from decision_algorithm.ml import preprocessing, model
 from massage.massage import Massage
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -30,9 +30,9 @@ if is_raspberry_pi:
 else:
     from bed.sensor.dummy_gpio import Gpio
     from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
-BODY_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/mask_rcnn_body parts_0050.h5")
-LSTM_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/LSTM_model.h5")
-IMAGE_DIR = os.path.join(dir_path, "ml/test_img/135.png")
+# BODY_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/mask_rcnn_body parts_0050.h5")
+# LSTM_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/LSTM_model.h5")
+# IMAGE_DIR = os.path.join(dir_path, "ml/test_img/135.png")
 
 #from decision_algorithm.ml import feature_extraction_preprocessing as fep
 # from ml.model import Model
@@ -98,7 +98,7 @@ def __init__(self, patient: Patient, bluetooth: Bluetooth):
     return
 
 # Main algorithm to make decision. Only looks at time spent under "high pressure"
-def algorithm():
+def algorithm_part2(BODY_MODEL_DIR,IMAGE_DIR,LSTM_MODEL_DIR,TEST_CSV_DIR):
     test_file = "/home/justin/PycharmProjects/raspberry_pi_bed/tests/test_files/sensor_data/sensor_data_dataframe168.csv"
     bluetooth = Bluetooth()
     Bed = bed.bed.Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
@@ -129,7 +129,7 @@ def algorithm():
         for i in range(min, max):
             body_position[body_part].append(i)
 
-    loc_0_x = pd.read_csv('ml/test_result/lstm_result.csv')
+    loc_0_x = pd.read_csv(TEST_CSV_DIR)
     loc_0_x.drop(['0'], axis=1)
     loc_0_x = loc_0_x.values
     head_df = pd.DataFrame()
@@ -152,6 +152,7 @@ def algorithm():
         buttocks_df = buttocks_df.append(LSTM_model_data[3],ignore_index=True)
         leg_df = leg_df.append(LSTM_model_data[4],ignore_index=True)
         heel_df = heel_df.append(LSTM_model_data[5],ignore_index=True)
+
         head_ema = head_df.ewm(com=0.2).mean()
         shoulder_ema = shoulder_df.ewm(com=0.2).mean()
         arm_ema = arm_df.ewm(com=0.2).mean()
@@ -159,30 +160,28 @@ def algorithm():
         leg_ema = leg_df.ewm(com=0.2).mean()
         heel_ema = heel_df.ewm(com=0.2).mean()
 
-        if head_ema[i] < head_df[i]:
-            bed.calculate_deflatable_regions('head')
-
-        if shoulder_ema[i] < shoulder_df[i]:
-            bed.calculate_deflatable_regions('shoulder')
-
-        if arm_ema[i] < arm_df[i]:
-            bed.calculate_deflatable_regions('arm')
-
-        if buttocks_ema[i] < buttocks_df[i]:
-            bed.calculate_deflatable_regions('buttocks')
-
-        if leg_ema[i] < leg_df[i]:
-            bed.calculate_deflatable_regions('leg')
-
-        if heel_ema[i] < heel_df[i]:
-            bed.calculate_deflatable_regions('heel')
-    return
+        # if head_ema[i] < head_df[i]:
+        #     bed.calculate_deflatable_regions('head')
+        #
+        # if shoulder_ema[i] < shoulder_df[i]:
+        #     bed.calculate_deflatable_regions('shoulder')
+        #
+        # if arm_ema[i] < arm_df[i]:
+        #     bed.calculate_deflatable_regions('arm')
+        #
+        # if buttocks_ema[i] < buttocks_df[i]:
+        #     bed.calculate_deflatable_regions('buttocks')
+        #
+        # if leg_ema[i] < leg_df[i]:
+        #     bed.calculate_deflatable_regions('leg')
+        #
+        # if heel_ema[i] < heel_df[i]:
+        #     bed.calculate_deflatable_regions('heel')
+    return True
     # part2 EMA of predict result
     #head_df = pd.DataFrame(columns = ['Name', 'Scores', 'Questions']
 
 
-
-algorithm()
 def analyze_sensor_data(self):
     #### Work on this ###
     ### function should generate a dataframe with pressure regions ###
@@ -191,9 +190,6 @@ def analyze_sensor_data(self):
     temp = self.__pressure_sensor.get_current_frame()
     if temp.empty:
         return
-
-
-
 
 
     for body_part, value in body_position.items():

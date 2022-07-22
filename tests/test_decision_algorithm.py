@@ -50,14 +50,22 @@ class TestDecision(unittest.TestCase):
         pass
 
     def test_body_part_location_update(self):
-        BODY_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/mask_rcnn_body parts_0050.h5")
-        IMAGE_DIR = os.path.join(dir_path, "ml/test_img/135.png")
+        curpath = os.path.join(os.getcwd(), '../src/')
+        BODY_MODEL_DIR = os.path.join(curpath, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
+        IMAGE_DIR = os.path.join(curpath, "decision_algorithm/ml/test_img/1.png")
         self.assertEqual(self.sensor.get_sensor_body_composition(),self.old_sensor_coord)
         self.assertEqual(self.Bed.get_tube_body_composition(),self.old_tube_coord)
         da.body_part_location_update(self.Bed, IMAGE_DIR, BODY_MODEL_DIR)
         self.assertEqual(self.sensor.get_sensor_body_composition(), self.new_sensor_coord)
         self.assertEqual(self.Bed.get_tube_body_composition(), self.new_tube_coord)
 
+    def test_algorithm_part2(self):
+        curpath = os.path.join(os.getcwd(), '../src/')
+        BODY_MODEL_DIR = os.path.join(curpath, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
+        IMAGE_DIR = os.path.join(curpath, "decision_algorithm/ml/test_img/1.png")
+        LSTM_MODEL_DIR = os.path.join(curpath, "decision_algorithm/ml/training/model_file/LSTM_model.h5")
+        TEST_CSV_DIR = os.path.join(curpath, "decision_algorithm/ml/test_result/lstm_result.csv")
+        self.assertEqual(da.algorithm_part2(BODY_MODEL_DIR,IMAGE_DIR,LSTM_MODEL_DIR,TEST_CSV_DIR),True)
 
 if __name__ == '__main__':
     unittest.main()
