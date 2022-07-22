@@ -13,7 +13,7 @@ from bed.sensor.tactilus import PressureSensor
 import os
 import sys
 from configuration import config, is_raspberry_pi
-from ml import preprocessing, model
+from decision_algorithm.ml import preprocessing, model
 from massage.massage import Massage
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -34,7 +34,24 @@ BODY_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/mask_rcnn_body p
 LSTM_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/LSTM_model.h5")
 IMAGE_DIR = os.path.join(dir_path, "ml/test_img/135.png")
 
-from ml.feature_extraction_preprocessing import combine_features_df
+from decision_algorithm.ml import feature_extraction_preprocessing as fep
+# from ml.model import Model
+
+# bluetooth = Bluetooth()
+# Bed = bed.bed.Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
+
+def body_part_location_update(bed: Bed, IMAGE_DIR, BODY_MODEL_DIR):
+    image_dir = IMAGE_DIR
+    body_model_dir = BODY_MODEL_DIR
+    # body_sensor_coordinates = Model().load_Body_Parts_Model(image_dir, body_model_dir)
+    body_sensor_coordinates ={'head': [[[13, 57], [13, 60], [14, 57], [14, 60]]], 'shoulder': [[[20, 54], [20, 59], [25, 54], [25, 59]]], 'buttocks': [[[32, 47], [32, 62], [44, 47], [44, 62]]], 'leg': [[[56, 45], [56, 49], [72, 45], [72, 49]], [[57, 57], [57, 61], [71, 57], [71, 61]]], 'arm': [[[21, 51], [21, 58], [27, 51], [27, 58]]], 'heel': [[[69, 46], [69, 48], [71, 46], [71, 48]]]}
+    print(bed.get_pressure_sensor().get_sensor_body_composition())
+    bed.get_pressure_sensor().set_sensor_body_composition(body_sensor_coordinates)
+    print(bed.get_pressure_sensor().get_sensor_body_composition())
+    print(bed.get_tube_body_composition())
+    bed.set_tube_body_composition(body_sensor_coordinates)
+    print(bed.get_tube_body_composition())
+    return
 
 # def part1_adjustment(bed: Bed):
 #     ulcer = combine_features_df()

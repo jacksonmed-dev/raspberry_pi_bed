@@ -119,7 +119,6 @@ class PressureSensor(threading.Thread):
             if a == 1:
                 min_y = new_dict[key][0][0][0]
                 max_y = new_dict[key][0][2][0]
-                print(min_y, max_y)
                 temp_list = [i for i in range(min_y, max_y + 1)]  # model output is 0 indexed?
                 temp[key] = temp_list
 
@@ -127,7 +126,6 @@ class PressureSensor(threading.Thread):
             elif a == 2:
                 min_y = min(new_dict[key][0][0][0], new_dict[key][1][0][0])
                 max_y = max(new_dict[key][0][2][0], new_dict[key][1][2][0])
-                print(min_y, max_y)
                 temp_list = [i for i in range(min_y, max_y + 1)]  # model output is 0 indexed?
                 temp[key] = temp_list
 

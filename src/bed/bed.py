@@ -10,6 +10,7 @@ from massage.massage import Massage
 from configuration import config, is_raspberry_pi
 
 config_blue = config['BLUETOOTHCONNECTION']
+config_bed = config['BED']
 
 if is_raspberry_pi:
     from bed.sensor.gpio import Gpio
@@ -210,8 +211,11 @@ class Bed:
         })
         return json_final
 
+    def get_tube_body_composition(self):
+        return self.__tube_body_composition
+
     def set_tube_body_composition(self, new_dict):
-        scaling_coeff = 65/8
+        scaling_coeff = int(config_bed['SENSOR_ROWS'])/int(config_bed['INFLATABLE_REGIONS'])
         temp = {"head": [], "shoulder": [], "arm": [], "buttocks": [], "leg": [], "heel": []}
         for key in temp:
             a = len(new_dict[key])
@@ -220,7 +224,6 @@ class Bed:
                 min_y = int(min_y / scaling_coeff)
                 max_y = new_dict[key][0][2][0]
                 max_y = int(max_y / scaling_coeff)
-                print(min_y, max_y)
                 temp_list = [i for i in range(min_y, max_y + 1)]  # model output is 0 indexed?
                 temp[key] = temp_list
 
@@ -230,7 +233,6 @@ class Bed:
                 min_y = int(min_y / scaling_coeff)
                 max_y = max(new_dict[key][0][2][0], new_dict[key][1][2][0])
                 max_y = int(max_y / scaling_coeff)
-                print(min_y, max_y)
                 temp_list = [i for i in range(min_y, max_y + 1)]  # model output is 0 indexed?
                 temp[key] = temp_list
 
