@@ -60,11 +60,16 @@ class Model():
                     name = "arm"
                elif item2 == 6:
                     name = "heel"
-               x1 = [int(item1[0]/6),int(item1[1]/6)]
-               x2 = [int(item1[0]/6),int(item1[3]/6)]
-               y1 = [int(item1[2]/6),int(item1[1]/6)]
-               y2 = [int(item1[2]/6), int(item1[3]/6)]
-               list =[x1,x2,y1,y2]
+
+               # the whole image size is:x is from 0~640, y is 0 ~480.
+               # the actual sensor reading in image is  x is 250 ~ 408, y is 57 ~ 426
+               # 5.7 and 5.8 are scaling factors to get a 27x64 dimensional coordinates
+               # coordinate pairings are x1 = [y,x]
+               x1 = [int((item1[0] - 57) / 5.7), int((item1[1] - 250) / 5.8)]
+               x2 = [int((item1[0] - 57) / 5.7), int((item1[3] - 250) / 5.8)]
+               y1 = [int((item1[2] - 57) / 5.7), int((item1[1] - 250) / 5.8)]
+               y2 = [int((item1[2] - 57) / 5.7), int((item1[3] - 250) / 5.8)]
+          list =[x1,x2,y1,y2]
                dic1[name].append(list)
 
           print(dic1)
@@ -122,7 +127,7 @@ class Model():
           return
 
      def predict_GRU(input_data):
-          model = load_model('training/model_file/GRU_model.h5') #need to make sur that pretrained model is there
+          model = load_model('training/model_file/GRU_model.h5') #need to make sure that pretrained model is there
           df = model.predict(input_data)
           df = pd.DataFrame(df, columns=['outcome_head', 'outcome_shoulder', 'outcome_arm', 'outcome_buttocks',
                                          'outcome_leg',
