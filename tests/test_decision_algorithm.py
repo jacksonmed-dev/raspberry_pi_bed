@@ -59,6 +59,13 @@ class TestDecision(unittest.TestCase):
         self.assertEqual(self.sensor.get_sensor_body_composition(), self.new_sensor_coord)
         self.assertEqual(self.Bed.get_tube_body_composition(), self.new_tube_coord)
 
+    def test_part1_adjustment(self):
+        self.assertEqual(da.part1_adjustment(self.Bed), True)
+
+    def test_part3_adjustment(self):
+        da.part3_adjustment(self.Bed)
+        self.assertEqual(self.Bed.get_massage(),True)
+
     def test_algorithm_part2(self):
         curpath = os.path.join(os.getcwd(), '../src/')
         BODY_MODEL_DIR = os.path.join(curpath, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")

@@ -12,6 +12,7 @@ import numpy as np
 from bed.sensor.tactilus import PressureSensor
 import os
 import sys
+
 from configuration import config, is_raspberry_pi
 from decision_algorithm.ml import preprocessing, model
 from massage.massage import Massage
@@ -32,9 +33,9 @@ else:
     from bluetoothconnection.bluetooth_connection_dummy import Bluetooth
 # BODY_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/mask_rcnn_body parts_0050.h5")
 # LSTM_MODEL_DIR = os.path.join(dir_path, "ml/training/model_file/LSTM_model.h5")
-# IMAGE_DIR = os.path.join(dir_path, "ml/test_img/135.png")
+# IMAGE_DIR = os.path.join(dir_path, "ml/test_img/1.png")
 
-#from decision_algorithm.ml import feature_extraction_preprocessing as fep
+from decision_algorithm.ml import feature_extraction_preprocessing as fep
 # from ml.model import Model
 
 # bluetooth = Bluetooth()
@@ -43,7 +44,7 @@ else:
 def body_part_location_update(bed: Bed, IMAGE_DIR, BODY_MODEL_DIR):
     image_dir = IMAGE_DIR
     body_model_dir = BODY_MODEL_DIR
-    # body_sensor_coordinates = Model().load_Body_Parts_Model(image_dir, body_model_dir)
+    # body_sensor_coordinates = model.Model().load_Body_Parts_Model(image_dir, body_model_dir)
     body_sensor_coordinates ={'head': [[[13, 57], [13, 60], [14, 57], [14, 60]]], 'shoulder': [[[20, 54], [20, 59], [25, 54], [25, 59]]], 'buttocks': [[[32, 47], [32, 62], [44, 47], [44, 62]]], 'leg': [[[56, 45], [56, 49], [72, 45], [72, 49]], [[57, 57], [57, 61], [71, 57], [71, 61]]], 'arm': [[[21, 51], [21, 58], [27, 51], [27, 58]]], 'heel': [[[69, 46], [69, 48], [71, 46], [71, 48]]]}
     print(bed.get_pressure_sensor().get_sensor_body_composition())
     bed.get_pressure_sensor().set_sensor_body_composition(body_sensor_coordinates)
@@ -53,28 +54,41 @@ def body_part_location_update(bed: Bed, IMAGE_DIR, BODY_MODEL_DIR):
     print(bed.get_tube_body_composition())
     return
 
-# def part1_adjustment(bed: Bed):
-#     ulcer = combine_features_df()
-#     ulcer = ulcer.filter(like='ulcer')
-#
-#     # if a body part has ulcer history make an immediate adjustment to alleviate pressure for that body part
-#
-#     # the labels in tactilus for PressureSensor.__sensor_body_composition do not match these
-#     # also these might still be fixed coordinates in tactilus script
-#     if ulcer.at['data', 'ulcer_head'] == 1:
-#         bed.calculate_deflatable_regions('head')
-#     elif ulcer.at['data', 'ulcer_arm'] == 1:
-#         bed.calculate_deflatable_regions('arm')
-#     elif ulcer.at['data', 'ulcer_shoulder'] == 1:
-#         bed.calculate_deflatable_regions('shoulder')
-#     elif ulcer.at['data', 'ulcer_buttocks'] == 1:
-#         bed.calculate_deflatable_regions('buttocks')
-#     elif ulcer.at['data', 'ulcer_leg'] == 1:
-#         bed.calculate_deflatable_regions('leg')
-#     elif ulcer.at['data', 'ulcer_heel'] == 1:
-#         bed.calculate_deflatable_regions('heel')
-#
-#     return
+# body_part_location_update(Bed,IMAGE_DIR,BODY_MODEL_DIR)
+def part1_adjustment(bed: Bed):
+    ulcer = fep.combine_features_df()
+    ulcer = ulcer.filter(like='ulcer')
+
+    # if a body part has ulcer history make an immediate adjustment to alleviate pressure for that body part
+
+    # the labels in tactilus for PressureSensor.__sensor_body_composition do not match these
+    # also these might still be fixed coordinates in tactilus script
+    if ulcer.at['data', 'ulcer_head'] == 1:
+        bed.calculate_deflatable_regions('head')
+    elif ulcer.at['data', 'ulcer_arm'] == 1:
+        bed.calculate_deflatable_regions('arm')
+    elif ulcer.at['data', 'ulcer_shoulder'] == 1:
+        bed.calculate_deflatable_regions('shoulder')
+    elif ulcer.at['data', 'ulcer_buttocks'] == 1:
+        bed.calculate_deflatable_regions('buttocks')
+    elif ulcer.at['data', 'ulcer_leg'] == 1:
+        bed.calculate_deflatable_regions('leg')
+    elif ulcer.at['data', 'ulcer_heel'] == 1:
+        bed.calculate_deflatable_regions('heel')
+
+    return True
+
+def part3_adjustment(bed:Bed):
+    movement_score = 2
+    if movement_score<=3:
+        # bed.calculate_deflatable_regions('head')
+        # bed.calculate_deflatable_regions('shoulder')
+        # bed.calculate_deflatable_regions('arm')
+        # bed.calculate_deflatable_regions('buttocks')
+        # bed.calculate_deflatable_regions('leg')
+        # bed.calculate_deflatable_regions('heel')
+        bed.massage(1)
+    return
 
 
 # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
