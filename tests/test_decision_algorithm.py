@@ -63,8 +63,9 @@ class TestDecision(unittest.TestCase):
         self.assertEqual(da.part1_adjustment(self.Bed), True)
 
     def test_part3_adjustment(self):
-        da.part3_adjustment(self.Bed)
-        self.assertEqual(self.Bed.get_massage(),True)
+        # da.part3_adjustment(self.Bed)
+        # self.assertEqual(self.Bed.get_massage(),True)
+        self.assertEqual(da.part3_adjustment(self.Bed),True)
 
     def test_algorithm_part2(self):
         curpath = os.path.join(os.getcwd(), '../src/')

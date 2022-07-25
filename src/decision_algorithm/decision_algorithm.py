@@ -88,7 +88,8 @@ def part3_adjustment(bed:Bed):
         # bed.calculate_deflatable_regions('leg')
         # bed.calculate_deflatable_regions('heel')
         #bed.massage(1)
-    return
+        print(movement_score)
+    return True
 
 
 # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
