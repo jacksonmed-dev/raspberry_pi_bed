@@ -44,8 +44,8 @@ from decision_algorithm.ml import feature_extraction_preprocessing as fep
 def body_part_location_update(bed: Bed, IMAGE_DIR, BODY_MODEL_DIR):
     image_dir = IMAGE_DIR
     body_model_dir = BODY_MODEL_DIR
-    # body_sensor_coordinates = model.Model().load_Body_Parts_Model(image_dir, body_model_dir)
-    body_sensor_coordinates ={'head': [[[13, 57], [13, 60], [14, 57], [14, 60]]], 'shoulder': [[[20, 54], [20, 59], [25, 54], [25, 59]]], 'buttocks': [[[32, 47], [32, 62], [44, 47], [44, 62]]], 'leg': [[[56, 45], [56, 49], [72, 45], [72, 49]], [[57, 57], [57, 61], [71, 57], [71, 61]]], 'arm': [[[21, 51], [21, 58], [27, 51], [27, 58]]], 'heel': [[[69, 46], [69, 48], [71, 46], [71, 48]]]}
+    body_sensor_coordinates = model.Model().load_Body_Parts_Model(image_dir, body_model_dir)
+    # body_sensor_coordinates ={'head': [[[13, 57], [13, 60], [14, 57], [14, 60]]], 'shoulder': [[[20, 54], [20, 59], [25, 54], [25, 59]]], 'buttocks': [[[32, 47], [32, 62], [44, 47], [44, 62]]], 'leg': [[[56, 45], [56, 49], [72, 45], [72, 49]], [[57, 57], [57, 61], [71, 57], [71, 61]]], 'arm': [[[21, 51], [21, 58], [27, 51], [27, 58]]], 'heel': [[[69, 46], [69, 48], [71, 46], [71, 48]]]}
     print(bed.get_pressure_sensor().get_sensor_body_composition())
     bed.get_pressure_sensor().set_sensor_body_composition(body_sensor_coordinates)
     print(bed.get_pressure_sensor().get_sensor_body_composition())
@@ -81,15 +81,37 @@ def part1_adjustment(bed: Bed):
 def part3_adjustment(bed:Bed):
     movement_score = 2
     if movement_score<=3:
-        # bed.calculate_deflatable_regions('head')
-        # bed.calculate_deflatable_regions('shoulder')
-        # bed.calculate_deflatable_regions('arm')
-        # bed.calculate_deflatable_regions('buttocks')
-        # bed.calculate_deflatable_regions('leg')
-        # bed.calculate_deflatable_regions('heel')
-        #bed.massage(1)
+        # bed.massage(1)
+        # bed.massage(0)
         print(movement_score)
     return True
+
+
+def decision_algorithm():
+    bluetooth = Bluetooth()
+    Bed = bed.bed.Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
+
+    history = Bed.get_patient().get_patient_history()
+    ulcer = history["ulcer_history"]
+
+    BODY_MODEL_DIR = os.path.join(dir_path, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
+    IMAGE_DIR = os.path.join(dir_path, "decision_algorithm/ml/test_img/1.png")
+    LSTM_MODEL_DIR = os.path.join(dir_path, "decision_algorithm/ml/training/model_file/LSTM_model.h5")
+    TEST_CSV_DIR = os.path.join(dir_path, "decision_algorithm/ml/test_result/lstm_result.csv")
+
+    movement_score = 2
+
+    if len(ulcer)>0:
+        part1_adjustment(Bed)
+    elif movement_score <=3 and len(ulcer)==0:
+        part3_adjustment(Bed)
+    elif movement_score >3 and len(ulcer)==0:
+        # should we keep updating the body part location things or is that done in this function?
+        #
+        algorithm_part2(BODY_MODEL_DIR,IMAGE_DIR,LSTM_MODEL_DIR,TEST_CSV_DIR)
+
+    return True
+
 
 
 # Same value for inflatable_regions and relay count. There may be a situation where there are more relays than
