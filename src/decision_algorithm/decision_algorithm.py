@@ -87,7 +87,7 @@ def part3_adjustment(bed:Bed):
         # bed.calculate_deflatable_regions('buttocks')
         # bed.calculate_deflatable_regions('leg')
         # bed.calculate_deflatable_regions('heel')
-        bed.massage(1)
+        #bed.massage(1)
     return
 
 
