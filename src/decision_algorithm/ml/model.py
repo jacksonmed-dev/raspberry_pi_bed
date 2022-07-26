@@ -69,8 +69,8 @@ class Model():
                x2 = [int((item1[0] - 57) / 5.7), int((item1[3] - 250) / 5.8)]
                y1 = [int((item1[2] - 57) / 5.7), int((item1[1] - 250) / 5.8)]
                y2 = [int((item1[2] - 57) / 5.7), int((item1[3] - 250) / 5.8)]
-          list =[x1,x2,y1,y2]
-          dic1[name].append(list)
+               list =[x1,x2,y1,y2]
+               dic1[name].append(list)
 
           print(dic1)
           return dic1

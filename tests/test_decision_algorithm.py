@@ -69,11 +69,14 @@ class TestDecision(unittest.TestCase):
 
     def test_algorithm_part2(self):
         curpath = os.path.join(os.getcwd(), '../src/')
+        TEST_FILE_DIR = "/home/justin/PycharmProjects/raspberry_pi_bed/tests/test_files/sensor_data/sensor_data_dataframe86.csv"
         BODY_MODEL_DIR = os.path.join(curpath, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
         IMAGE_DIR = os.path.join(curpath, "decision_algorithm/ml/test_img/1.png")
         LSTM_MODEL_DIR = os.path.join(curpath, "decision_algorithm/ml/training/model_file/LSTM_model.h5")
         TEST_CSV_DIR = os.path.join(curpath, "decision_algorithm/ml/test_result/lstm_result.csv")
-        self.assertEqual(da.algorithm_part2(BODY_MODEL_DIR,IMAGE_DIR,LSTM_MODEL_DIR,TEST_CSV_DIR),True)
+        self.assertEqual(da.preprocess(BODY_MODEL_DIR, IMAGE_DIR, TEST_FILE_DIR),{'head': [], 'shoulder': [[[7, 14], [7, 20], [14, 14], [14, 20]], [[8, 7], [8, 13], [14, 7], [14, 13]]], 'buttocks': [[[23, 7], [23, 17], [31, 7], [31, 17]]], 'leg': [[[34, 11], [34, 19], [55, 11], [55, 19]], [[46, 3], [46, 6], [63, 3], [63, 6]]], 'arm': [[[7, 21], [7, 22], [20, 21], [20, 22]]], 'heel': []})
+        BODY_POSITION = da.preprocess(BODY_MODEL_DIR, IMAGE_DIR, TEST_FILE_DIR)
+        self.assertEqual(da.algorithm_part2(LSTM_MODEL_DIR,TEST_CSV_DIR,BODY_POSITION,self.Bed),True)
 
 if __name__ == '__main__':
     unittest.main()

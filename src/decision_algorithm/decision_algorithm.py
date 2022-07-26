@@ -18,12 +18,7 @@ from decision_algorithm.ml import preprocessing, model
 from massage.massage import Massage
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-#full_path = os.path.join(dir_path, config['BODY'])
-#sys.path.append(os.path.abspath(full_path))
-#full_path = os.path.join(dir_path, config['ML'])
-#sys.path.append(os.path.abspath(full_path))
 
-# config_blue = config['BLUETOOTHCONNECTION']
 config_paths = config['PATHS']
 if is_raspberry_pi:
     from bed.sensor.gpio import Gpio
@@ -74,7 +69,7 @@ def part1_adjustment(bed: Bed):
     elif ulcer.at['data', 'ulcer_leg'] == 1:
         bed.calculate_deflatable_regions('leg')
     elif ulcer.at['data', 'ulcer_heel'] == 1:
-        bed.calculate_deflatable_regions('heel')
+        bed.calculate_deflatable_regions('leg')
 
     return True
 
@@ -135,25 +130,29 @@ def __init__(self, patient: Patient, bluetooth: Bluetooth):
     return
 
 # Main algorithm to make decision. Only looks at time spent under "high pressure"
-def algorithm_part2(BODY_MODEL_DIR,IMAGE_DIR,LSTM_MODEL_DIR,TEST_CSV_DIR):
-    test_file = "/home/justin/PycharmProjects/raspberry_pi_bed/tests/test_files/sensor_data/sensor_data_dataframe168.csv"
+def preprocess(BODY_MODEL_DIR,IMAGE_DIR, TEST_FILE_DIR):
+
     bluetooth = Bluetooth()
     Bed = bed.bed.Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
-    data_df = load_sensor_dataframe(test_file)
+    data_df = load_sensor_dataframe(TEST_FILE_DIR)
     sensor = Bed.get_pressure_sensor()
     sensor.append_sensor_data(data_df)
     sensor.set_current_frame(data_df)
     data = np.asarray(extract_sensor_dataframe(data_df['readings']),
-                       dtype=np.float64).reshape(64, 27)
+                      dtype=np.float64).reshape(64, 27)
 
     sensor_data = pd.DataFrame(data)
     preprocessing.convert_to_image(data)
 
     sensor_composition = model.Model().load_Body_Parts_Model(IMAGE_DIR, BODY_MODEL_DIR)
+    return sensor_composition
+
+def algorithm_part2(LSTM_MODEL_DIR,TEST_CSV_DIR,BODY_POSITION,bed:Bed):
+
 
     # Identify regions of the body that are in a high pressure state
     body_position = {"head": [], "shoulder": [], "buttocks": [], "leg": [], "arm": [], "heel": []}
-    for body_part, value in sensor_composition.items():
+    for body_part, value in BODY_POSITION.items():
         print(body_part)
         max = 0
         min = 99999
@@ -197,63 +196,26 @@ def algorithm_part2(BODY_MODEL_DIR,IMAGE_DIR,LSTM_MODEL_DIR,TEST_CSV_DIR):
         leg_ema = leg_df.ewm(com=0.2).mean()
         heel_ema = heel_df.ewm(com=0.2).mean()
 
-        # if head_ema[i] < head_df[i]:
-        #     bed.calculate_deflatable_regions('head')
-        #
-        # if shoulder_ema[i] < shoulder_df[i]:
-        #     bed.calculate_deflatable_regions('shoulder')
-        #
-        # if arm_ema[i] < arm_df[i]:
-        #     bed.calculate_deflatable_regions('arm')
-        #
-        # if buttocks_ema[i] < buttocks_df[i]:
-        #     bed.calculate_deflatable_regions('buttocks')
-        #
-        # if leg_ema[i] < leg_df[i]:
-        #     bed.calculate_deflatable_regions('leg')
-        #
-        # if heel_ema[i] < heel_df[i]:
-        #     bed.calculate_deflatable_regions('heel')
+        if head_ema.iloc[i,0] < head_df.iloc[i,0]:
+            bed.calculate_deflatable_regions('head')
+
+        if shoulder_ema.iloc[i,0] < shoulder_df.iloc[i,0]:
+            bed.calculate_deflatable_regions('shoulder')
+
+        if arm_ema.iloc[i,0] < arm_df.iloc[i,0]:
+            bed.calculate_deflatable_regions('arm')
+
+        if buttocks_ema.iloc[i,0] < buttocks_df.iloc[i,0]:
+            bed.calculate_deflatable_regions('buttocks')
+
+        if leg_ema.iloc[i,0] < leg_df.iloc[i,0]:
+            bed.calculate_deflatable_regions('leg')
+
+        if heel_ema.iloc[i,0] < heel_df.iloc[i,0]:
+            bed.calculate_deflatable_regions('heel')
     return True
     # part2 EMA of predict result
     #head_df = pd.DataFrame(columns = ['Name', 'Scores', 'Questions']
-
-
-def analyze_sensor_data(self):
-    #### Work on this ###
-    ### function should generate a dataframe with pressure regions ###
-    body_stats_df = self.__patient.get_body_stats_df()
-    time_diff = self.__pressure_sensor.get_time()
-    temp = self.__pressure_sensor.get_current_frame()
-    if temp.empty:
-        return
-
-
-    for body_part, value in body_position.items():
-        data = sensor_data.loc[value]
-        max_value = data.max().max()
-        body_stats_df.at[body_part, 'max_pressure'] = max_value
-
-        if max_value > self.__pressure_sensor.get_sensor_threshold():
-            current_time = body_stats_df.at[body_part, 'time']
-            new_time = current_time + time_diff
-            body_stats_df.at[body_part, 'time'] = new_time
-        else:
-            body_stats_df.at[body_part, 'time'] = timedelta(0)
-
-    # Update the patient body stats dataframe
-    self.__patient.set_body_stats_df(body_stats_df)
-
-    # Demo method!!
-    for body_part, value in sensor_composition.items():
-        pressure = body_stats_df.at[body_part, 'max_pressure']
-        if pressure > self.__pressure_sensor.get_sensor_threshold():
-            self.calculate_deflatable_regions(body_part)
-        else:
-            self.calculate_inflatable_regions(body_part)
-
-    self.__bed_gpio.change_relay_state()
-    return
 
 # Should be pre computed. Change this!!! Save in dictionary. Should only called if the body region state needs to
 # change
