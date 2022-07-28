@@ -44,18 +44,20 @@ class TestDecision(unittest.TestCase):
 
         self.sensor = self.Bed.get_pressure_sensor()
 
+        self.curpath = os.path.join(os.getcwd(), '../src/')
+        self.BODY_MODEL_DIR = os.path.join(self.curpath, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
+        self.TEST_FILE_DIR = os.path.join(os.getcwd(), "test_files/sensor_data/sensor_data_dataframe86.csv")
+        self.LSTM_MODEL_DIR = os.path.join(self.curpath, "decision_algorithm/ml/training/model_file/LSTM_model.h5")
+        self.TEST_CSV_DIR = os.path.join(self.curpath, "decision_algorithm/ml/test_result/lstm_result.csv")
         pass
 
     def tearDown(self):
         pass
 
     def test_body_part_location_update(self):
-        curpath = os.path.join(os.getcwd(), '../src/')
-        BODY_MODEL_DIR = os.path.join(curpath, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
-        IMAGE_DIR = os.path.join(curpath, "decision_algorithm/ml/test_img/1.png")
         self.assertEqual(self.sensor.get_sensor_body_composition(),self.old_sensor_coord)
         self.assertEqual(self.Bed.get_tube_body_composition(),self.old_tube_coord)
-        da.body_part_location_update(self.Bed, IMAGE_DIR, BODY_MODEL_DIR)
+        da.body_part_location_update(self.Bed, self.TEST_FILE_DIR, self.BODY_MODEL_DIR)
         self.assertEqual(self.sensor.get_sensor_body_composition(), self.new_sensor_coord)
         self.assertEqual(self.Bed.get_tube_body_composition(), self.new_tube_coord)
 
@@ -63,16 +65,8 @@ class TestDecision(unittest.TestCase):
         self.assertEqual(da.part1_adjustment(self.Bed), True)
 
     def test_algorithm_part2(self):
-        curpath = os.path.join(os.getcwd(), '../src/')
-        TEST_FILE_DIR = "/home/justin/PycharmProjects/raspberry_pi_bed/tests/test_files/sensor_data/sensor_data_dataframe86.csv"
-        BODY_MODEL_DIR = os.path.join(curpath, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
-        IMAGE_DIR = os.path.join(curpath, "decision_algorithm/ml/test_img/1.png")
-        LSTM_MODEL_DIR = os.path.join(curpath, "decision_algorithm/ml/training/model_file/LSTM_model.h5")
-        TEST_CSV_DIR = os.path.join(curpath, "decision_algorithm/ml/test_result/lstm_result.csv")
-        self.assertEqual(da.body_part_location_update(self.Bed,TEST_FILE_DIR,BODY_MODEL_DIR),{'head': [], 'shoulder': [[[7, 14], [7, 20], [14, 14], [14, 20]], [[8, 7], [8, 13], [14, 7], [14, 13]]], 'buttocks': [[[23, 7], [23, 17], [31, 7], [31, 17]]], 'leg': [[[34, 11], [34, 19], [55, 11], [55, 19]], [[46, 3], [46, 6], [63, 3], [63, 6]]], 'arm': [[[7, 21], [7, 22], [20, 21], [20, 22]]], 'heel': []})
-        # BODY_POSITION = da.body_part_location_update(self.Bed,TEST_FILE_DIR,BODY_MODEL_DIR)
-        # self.assertEqual(da.algorithm_part2(self.Bed,LSTM_MODEL_DIR,TEST_CSV_DIR,BODY_POSITION),True)
-        self.assertEqual(da.algorithm_part2(self.Bed, LSTM_MODEL_DIR, TEST_CSV_DIR), True)
+        self.assertEqual(da.body_part_location_update(self.Bed,self.TEST_FILE_DIR,self.BODY_MODEL_DIR),{'head': [], 'shoulder': [[[7, 14], [7, 20], [14, 14], [14, 20]], [[8, 7], [8, 13], [14, 7], [14, 13]]], 'buttocks': [[[23, 7], [23, 17], [31, 7], [31, 17]]], 'leg': [[[34, 11], [34, 19], [55, 11], [55, 19]], [[46, 3], [46, 6], [63, 3], [63, 6]]], 'arm': [[[7, 21], [7, 22], [20, 21], [20, 22]]], 'heel': []})
+        self.assertEqual(da.algorithm_part2(self.Bed, self.LSTM_MODEL_DIR, self.TEST_CSV_DIR), True)
 
     def test_part3_adjustment(self):
         # da.part3_adjustment(self.Bed)

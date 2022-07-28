@@ -187,8 +187,7 @@ def part3_adjustment(bed: Bed):
         print(movement_score)
     return True
 
-# Main algorithm to make decision. Only looks at time spent under "high pressure"
-def decision_algorithm():
+# Main algorithm to make decision.
     # create the bed object
     bluetooth = Bluetooth()
     bed = Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
