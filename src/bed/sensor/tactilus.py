@@ -89,6 +89,12 @@ class PressureSensor(threading.Thread):
     def get_current_frame(self):
         return self.__current_frame
 
+    def get_current_frame_array(self):
+        temp = self.__current_frame
+        temp = (temp['readings'][0])[1:-1].split(',')
+        temp = np.array(temp).astype(np.uint8)
+        return temp
+
     def get_sensor_threshold(self):
         return self.__sensor_threshold
 

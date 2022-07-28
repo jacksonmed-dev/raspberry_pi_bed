@@ -46,8 +46,8 @@ def body_part_location_update(bed: Bed, TEST_FILE_DIR, BODY_MODEL_DIR):
 
     # calculate body sensor coordinates and set the updated sensor_body_composition
     # as well as tube_body composition
-    body_sensor_coordinates = model.Model().load_Body_Parts_Model(image_dir, BODY_MODEL_DIR)
-    # body_sensor_coordinates ={'head': [[[13, 57], [13, 60], [14, 57], [14, 60]]], 'shoulder': [[[20, 54], [20, 59], [25, 54], [25, 59]]], 'buttocks': [[[32, 47], [32, 62], [44, 47], [44, 62]]], 'leg': [[[56, 45], [56, 49], [72, 45], [72, 49]], [[57, 57], [57, 61], [71, 57], [71, 61]]], 'arm': [[[21, 51], [21, 58], [27, 51], [27, 58]]], 'heel': [[[69, 46], [69, 48], [71, 46], [71, 48]]]}
+    # body_sensor_coordinates = model.Model().load_Body_Parts_Model(image_dir, BODY_MODEL_DIR)
+    body_sensor_coordinates ={'head': [[[13, 57], [13, 60], [14, 57], [14, 60]]], 'shoulder': [[[20, 54], [20, 59], [25, 54], [25, 59]]], 'buttocks': [[[32, 47], [32, 62], [44, 47], [44, 62]]], 'leg': [[[56, 45], [56, 49], [72, 45], [72, 49]], [[57, 57], [57, 61], [71, 57], [71, 61]]], 'arm': [[[21, 51], [21, 58], [27, 51], [27, 58]]], 'heel': [[[69, 46], [69, 48], [71, 46], [71, 48]]]}
     # print(bed.get_pressure_sensor().get_sensor_body_composition())
     bed.get_pressure_sensor().set_sensor_body_composition(body_sensor_coordinates)
     # print(bed.get_pressure_sensor().get_sensor_body_composition())

@@ -116,8 +116,9 @@ class Bed:
     # change
     def calculate_deflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
+        sensor_data_pre = self.__pressure_sensor.get_current_frame_array()
         sensor_data_df = \
-            pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
+            pd.DataFrame(sensor_data_pre.reshape(64, 27)).loc[
                 sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)
@@ -134,8 +135,9 @@ class Bed:
 
     def calculate_inflatable_regions(self, body_part):
         sensor_region_body = self.__pressure_sensor.get_sensor_body_composition()[body_part]
+        sensor_data_pre = self.__pressure_sensor.get_current_frame_array()
         sensor_data_df = \
-            pd.DataFrame(np.array(self.__pressure_sensor.get_current_frame()['readings'][0]).reshape(64, 27)).loc[
+            pd.DataFrame(sensor_data_pre.reshape(64, 27)).loc[
                 sensor_region_body]
 
         sensor_data_row_max = sensor_data_df.max(axis=1)

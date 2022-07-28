@@ -44,11 +44,12 @@ class TestDecision(unittest.TestCase):
 
         self.sensor = self.Bed.get_pressure_sensor()
 
-        self.curpath = os.path.join(os.getcwd(), '../src/')
-        self.BODY_MODEL_DIR = os.path.join(self.curpath, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
+        self.curpath = os.path.join(os.getcwd(), '..\\src\\')
+        # self.BODY_MODEL_DIR = os.path.join(self.curpath, "decision_algorithm\\ml\\training\\model_file\\mask_rcnn_body parts_0050.h5")
         self.TEST_FILE_DIR = os.path.join(os.getcwd(), "test_files/sensor_data/sensor_data_dataframe86.csv")
         self.LSTM_MODEL_DIR = os.path.join(self.curpath, "decision_algorithm/ml/training/model_file/LSTM_model.h5")
         self.TEST_CSV_DIR = os.path.join(self.curpath, "decision_algorithm/ml/test_result/lstm_result.csv")
+        self.BODY_MODEL_DIR = "C:\\Users\\mojca\\Desktop\\EPICS\\JacksonMedical\\Github\src\\decision_algorithm\ml\\training\\model_file\\mask_rcnn_body parts_0025.h5"
         pass
 
     def tearDown(self):
@@ -62,7 +63,7 @@ class TestDecision(unittest.TestCase):
         self.assertEqual(self.Bed.get_tube_body_composition(), self.new_tube_coord)
 
     def test_part1_adjustment(self):
-        self.assertEqual(da.part1_adjustment(self.Bed), True)
+        self.assertEqual(da.part1_adjustment(self.Bed,self.TEST_FILE_DIR,self.BODY_MODEL_DIR), True)
 
     def test_algorithm_part2(self):
         self.assertEqual(da.body_part_location_update(self.Bed,self.TEST_FILE_DIR,self.BODY_MODEL_DIR),{'head': [], 'shoulder': [[[7, 14], [7, 20], [14, 14], [14, 20]], [[8, 7], [8, 13], [14, 7], [14, 13]]], 'buttocks': [[[23, 7], [23, 17], [31, 7], [31, 17]]], 'leg': [[[34, 11], [34, 19], [55, 11], [55, 19]], [[46, 3], [46, 6], [63, 3], [63, 6]]], 'arm': [[[7, 21], [7, 22], [20, 21], [20, 22]]], 'heel': []})
