@@ -55,7 +55,7 @@ def convert_to_image(data):
     fig_path = os.path.join(os.getcwd(),"../src/decision_algorithm/ml/test_img/1.png")
     plt.savefig(fig_path)
     # plt.savefig("/home/justin/PycharmProjects/raspberry_pi_bed/src/decision_algorithm/ml/test_img/" + "1.png")
-    return True
+    return fig_path
 
 
 

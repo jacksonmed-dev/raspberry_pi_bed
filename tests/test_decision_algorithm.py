@@ -66,8 +66,7 @@ class TestDecision(unittest.TestCase):
         self.assertEqual(da.part1_adjustment(self.Bed,self.TEST_FILE_DIR,self.BODY_MODEL_DIR), True)
 
     def test_algorithm_part2(self):
-        self.assertEqual(da.body_part_location_update(self.Bed,self.TEST_FILE_DIR,self.BODY_MODEL_DIR),{'head': [], 'shoulder': [[[7, 14], [7, 20], [14, 14], [14, 20]], [[8, 7], [8, 13], [14, 7], [14, 13]]], 'buttocks': [[[23, 7], [23, 17], [31, 7], [31, 17]]], 'leg': [[[34, 11], [34, 19], [55, 11], [55, 19]], [[46, 3], [46, 6], [63, 3], [63, 6]]], 'arm': [[[7, 21], [7, 22], [20, 21], [20, 22]]], 'heel': []})
-        self.assertEqual(da.algorithm_part2(self.Bed, self.LSTM_MODEL_DIR, self.TEST_CSV_DIR), True)
+       self.assertEqual(da.algorithm_part2(self.Bed, self.LSTM_MODEL_DIR, self.TEST_CSV_DIR), True)
 
     def test_part3_adjustment(self):
         # da.part3_adjustment(self.Bed)
