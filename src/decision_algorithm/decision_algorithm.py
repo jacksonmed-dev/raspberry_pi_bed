@@ -196,7 +196,8 @@ def main_algorithm():
     ulcer = history["ulcer_history"]
 
     # import all the directory paths needed
-    # BODY_MODEL_DIR = os.path.join(dir_path, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
+    BODY_MODEL_DIR = os.path.join(dir_path, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
+    TEST_FILE_DIR = os.path.join(os.getcwd(), "test_files/sensor_data/sensor_data_dataframe86.csv")
     # IMAGE_DIR = os.path.join(dir_path, "decision_algorithm/ml/test_img/1.png")
     LSTM_MODEL_DIR = os.path.join(dir_path, "decision_algorithm/ml/training/model_file/LSTM_model.h5")
     TEST_CSV_DIR = os.path.join(dir_path, "decision_algorithm/ml/test_result/lstm_result.csv")
@@ -206,12 +207,12 @@ def main_algorithm():
 
     # if there is an existing ulcer deflate that region immediately
     if len(ulcer) > 0:
-        part1_adjustment(bed)
+        part1_adjustment(bed,TEST_FILE_DIR,BODY_MODEL_DIR)
     # if there is no ulcer resent and there has not been enough movement
     # (low movement score) start massage
     elif movement_score <= 3 and len(ulcer) == 0:
         part3_adjustment(bed)
-    # if the movement score is stisfactory and there is no ulcer present
+    # if the movement score is satisfactory and there is no ulcer present
     # check for pressure applied to different body arts and make adjustments
     # for them accordingly
     elif movement_score > 3 and len(ulcer) == 0:
