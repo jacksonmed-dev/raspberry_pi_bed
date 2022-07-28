@@ -74,5 +74,7 @@ class TestDecision(unittest.TestCase):
         # self.assertEqual(self.Bed.get_massage(),True)
         self.assertEqual(da.part3_adjustment(self.Bed),True)
 
+    def test_main_algorithm(self):
+        self.assertEqual(da.main_algorithm(),True)
 if __name__ == '__main__':
     unittest.main()

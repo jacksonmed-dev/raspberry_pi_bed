@@ -188,6 +188,7 @@ def part3_adjustment(bed: Bed):
     return True
 
 # Main algorithm to make decision.
+def main_algorithm():
     # create the bed object
     bluetooth = Bluetooth()
     bed = Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
