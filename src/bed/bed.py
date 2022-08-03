@@ -6,6 +6,8 @@ from body.body import Patient
 from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
 import numpy as np
+
+from decision_algorithm.decision_algorithm import main_algorithm
 from massage.massage import Massage
 from configuration import config, is_raspberry_pi
 
@@ -66,51 +68,54 @@ class Bed:
         else:
             return None
 
-    # Main algorithm to make decision. Only looks at time spent under "high pressure"
     def analyze_sensor_data(self):
-        #### Work on this ###
-        ### function should generate a dataframe with pressure regions ###
-        body_stats_df = self.__patient.get_body_stats_df()
-        time_diff = self.__pressure_sensor.get_time()
-        temp = self.__pressure_sensor.get_current_frame()
-        if temp.empty:
-            return
-        # data = extract_sensor_dataframe(df["readings"])
-        # test = self.__pressure_sensor.get_current_frame()['readings']
-        data = np.asarray(extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()['readings']),
-                          dtype=np.float64).reshape(64, 27)
-        # temp = np.asarray(data, dtype=np.float64).reshape(64,27)
-        # temp = np.asarray(test, dtype=np.float64)
-        sensor_data = pd.DataFrame(data)
+        main_algorithm(self)
 
-        sensor_composition = self.__pressure_sensor.get_sensor_body_composition()
-
-        # Identify regions of the body that are in a high pressure state
-        for body_part, value in sensor_composition.items():
-            data = sensor_data.loc[value]
-            max_value = data.max().max()
-            body_stats_df.at[body_part, 'max_pressure'] = max_value
-
-            if max_value > self.__pressure_sensor.get_sensor_threshold():
-                current_time = body_stats_df.at[body_part, 'time']
-                new_time = current_time + time_diff
-                body_stats_df.at[body_part, 'time'] = new_time
-            else:
-                body_stats_df.at[body_part, 'time'] = timedelta(0)
-
-        # Update the patient body stats dataframe
-        self.__patient.set_body_stats_df(body_stats_df)
-
-        # Demo method!!
-        for body_part, value in sensor_composition.items():
-            pressure = body_stats_df.at[body_part, 'max_pressure']
-            if pressure > self.__pressure_sensor.get_sensor_threshold():
-                self.calculate_deflatable_regions(body_part)
-            else:
-                self.calculate_inflatable_regions(body_part)
-
-        self.__bed_gpio.change_relay_state()
-        return
+    # Main algorithm to make decision. Only looks at time spent under "high pressure"
+    # def analyze_sensor_data(self):
+    #     #### Work on this ###
+    #     ### function should generate a dataframe with pressure regions ###
+    #     body_stats_df = self.__patient.get_body_stats_df()
+    #     time_diff = self.__pressure_sensor.get_time()
+    #     temp = self.__pressure_sensor.get_current_frame()
+    #     if temp.empty:
+    #         return
+    #     # data = extract_sensor_dataframe(df["readings"])
+    #     # test = self.__pressure_sensor.get_current_frame()['readings']
+    #     data = np.asarray(extract_sensor_dataframe(self.__pressure_sensor.get_current_frame()['readings']),
+    #                       dtype=np.float64).reshape(64, 27)
+    #     # temp = np.asarray(data, dtype=np.float64).reshape(64,27)
+    #     # temp = np.asarray(test, dtype=np.float64)
+    #     sensor_data = pd.DataFrame(data)
+    #
+    #     sensor_composition = self.__pressure_sensor.get_sensor_body_composition()
+    #
+    #     # Identify regions of the body that are in a high pressure state
+    #     for body_part, value in sensor_composition.items():
+    #         data = sensor_data.loc[value]
+    #         max_value = data.max().max()
+    #         body_stats_df.at[body_part, 'max_pressure'] = max_value
+    #
+    #         if max_value > self.__pressure_sensor.get_sensor_threshold():
+    #             current_time = body_stats_df.at[body_part, 'time']
+    #             new_time = current_time + time_diff
+    #             body_stats_df.at[body_part, 'time'] = new_time
+    #         else:
+    #             body_stats_df.at[body_part, 'time'] = timedelta(0)
+    #
+    #     # Update the patient body stats dataframe
+    #     self.__patient.set_body_stats_df(body_stats_df)
+    #
+    #     # Demo method!!
+    #     for body_part, value in sensor_composition.items():
+    #         pressure = body_stats_df.at[body_part, 'max_pressure']
+    #         if pressure > self.__pressure_sensor.get_sensor_threshold():
+    #             self.calculate_deflatable_regions(body_part)
+    #         else:
+    #             self.calculate_inflatable_regions(body_part)
+    #
+    #     self.__bed_gpio.change_relay_state()
+    #     return
 
     # Should be pre computed. Change this!!! Save in dictionary. Should only called if the body region state needs to
     # change

@@ -205,9 +205,11 @@ class PressureSensor(threading.Thread):
 
     def run(self):
         if self.isRaspberryPi:
-            self.start_sse_client()
+            thread = threading.Thread(target=self.start_sse_client())
+            thread.start()
         else:
-            self.start_sse_client_dummy()
+            thread = threading.Thread(target=self.start_sse_client_dummy())
+            thread.start()
 
 # print("data received {}".format(index))
 # df.to_csv(

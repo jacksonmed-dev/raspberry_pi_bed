@@ -188,10 +188,11 @@ def part3_adjustment(bed: Bed):
     return True
 
 # Main algorithm to make decision.
-def main_algorithm():
+def main_algorithm(bed:Bed):
     # create the bed object
-    bluetooth = Bluetooth()
-    bed = Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
+    # bluetooth = Bluetooth()
+    # bed = Bed(patient=Patient(bluetooth=bluetooth), bluetooth=bluetooth)
+    df = bed.get_pressure_sensor().get_current_frame()
     history = bed.get_patient().get_patient_history()
     ulcer = history["ulcer_history"]
 
