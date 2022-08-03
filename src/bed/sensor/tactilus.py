@@ -180,6 +180,21 @@ class PressureSensor(threading.Thread):
                     self.current_frame(df)
                     # print(df)
 
+    def start_sse_client_dummy(self):
+        # Get the files from test/test_files/sensor_data
+        # 406 total files
+        directory = os.getcwd()
+        files = os.listdir(r"{}/test_files/sensor_data".format(directory))
+        for file in files:
+        # Loop over each file and notify bluetooth observers
+        # Set the current dataframe
+        # time.sleep(3)
+            df = pd.read_json(file)
+            readings_array = str(df["readings"][0])
+            self._notify_bluetooth_observers(readings_array)
+            self.current_frame(df)
+            time.sleep(3)
+
     def save_sensor_data(self, df: pd.DataFrame): #should I leave it all this way or try and add some stuff to configuration?
         directory = os.getcwd()
         temp = "{}/sensor_data".format(directory)
@@ -191,6 +206,8 @@ class PressureSensor(threading.Thread):
     def run(self):
         if self.isRaspberryPi:
             self.start_sse_client()
+        else:
+            self.start_sse_client_dummy()
 
 # print("data received {}".format(index))
 # df.to_csv(
