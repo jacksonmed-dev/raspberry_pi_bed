@@ -45,11 +45,11 @@ class TestDecision(unittest.TestCase):
         self.sensor = self.Bed.get_pressure_sensor()
 
         self.curpath = os.path.join(os.getcwd(), '../src/')
-        self.BODY_MODEL_DIR = os.path.join(self.curpath, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
+        # self.BODY_MODEL_DIR = os.path.join(self.curpath, "decision_algorithm/ml/training/model_file/mask_rcnn_body parts_0050.h5")
         self.TEST_FILE_DIR = os.path.join(os.getcwd(), "test_files/sensor_data/sensor_data_dataframe86.csv")
         self.LSTM_MODEL_DIR = os.path.join(self.curpath, "decision_algorithm/ml/training/model_file/LSTM_model.h5")
         self.TEST_CSV_DIR = os.path.join(self.curpath, "decision_algorithm/ml/test_result/lstm_result.csv")
-        #self.BODY_MODEL_DIR = "C:\\Users\\mojca\\Desktop\\EPICS\\JacksonMedical\\Github\src\\decision_algorithm\ml\\training\\model_file\\mask_rcnn_body parts_0025.h5"
+        self.BODY_MODEL_DIR = "C:\\Users\\mojca\\Desktop\\EPICS\\JacksonMedical\\Github\src\\decision_algorithm\ml\\training\\model_file\\mask_rcnn_body parts_0025.h5"
         pass
 
     def tearDown(self):
@@ -75,5 +75,6 @@ class TestDecision(unittest.TestCase):
 
     def test_main_algorithm(self):
         self.assertEqual(da.main_algorithm(),True)
+
 if __name__ == '__main__':
     unittest.main()

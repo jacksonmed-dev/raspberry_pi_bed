@@ -5,6 +5,7 @@ from body.body import Patient
 from server.flask_server import create_server
 from configuration import is_raspberry_pi
 
+
 if is_raspberry_pi:
     from bluetoothconnection.bluetooth_connection import Bluetooth as Bluetooth
 else:
@@ -34,7 +35,8 @@ if __name__ == "__main__":
     #     threading.Thread(message.start())
     # else:
     #     print("Invalid argument passed")
-    bluetooth.run(send_dummy_data=False)
+    # bluetooth.run(send_dummy_data=False)
     # threading.Thread(target=bed.get_pressure_sensor().start_sse_client).start()
-    bed.get_pressure_sensor().run()
+    # bed.get_pressure_sensor().run()
+    bed.run()
     # threading.Thread(app.run(host='0.0.0.0', debug=False, use_reloader=False))

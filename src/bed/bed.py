@@ -1,4 +1,9 @@
+import ast
 import json
+import os
+import pathlib
+import time
+from os.path import isfile, join
 
 import pandas as pd
 from bed.sensor.tactilus import PressureSensor
@@ -6,13 +11,14 @@ from body.body import Patient
 from bed.sensor.util.sensor_data_utils import extract_sensor_dataframe
 from datetime import timedelta
 import numpy as np
+import threading
 
-from decision_algorithm.decision_algorithm import main_algorithm
 from massage.massage import Massage
 from configuration import config, is_raspberry_pi
 
 config_blue = config['BLUETOOTHCONNECTION']
 config_bed = config['BED']
+config_paths = config['PATHS']
 
 if is_raspberry_pi:
     from bed.sensor.gpio import Gpio
@@ -69,7 +75,9 @@ class Bed:
             return None
 
     def analyze_sensor_data(self):
+        from decision_algorithm.decision_algorithm import main_algorithm
         main_algorithm(self)
+        return
 
     # Main algorithm to make decision. Only looks at time spent under "high pressure"
     # def analyze_sensor_data(self):
@@ -261,3 +269,31 @@ class Bed:
 
     def stop_massage(self):
         self.__massage.set_massage_status(False)
+
+    def sensor_start_sse_client(self):
+        self.get_pressure_sensor().start_sse_client()
+
+    def sensor_start_sse_client_dummy(self):
+        # Get the files from test/test_files/sensor_data
+        # 407 total files
+        sensor = self.get_pressure_sensor()
+        current_path = str(pathlib.Path(__file__).parent.resolve())
+        path_to_data = current_path + config_paths['TEST_DATA']
+        only_files = [f for f in os.listdir(path_to_data) if isfile(join(path_to_data, f))]
+        while True:
+            for file in only_files:
+                df = pd.read_csv(path_to_data + file)
+                readings_array = str(df["readings"][0])
+                sensor._notify_bluetooth_observers(readings_array)
+                # sensor.current_frame(df) # over here it takes me to the analyze sensor data function already?
+                sensor.set_current_frame(df)
+                self.analyze_sensor_data()
+                time.sleep(3)
+
+    def run(self):
+        if self.get_pressure_sensor().isRaspberryPi:
+            thread = threading.Thread(target=self.sensor_start_sse_client())
+            thread.start()
+        else:
+            thread = threading.Thread(target=self.sensor_start_sse_client_dummy())
+            thread.start()

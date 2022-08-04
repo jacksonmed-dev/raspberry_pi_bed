@@ -8,13 +8,10 @@ from datetime import datetime, timedelta
 from sseclient import SSEClient
 import pathlib
 import os
-from os.path import isfile, join, realpath, dirname
-import configparser
+from os.path import isfile, join
 
-dir_path = dirname(realpath(__file__))
-file = join(dir_path, '../../configuration/config.ini')
-config = configparser.ConfigParser()
-config.read(file)
+
+from configuration import config,is_raspberry_pi
 config_bed = config['BED']
 config_paths = config['PATHS']
 
@@ -53,7 +50,7 @@ class PressureSensor(threading.Thread):
         #     self.isRaspberryPi = True
         # return
 
-        self.isRaspberryPi = True
+        self.isRaspberryPi = is_raspberry_pi
 
     def current_frame(self):
         return self.__current_frame
@@ -179,21 +176,25 @@ class PressureSensor(threading.Thread):
                     self._notify_bluetooth_observers(readings_array)
                     self.current_frame(df)
                     # print(df)
-
-    def start_sse_client_dummy(self):
-        # Get the files from test/test_files/sensor_data
-        # 406 total files
-        directory = os.getcwd()
-        files = os.listdir(r"{}/test_files/sensor_data".format(directory))
-        for file in files:
-        # Loop over each file and notify bluetooth observers
-        # Set the current dataframe
-        # time.sleep(3)
-            df = pd.read_json(file)
-            readings_array = str(df["readings"][0])
-            self._notify_bluetooth_observers(readings_array)
-            self.current_frame(df)
-            time.sleep(3)
+    #
+    # def start_sse_client_dummy(self):
+    #     # Get the files from test/test_files/sensor_data
+    #     # 406 total files
+    #     current_path = str(pathlib.Path(__file__).parent.resolve())
+    #     path_to_data = current_path + config_paths['TEST_DATA']
+    #     only_files = [f for f in os.listdir(path_to_data) if isfile(join(path_to_data, f))]
+    #     while True:
+    #         for file in only_files:
+    #         # Loop over each file and notify bluetooth observers
+    #         # Set the current dataframe
+    #         # Use current dataframe to run decision algorithm
+    #         # time.sleep(3)
+    #             df = pd.read_csv(path_to_data+file)
+    #             readings_array = str(df["readings"][0])
+    #             self._notify_bluetooth_observers(readings_array)
+    #             self.current_frame(df)
+    #             self.set_current_frame(df)
+    #             time.sleep(3)
 
     def save_sensor_data(self, df: pd.DataFrame): #should I leave it all this way or try and add some stuff to configuration?
         directory = os.getcwd()
