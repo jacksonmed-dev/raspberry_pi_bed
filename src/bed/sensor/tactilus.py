@@ -8,13 +8,10 @@ from datetime import datetime, timedelta
 from sseclient import SSEClient
 import pathlib
 import os
-from os.path import isfile, join, realpath, dirname
-import configparser
+from os.path import isfile, join
 
-dir_path = dirname(realpath(__file__))
-file = join(dir_path, '../../configuration/config.ini')
-config = configparser.ConfigParser()
-config.read(file)
+
+from configuration import config,is_raspberry_pi
 config_bed = config['BED']
 config_paths = config['PATHS']
 
@@ -29,11 +26,11 @@ class PressureSensor(threading.Thread):
     __sensor_threshold = int(config_bed['SENSOR_THRESHOLD'])
     __sensor_body_composition = {
         "head": [i for i in range(0, 9)],
-        "shoulders": [i for i in range(10, 16)],
-        "back": [i for i in range(17, 33)],
-        "butt": [i for i in range(34, 43)],
-        "calves": [i for i in range(44, 57)],
-        "feet": [i for i in range(58, 64)]
+        "shoulder": [i for i in range(10, 16)],
+        "arm": [i for i in range(17, 33)],
+        "buttocks": [i for i in range(34, 43)],
+        "leg": [i for i in range(44, 57)],
+        "heels": [i for i in range(58, 64)]
     }
     __sensor_rows = int(config_bed['SENSOR_ROWS'])
     __sensor_columns = int(config_bed['SENSOR_COLUMNS'])
@@ -47,11 +44,13 @@ class PressureSensor(threading.Thread):
         self._callbacks = []
         self._bluetooth_callback = []
 
-        if os.uname()[4][:3] == 'arm':
-            self.isRaspberryPi = True
-        else:
-            self.isRaspberryPi = True
-        return
+        # if os.uname()[4][:3] == 'arm':
+        #     self.isRaspberryPi = True
+        # else:
+        #     self.isRaspberryPi = True
+        # return
+
+        self.isRaspberryPi = is_raspberry_pi
 
     def current_frame(self):
         return self.__current_frame
@@ -87,6 +86,12 @@ class PressureSensor(threading.Thread):
     def get_current_frame(self):
         return self.__current_frame
 
+    def get_current_frame_array(self):
+        temp = self.__current_frame
+        temp = (temp['readings'][0])[1:-1].split(',')
+        temp = np.array(temp).astype(np.uint8)
+        return temp
+
     def get_sensor_threshold(self):
         return self.__sensor_threshold
 
@@ -108,6 +113,30 @@ class PressureSensor(threading.Thread):
 
     def set_sensor_inflatable_composition(self, values):
         self.__sensor_inflatable_composition = values
+
+    def set_sensor_body_composition(self, new_dict):
+        temp = {"head": [], "shoulder": [], "arm": [], "buttocks": [], "leg": [], "heel": []}
+        for key in temp:
+            a = len(new_dict[key])
+
+            if a == 1:
+                min_y = new_dict[key][0][0][0]
+                max_y = new_dict[key][0][2][0]
+                temp_list = [i for i in range(min_y, max_y + 1)]  # model output is 0 indexed?
+                temp[key] = temp_list
+
+            # in the case of arm, leg, shoulder and heel we might have two objects so take lowest and highes toint of both
+            elif a == 2:
+                min_y = min(new_dict[key][0][0][0], new_dict[key][1][0][0])
+                max_y = max(new_dict[key][0][2][0], new_dict[key][1][2][0])
+                temp_list = [i for i in range(min_y, max_y + 1)]  # model output is 0 indexed?
+                temp[key] = temp_list
+
+            # if there is no signal in shoulder area keep the default coordinates
+            elif a == 0:
+                temp[key] = self.__sensor_body_composition[key]
+
+        self.__sensor_body_composition = temp
 
     def append_sensor_data(self, df):
         self.__sensor_data = self.__sensor_data.append(df)
@@ -147,6 +176,25 @@ class PressureSensor(threading.Thread):
                     self._notify_bluetooth_observers(readings_array)
                     self.current_frame(df)
                     # print(df)
+    #
+    # def start_sse_client_dummy(self):
+    #     # Get the files from test/test_files/sensor_data
+    #     # 406 total files
+    #     current_path = str(pathlib.Path(__file__).parent.resolve())
+    #     path_to_data = current_path + config_paths['TEST_DATA']
+    #     only_files = [f for f in os.listdir(path_to_data) if isfile(join(path_to_data, f))]
+    #     while True:
+    #         for file in only_files:
+    #         # Loop over each file and notify bluetooth observers
+    #         # Set the current dataframe
+    #         # Use current dataframe to run decision algorithm
+    #         # time.sleep(3)
+    #             df = pd.read_csv(path_to_data+file)
+    #             readings_array = str(df["readings"][0])
+    #             self._notify_bluetooth_observers(readings_array)
+    #             self.current_frame(df)
+    #             self.set_current_frame(df)
+    #             time.sleep(3)
 
     def save_sensor_data(self, df: pd.DataFrame): #should I leave it all this way or try and add some stuff to configuration?
         directory = os.getcwd()
@@ -158,7 +206,11 @@ class PressureSensor(threading.Thread):
 
     def run(self):
         if self.isRaspberryPi:
-            self.start_sse_client()
+            thread = threading.Thread(target=self.start_sse_client())
+            thread.start()
+        else:
+            thread = threading.Thread(target=self.start_sse_client_dummy())
+            thread.start()
 
 # print("data received {}".format(index))
 # df.to_csv(

@@ -4,7 +4,7 @@ from os.path import *
 import sys
 
 #from body.body import Patient
-from braden_score import BradenScore
+from decision_algorithm.ml.braden_score import BradenScore
 
 
 def patient_history_feature_extraction_df():
